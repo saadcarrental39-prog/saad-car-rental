@@ -1,41 +1,22 @@
-# Reviews setup (Google reviews + website reviews)
+# Reviews (card ke andar, Google jaisa)
 
-Code tayyar hai. Asli reviews tab dikhenge jab neeche ke 4 steps ek baar kar lein. Bina setup ke bhi site theek chalti hai: rating, count aur "All on Google" link dikhta hai, aur koi nakli review kabhi nahi dikhaya jata.
+## Kaise dikhta hai
+Har car ke card ke andar: ⭐⭐⭐⭐⭐ 5.0 (212 reviews). Us par click karein to poori reviews window khulti hai (naam, profile icon, stars, text, "Write a review", aur "See all 212 reviews on Google Maps"). Review text card par nazar nahi aata, sirf click par.
 
-## Kya kahan dikhta hai
-- Har car carousel ke neeche (Home par har showroom, aur har car page par) premium review strip: gold stars, rating, review cards, "Write a review".
-- Home aur About ke neeche bara section: saare reviews.
-- Google reviews har car ke neeche aate hain (Google reviews poore business ke hote hain, kisi ek car ke nahi). Website se diye gaye reviews us car ke neeche aate hain jis car ka customer ne chuna.
+## Design chunna (4 designs)
+1. `start-dev.bat` chalayein, browser mein `http://localhost:5173/review-designs` kholein.
+2. Chaaron designs click karke dekhein.
+3. Pasand wala number `src/config.js` mein `reviewDesign: 1` ki jagah likhein (1, 2, 3 ya 4), ya mujhe batayein.
+(Yeh page sirf aap ke computer par hai, live site par nahi.)
 
-## Setup (sirf ek baar)
+## Apne asli reviews lagana
+`src/data/reviews.js` kholein, Google Maps se apne reviews copy karke is format mein paste karein:
 
-**1. Google API key**
-Google Cloud Console > naya project > "Places API (New)" Enable > Credentials > Create API key.
-Key ko "API restrictions" mein sirf Places API (New) tak restrict karein. Billing budget alert zaroor lagayein (is setup mein 1 ghante ki cache hai, isliye kharcha bohat kam hota hai).
+    { name: "Ali Khan", rating: 5, date: "2 months ago", text: "Review ka text", photo: "" },
 
-**2. Place ID**
-Google ka "Place ID Finder" kholein, "Saad Car Rental Services G-11 Markaz Islamabad" search karein, `ChIJ...` wala ID copy karein.
+- `photo` khali = naam ke pehle harf ka rangeen icon. Photo chahiye to `public/assets/reviews/` mein image rakhein aur `"/assets/reviews/ali.webp"` likhein.
+- Rating aur count `src/config.js` ke `rating` aur `reviewCount` se aate hain (abhi 5.0 aur 212). Jab Google par badlein, wahan bhi badal dein.
+- "Write a review" aur "See all reviews" ka link `writeReviewUrl` / `reviewsMap` (config.js) mein hai.
+- Sirf asli reviews dalein. Naqli reviews Google ki policy ke khilaf hain aur profile par action ho sakta hai.
 
-**3. Cloudflare KV (website reviews ke liye)**
-Cloudflare Dashboard > Workers & Pages > KV > Create namespace: `saad-reviews`.
-
-**4. Cloudflare Pages settings**
-Pages project > Settings:
-- Bindings > Add > KV namespace: Variable name `REVIEWS_KV`, namespace `saad-reviews` (Production)
-- Variables and Secrets (Production): `GOOGLE_PLACES_API_KEY` (Secret), `GOOGLE_PLACE_ID`, aur optional `ADMIN_TOKEN` (koi lamba random text)
-
-Phir `update.bat` chala dein (bindings agli deployment se lagti hain).
-
-## Zaroori sachchai (please parhein)
-
-1. **Google sirf 5 reviews deta hai.** Places API har baar zyada se zyada 5 "most relevant" reviews deti hai, 211 nahi. Rating aur total count poora aata hai. Saare reviews ke liye Google Business Profile API chahiye (aap ka business owner access + Google ki approval). Chahein to agla step main bana doonga.
-2. **Website se Google par review khud post nahi ho sakta.** Google kisi ko bhi API se customer ki taraf se review post karne nahi deta (sirf customer khud Google par likh sakta hai). Isliye: website review aap ki site par foran dikhta hai, aur submit ke baad customer ko "Copy and open Google review" button milta hai: text copy hota hai aur Google ka review page khulta hai, customer bas paste karke post karta hai.
-3. Google reviews ka text sirf 1 ghante ki short cache mein rakha jata hai, kahin save nahi hota (Google ke terms is wajah se).
-4. Local `start-dev.bat` mein Functions nahi chalte, wahan design dekhne ke liye sample cards dikhte hain (clearly "sample" likha hota hai). Live site par yeh kabhi nahi aate.
-
-## Website review hatana
-- Cloudflare > KV > `saad-reviews` > key `reviews:all` ko edit karke us review ka object delete karein, ya
-- `ADMIN_TOKEN` set ho to: `curl -X DELETE -H "Authorization: Bearer TOKEN" "https://aapki-site/api/reviews?id=REVIEW_ID"`
-
-## Spam se bachao
-Hidden honeypot field, 10 minute mein ek IP se ek review, links block, 500 akshar ki limit, aur sab text safely escape hota hai.
+Phir `update.bat` chalayein.

@@ -1,7 +1,8 @@
-// Gold stars drawn with the supplied star icon. `value` can be fractional (4.8 -> last star mostly filled).
-const row = () => [0, 1, 2, 3, 4].map((i) => <img key={i} src="/assets/star.png" alt="" width="96" height="96" loading="lazy" />);
-export default function Stars({ value = 5, size = 18 }) {
-  const pct = (Math.max(0, Math.min(5, Number(value) || 0)) / 5) * 100;
-  return (<span className="stars5" role="img" aria-label={`${value} out of 5 stars`} style={{ "--s": `${size}px` }}>
-    <span className="stars5__bg" aria-hidden="true">{row()}</span><span className="stars5__fg" aria-hidden="true" style={{ width: `${pct}%` }}>{row()}</span></span>);
+// Simple yellow stars. line = outline-only style (design 3).
+const P = "M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.4l-5.8 3.1 1.1-6.45-4.7-4.6 6.5-.95z";
+export default function Stars({ value = 5, size = 18, line = false }) {
+  const n = Math.round(Number(value) || 0);
+  return (<span className="st" role="img" aria-label={`${n} out of 5 stars`} style={{ "--s": `${size}px` }}>
+    {[1, 2, 3, 4, 5].map((i) => (<svg key={i} viewBox="0 0 24 24" aria-hidden="true" className={i <= n ? "on" : "off"}>
+      <path d={P} fill={i <= n && !line ? "#FFC107" : "none"} stroke={i <= n ? (line ? "#F5A300" : "#FFC107") : "#cfcfcf"} strokeWidth={line ? 2.2 : 1} strokeLinejoin="round" /></svg>))}</span>);
 }

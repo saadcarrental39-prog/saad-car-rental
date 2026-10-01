@@ -4,7 +4,6 @@ import { fleet, findCategory } from "../data/fleet";
 import { services } from "../data/services";
 import { useSeo } from "../seo";
 import Reviews from "../components/Reviews";
-import ReviewStrip from "../components/reviews/ReviewStrip";
 import VehicleCarousel from "../components/automotive/VehicleCarousel";
 export function Cars() {
   useSeo({ title: "Our Fleet – Cars With Professional Driver", description: "Explore the SAAD CAR RENTAL SERVICES fleet in Islamabad, all available with a professional driver.", path: "/cars" });
@@ -15,7 +14,6 @@ export function CarPage() {
   useSeo({ title: c?.seo || "Cars", description: c?.description || "", path: `/cars/${c?.slug}` });
   if (!c) return <Navigate to="/cars" replace />;
   return <div className="pad"><h1>{c.title} – With Professional Driver</h1><p className="lead">{c.description}</p><VehicleCarousel key={c.slug} vehicles={c.vehicles} label={`${c.title} carousel`} />
-    <ReviewStrip cars={[c.slug]} />
     <p className="row"><Link className="btn btn--dark" to={`/book?car=${c.vehicles[0].id}`}>Book Now</Link></p>
     <nav className="chips" aria-label="Other vehicles">{fleet.filter((x) => x.slug !== c.slug).map((x) => <Link key={x.slug} to={`/cars/${x.slug}`}>{x.title}</Link>)}</nav></div>;
 }
