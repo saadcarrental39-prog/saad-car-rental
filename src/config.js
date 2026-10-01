@@ -6,6 +6,7 @@ export const SITE = {
   phone: env.VITE_PHONE_NUMBER || "+923339850599", phoneDisplay: "0333 9850599", years: 22, rating: "5.0", reviewCount: 211, reviewsUrl: "https://www.google.com/search?q=saad+car+rental+with+driver",
   address: ["Office No 12, 3rd Floor,", "Shah Nawaz Plaza,", "G-11 Markaz,", "Islamabad 44000,", "Pakistan"],
   maps: "https://maps.app.goo.gl/MHzBvUAZeretA5Q86",
+  reviewsMap: "https://maps.app.goo.gl/cT7jjBCDkJK7oREU6", // fallback link for "All on Google" / "Write a review" until the API supplies exact links
 };
 export const telHref = SITE.phone ? `tel:${SITE.phone.replace(/[^\d+]/g, "")}` : "";
 export const waHref = (text = "") => (SITE.whatsapp ? `https://wa.me/${SITE.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ""}` : "");

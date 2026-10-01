@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./styles/automotive-carousel.css";
 import "./styles/site.css";
+import "./styles/reviews.css";
 createRoot(document.getElementById("root")).render(<BrowserRouter><App /></BrowserRouter>);
 
 // Auto-refresh when a new version is deployed, so nobody keeps running old files.

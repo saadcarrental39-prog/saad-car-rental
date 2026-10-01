@@ -1,0 +1,23 @@
+import { useEffect, useState } from "react";
+// Local-only sample so you can see the design with `npm run dev` (Pages Functions don't run in plain Vite).
+// In the production build this branch is removed, so sample data can never appear on the live site.
+const SAMPLE = { sample: true, google: { rating: 5, count: 211, mapsUrl: "", writeUrl: "", reviews: [
+  { id: "s1", source: "google", name: "Sample Reviewer", rating: 5, text: "Sample text for the local preview. Real Google reviews appear here once the API is connected.", date: "2026-09-01T00:00:00Z", when: "a month ago" },
+  { id: "s2", source: "google", name: "Another Sample", rating: 5, text: "Second sample card, only visible while testing on your own computer.", date: "2026-08-01T00:00:00Z", when: "2 months ago" },
+  { id: "s3", source: "google", name: "Third Sample", rating: 4, text: "A four star sample so you can check partial stars and card heights.", date: "2026-07-01T00:00:00Z", when: "3 months ago" }] }, site: [] };
+let cache = null;
+export function loadReviews(force = false) {
+  if (!cache || force) cache = fetch(`/api/reviews${force ? `?t=${Date.now()}` : ""}`, { headers: { accept: "application/json" } })
+    .then((r) => { if (!r.ok || !(r.headers.get("content-type") || "").includes("json")) throw new Error("no api"); return r.json(); })
+    .catch(() => (import.meta.env.DEV ? SAMPLE : { google: null, site: [] }));
+  return cache;
+}
+export function useReviews() {
+  const [d, setD] = useState(null);
+  useEffect(() => {
+    let on = true; const run = (f) => loadReviews(f).then((x) => on && setD(x));
+    run(false); const h = () => run(true); window.addEventListener("reviews-updated", h);
+    return () => { on = false; window.removeEventListener("reviews-updated", h); };
+  }, []);
+  return d;
+}
