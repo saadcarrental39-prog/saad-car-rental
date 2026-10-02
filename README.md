@@ -1,7 +1,7 @@
 # SAAD CAR RENTAL SERVICES – website
 React + Vite + GSAP + React Router. Built from the supplied land-cruiser-carousel project.
 ## Updates and cache
-Every build gets a new ID. Hashed files in /static are cached forever, HTML and /assets are always revalidated, and the site checks /version.json on load and when the tab is reopened, then reloads itself once if a newer build exists. The footer shows the build number so you can confirm which version is running.
+Every build gets a new ID. Hashed files in /bundle are cached forever, every HTML page and /assets are always revalidated (see public/_headers), and the site checks /version.json on load and when the tab is reopened, then reloads itself once if a newer build exists. The footer shows the build number so you can confirm which version is running.
 ## Hero
 The hero on the Home page loops fleet pictures (src/components/HeroShowcase.jsx). IMAGE_MS = time per picture, FADE_MS = fade length. Videos were removed: they are full dark scenes and cannot be made transparent.
 ## Run
@@ -20,3 +20,5 @@ Showrooms on the Home page are set in `ROOMS` at the top of `src/pages/Home.jsx`
 Phone 0333 9850599 (+923339850599), WhatsApp defaults to the same number (override with env vars). 22 years, 5.0 rating, 211 Google reviews are set in `SITE` in `src/config.js`; update them when they change. Live review cards need a Cloudflare Worker + Places API (not built yet). No AggregateRating schema is added on purpose (Google does not allow self-served reviews in LocalBusiness markup).
 ## WhatsApp auto-send
 Booking receipt PNG is delivered to the owner's WhatsApp by `functions/api/booking.js` (Cloudflare Pages Function). Setup steps: `WHATSAPP_SETUP.md`.
+
+White-screen protection: index.html loads Google Fonts without blocking the page and reloads itself once if the app files fail to load or the page comes back empty.

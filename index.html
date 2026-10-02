@@ -2,5 +2,22 @@
 <html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>SAAD CAR RENTAL SERVICES | Premium Car Rental With Professional Driver</title>
 <meta name="description" content="Premium car rental with professional driver in Islamabad." /><meta property="og:type" content="website" /><meta name="twitter:card" content="summary_large_image" />
-<link rel="preconnect" href="https://fonts.googleapis.com" /><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" /></head>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<!-- Fonts load in the background (never block the page: if Google Fonts is slow or blocked the site still shows, with system fonts) -->
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+<noscript><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" /></noscript>
+<script>
+/* Safety net against a white screen: if the app files fail to load (old cached copy, bad network) or the page comes back
+   empty from the back button, reload once automatically. Runs at most once per browser tab session. */
+(function () {
+  var K = "saad_recover";
+  function recover() { try { if (sessionStorage.getItem(K)) return; sessionStorage.setItem(K, "1"); } catch (e) {} location.reload(); }
+  function empty() { var r = document.getElementById("root"); return !r || !r.firstChild; }
+  addEventListener("error", function (e) { var t = e.target; if (t && t.tagName === "SCRIPT") recover(); }, true);
+  addEventListener("unhandledrejection", function () { if (empty()) recover(); });
+  addEventListener("pageshow", function (e) { if (e.persisted && empty()) location.reload(); });
+  setTimeout(function () { if (empty()) recover(); }, 6000);
+  addEventListener("load", function () { setTimeout(function () { if (!empty()) { try { sessionStorage.removeItem(K); } catch (e) {} } }, 3000); });
+})();
+</script></head>
 <body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>

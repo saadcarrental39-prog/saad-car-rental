@@ -6,5 +6,5 @@ const versionFile = () => ({ name: "version-file", generateBundle() { this.emitF
 export default defineConfig({
   plugins: [react(), versionFile()],
   define: { __BUILD_ID__: JSON.stringify(BUILD_ID) },
-  build: { assetsDir: "static" }, // hashed JS/CSS go to /static (cached forever); /assets stays for your images
+  build: { assetsDir: "bundle" }, // hashed JS/CSS go to /bundle (cached forever); /assets stays for your images
 });
