@@ -1,4 +1,4 @@
-import { SITE, waHref } from "./config";
+import { SITE } from "./config";
 import { clean } from "./booking";
 
 const W = 900;
@@ -166,8 +166,6 @@ export async function makeReceipt(d, v, ref = refNo()) {
   return { blob, url: URL.createObjectURL(blob), ref };
 }
 
-const fileOf = (blob, ref) => new File([blob], `${ref}-booking-receipt.png`, { type: "image/png" });
-
 export function downloadReceipt(blob, ref) {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
@@ -175,20 +173,11 @@ export function downloadReceipt(blob, ref) {
   document.body.appendChild(a); a.click(); a.remove();
 }
 
-/** Mobile: share sheet with the PNG attached (pick WhatsApp). Desktop: download PNG + open WhatsApp chat. */
-export async function sendReceiptWhatsApp(blob, ref) {
-  const file = fileOf(blob, ref);
-  if (navigator.canShare?.({ files: [file] }) && navigator.share) {
-    try {
-      await navigator.share({ files: [file], title: SITE.name });
-      return "shared";
-    } catch (e) {
-      if (e?.name === "AbortError") return "cancelled";
-      if (e?.name === "NotAllowedError") return "failed"; // browser wants a fresh tap -> show preview with Send button
-    }
+export async function copyImage(blobOrPromise) {
+  try {
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": blobOrPromise })]);
+    return true;
+  } catch {
+    return false;
   }
-  downloadReceipt(blob, ref);
-  const href = waHref();
-  if (href) window.open(href, "_blank", "noopener,noreferrer");
-  return "downloaded";
 }
