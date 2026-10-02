@@ -29,13 +29,13 @@ export default function ReceiptView({ d, v, onBack, initial, onDone }) {
           {info.needsTap || info.shared
             ? "Receipt bhejne ke liye neeche \"Share Receipt on WhatsApp\" dabayen, WhatsApp chunen aur Saad Car Rental ki chat select karen."
             : <>{info.opened ? "WhatsApp chat khul gayi hai. " : "WhatsApp chat kholne ke liye neeche button dabayen. "}
-                {info.copied ? "Receipt copy ho chuki hai: message box mein paste (Ctrl+V) karke Send karein." : "Receipt save ho gayi hai: chat mein attach (📎) karke Send karein."}</>}
+                {info.copied ? (info.mobile ? "Receipt copy ho chuki hai: message box par ungli dabaa kar rakhein, Paste chunen aur Send karein." : "Receipt copy ho chuki hai: message box mein paste (Ctrl+V) karke Send karein.") : "Receipt save ho gayi hai: chat mein attach (📎) karke Send karein."}</>}
         </p>
       )}
       <p className="row noprint">
         {onBack && <button className="btn" onClick={onBack}>Edit Booking</button>}
         <button className="btn" disabled={!r} onClick={() => r && downloadReceipt(r.blob, r.ref)}>Download PNG</button>
-        {info && !info.delivered && r && canShareFiles(r.blob, r.ref) && <button className="btn btn--dark" onClick={share}>Share Receipt on WhatsApp</button>}
+        {info && !info.delivered && r && canShareFiles(r.blob, r.ref) && <button className="btn btn--dark" onClick={share}>{info.mobile && info.copied ? "Or Share Receipt" : "Share Receipt on WhatsApp"}</button>}
         {waHref()
           ? (info
               ? <a className={info.delivered ? "btn" : "btn btn--dark"} href={waHref()} target="_blank" rel="noopener noreferrer">{info.delivered ? "Chat with us on WhatsApp" : "Open WhatsApp Chat"}</a>

@@ -2,9 +2,13 @@ import { waHref } from "./config";
 import { makeReceipt, downloadReceipt, copyImage, isMobile, canShareFiles, shareReceipt } from "./receipt";
 
 export function openChat() {
-  const w = window.open(waHref(), "_blank");
-  if (w) w.opener = null;
-  return !!w;
+  const url = waHref();
+  if (!url) return false;
+  let w = null;
+  try { w = window.open(url, "_blank"); } catch { /* blocked */ }
+  if (w) { w.opener = null; return true; }
+  // Phone browsers may block a popup opened after the network call -> open the chat in this tab instead.
+  try { window.location.assign(url); return true; } catch { return false; }
 }
 
 async function postToServer(receipt, d, v) {
@@ -23,7 +27,8 @@ async function postToServer(receipt, d, v) {
 /**
  * One click -> receipt PNG -> delivered straight to the owner's WhatsApp by our server (same on phone and PC).
  * Fallback only if the server is not set up / fails:
- *   phone: share sheet with the PNG attached; PC: copy PNG + open chat (download only if copy is impossible).
+ *   phone and PC (same): copy PNG + open the owner's chat (download only if copy is impossible;
+ *   phone without clipboard-image support: share sheet).
  * Must be called from a click handler.
  */
 export async function sendBooking(d, v, ready) {
@@ -33,15 +38,18 @@ export async function sendBooking(d, v, ready) {
     try { delivered = await postToServer(receipt, d, v); } catch (e) { console.warn("[booking] server unreachable", e); }
     if (delivered) return { receipt, delivered: true };
 
-    if (isMobile() && canShareFiles(receipt.blob, receipt.ref)) {
-      const s = await shareReceipt(receipt.blob, receipt.ref);
-      if (s !== "failed") return { receipt, delivered: false, shared: true };
-      return { receipt, delivered: false, needsTap: true }; // browser wants a fresh tap -> button on screen
-    }
+    // Same flow on phone and PC: copy the PNG, then open the owner's chat (number already filled in).
+    const mobile = isMobile();
     const copied = await copyImage(receipt.blob);
+    if (!copied && mobile && canShareFiles(receipt.blob, receipt.ref)) {
+      // Clipboard image not supported on this phone browser -> share sheet is the only way to attach the PNG.
+      const s = await shareReceipt(receipt.blob, receipt.ref);
+      if (s !== "failed") return { receipt, delivered: false, shared: true, mobile };
+      return { receipt, delivered: false, needsTap: true, mobile };
+    }
     if (!copied) downloadReceipt(receipt.blob, receipt.ref);
     const opened = openChat();
-    return { receipt, delivered: false, copied, opened };
+    return { receipt, delivered: false, copied, opened, mobile };
   } catch {
     return null;
   }
