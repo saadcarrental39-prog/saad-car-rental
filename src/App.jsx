@@ -3,11 +3,13 @@ import { Routes, Route, Link, NavLink, useLocation } from "react-router-dom";
 import { SITE, telHref, waHref } from "./config";
 import Home from "./pages/Home";
 import BookingModal from "./components/BookingModal";
+import VehicleDetails from "./components/VehicleDetails";
 import ReviewPanel from "./components/reviews/ReviewPanel";
 import ReviewDesigns from "./pages/ReviewDesigns";
 import { fleet } from "./data/fleet";
 import { Cars, CarPage, Services, About, Contact } from "./pages/Pages";
 import Book from "./pages/Book";
+import Receipt from "./pages/Receipt";
 
 // If anything ever crashes, recover instead of showing a white screen.
 class Guard extends Component {
@@ -31,9 +33,10 @@ export default function App() {
       {open && <nav id="menu" className="menu" aria-label="Mobile">{[["/", "Home"], ["/cars", "All Cars"], ...fleet.map((c) => [`/cars/${c.slug}`, c.title]), ["/services", "Services"], ["/about", "About"], ["/contact", "Contact"], ["/book", "Book Now"]].map(([to, t]) => <Link key={to} to={to}>{t}</Link>)}</nav>}
       <BookingModal />
       <ReviewPanel />
+      <VehicleDetails />
       <main id="main"><Guard key={pathname}>
         <Routes><Route path="/" element={<Home />} /><Route path="/cars" element={<Cars />} /><Route path="/cars/:slug" element={<CarPage />} />
-          <Route path="/services" element={<Services />} /><Route path="/about" element={<About />} /><Route path="/contact" element={<Contact />} /><Route path="/book" element={<Book />} />{import.meta.env.DEV && <Route path="/review-designs" element={<ReviewDesigns />} />}<Route path="*" element={<Home />} /></Routes>
+          <Route path="/services" element={<Services />} /><Route path="/about" element={<About />} /><Route path="/contact" element={<Contact />} /><Route path="/book" element={<Book />} /><Route path="/receipt" element={<Receipt />} />{import.meta.env.DEV && <Route path="/review-designs" element={<ReviewDesigns />} />}<Route path="*" element={<Home />} /></Routes>
       </Guard></main>
       <footer className="ftr"><div><strong>{SITE.name}</strong><p>{SITE.tagline}</p></div><address>{SITE.address.map((l) => <span key={l}>{l}<br /></span>)}<a href={SITE.maps} target="_blank" rel="noopener noreferrer">Google Maps</a></address>
         <nav aria-label="Footer"><Link to="/">Home</Link>{["cars", "services", "about", "contact", "book"].map((p) => <Link key={p} to={`/${p}`}>{p[0].toUpperCase() + p.slice(1)}</Link>)}</nav>
