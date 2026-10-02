@@ -30,9 +30,3 @@ export function About() {
     <section className="dark"><p className="eyebrow">Our promise</p><h2 className="h2">Premium cars. Professional drivers. Seamless journeys.</h2><p>For more than two decades we have helped families, executives and visitors travel comfortably across Islamabad and beyond. Every vehicle is offered with a professional driver, so your time is spent on what matters.</p>
       <p className="row"><Link className="btn" to="/book">Book Now</Link><Link className="btn" to="/cars">Explore Cars</Link></p></section><Reviews /></>);
 }
-export function Contact() {
-  useSeo({ title: "Contact", description: "Contact SAAD CAR RENTAL SERVICES, G-11 Markaz, Islamabad. Call, WhatsApp or book online.", path: "/contact" });
-  return <div className="pad narrow"><h1>Contact</h1><p><strong>{SITE.phoneDisplay}</strong></p><address>{SITE.name}<br />{SITE.address.map((l) => <span key={l}>{l}<br /></span>)}</address>
-    <p className="row"><a className="btn btn--dark" href={SITE.maps} target="_blank" rel="noopener noreferrer">Open in Google Maps</a>{telHref && <a className="btn" href={telHref}>Call Now</a>}{waHref() && <a className="btn" href={waHref()} target="_blank" rel="noopener noreferrer">WhatsApp</a>}<Link className="btn" to="/book">Book Now</Link></p>
-    <iframe className="map" title="SAAD CAR RENTAL SERVICES location" loading="lazy" referrerPolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Shah+Nawaz+Plaza+G-11+Markaz+Islamabad&output=embed" /></div>;
-}

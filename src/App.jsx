@@ -4,7 +4,8 @@ import { SITE, telHref, waHref } from "./config";
 import Home from "./pages/Home";
 import BookingModal from "./components/BookingModal";
 import { fleet } from "./data/fleet";
-import { Cars, CarPage, Services, About, Contact } from "./pages/Pages";
+import { Cars, CarPage, Services, About } from "./pages/Pages";
+import Contact from "./pages/Contact";
 import Book from "./pages/Book";
 
 // If anything ever crashes, recover instead of showing a white screen.

@@ -55,3 +55,18 @@ Setup (one time, free):
 Notes: links are random (128-bit), not indexed by search engines, and expire after 30 days.
 Cloudflare Pages must be served on https (preview needs a public link, not localhost).
 If the Meta API (`/api/booking`) is configured and works, it is always used first and this link is not needed.
+
+---
+# Contact form (`/contact` page -> `functions/api/contact.js`)
+The Contact page sends the enquiry to the owner's WhatsApp automatically, using the SAME env variables as bookings
+(`WA_TOKEN`, `WA_PHONE_ID`, `WA_TO`). Only one extra thing is needed: a second message template.
+
+WhatsApp Manager > Message templates > Create:
+- Name: `new_enquiry`   Category: **Utility**   Language: English (`en`)   (no header needed)
+- Body (6 variables):
+  `New website enquiry. Name: {{1}}, Phone: {{2}}, Topic: {{3}}, Vehicle: {{4}}, Date: {{5}}, Message: {{6}}.`
+Optional env: `WA_CONTACT_TEMPLATE` (if you used a different template name).
+Check setup: open `https://YOUR-SITE/api/contact` -> should show `{"configured":true,...}`.
+
+If the server is not configured or fails, the form never loses the customer: it opens WhatsApp with the message
+already typed (number filled in) and the customer just taps Send.
