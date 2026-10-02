@@ -14,10 +14,10 @@ class Guard extends Component {
   componentDidCatch() { if (!sessionStorage.getItem("crash")) { sessionStorage.setItem("crash", "1"); location.reload(); } }
   render() { return this.state.err ? <div className="pad narrow"><h1>Please reload</h1><p><a className="btn btn--dark" href="/">Back to Home</a></p></div> : this.props.children; }
 }
-function ScrollTop() { const { pathname } = useLocation(); useEffect(() => window.scrollTo(0, 0), [pathname]); return null; }
+function ScrollTop() { const { pathname } = useLocation(); useEffect(() => { window.scrollTo(0, 0); }, [pathname]); return null; }
 export default function App() {
   const [open, setOpen] = useState(false); const { pathname } = useLocation();
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => { setOpen(false); }, [pathname]);
   return (
     <>
       <ScrollTop />
