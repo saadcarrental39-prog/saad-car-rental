@@ -1,8 +1,8 @@
 import { waHref } from "./config";
-import { makeReceipt, downloadReceipt, copyImage, isMobile, canShareFiles, shareReceipt } from "./receipt";
+import { makeReceipt, makeThumb, downloadReceipt, copyImage, isMobile, canShareFiles, shareReceipt } from "./receipt";
 
-export function openChat() {
-  const url = waHref();
+export function openChat(text = "") {
+  const url = waHref(text);
   if (!url) return false;
   let w = null;
   try { w = window.open(url, "_blank"); } catch { /* blocked */ }
@@ -24,6 +24,21 @@ async function postToServer(receipt, d, v) {
   return r.ok && j?.ok === true;
 }
 
+// Phone fallback: store the receipt on our server, get a private link, and open the owner's chat with that link typed in.
+async function postLink(receipt) {
+  try {
+    const thumb = await makeThumb(receipt.blob);
+    if (!thumb) return null;
+    const f = new FormData();
+    f.append("file", receipt.blob, `${receipt.ref}.png`);
+    f.append("thumb", thumb, `${receipt.ref}.jpg`);
+    f.append("ref", receipt.ref);
+    const r = await fetch("/api/receipt-link", { method: "POST", body: f });
+    const j = await r.json();
+    return r.ok && j?.ok === true && /^https:\/\//.test(j.url || "") ? j.url : null;
+  } catch (e) { console.warn("[booking] receipt link failed", e); return null; }
+}
+
 /**
  * One click -> receipt PNG -> delivered straight to the owner's WhatsApp by our server (same on phone and PC).
  * Fallback only if the server is not set up / fails:
@@ -38,8 +53,13 @@ export async function sendBooking(d, v, ready) {
     try { delivered = await postToServer(receipt, d, v); } catch (e) { console.warn("[booking] server unreachable", e); }
     if (delivered) return { receipt, delivered: true };
 
-    // Same flow on phone and PC: copy the PNG, then open the owner's chat (number already filled in).
     const mobile = isMobile();
+    if (mobile) {
+      // Phones cannot paste an image into a chat automatically -> send a link whose preview shows the receipt picture. Customer only taps Send.
+      const link = await postLink(receipt);
+      if (link) return { receipt, delivered: false, linked: true, link, opened: openChat(link), mobile };
+    }
+    // PC (and phone if links are not set up): copy the PNG, then open the owner's chat (number already filled in).
     const copied = await copyImage(receipt.blob);
     if (!copied && mobile && canShareFiles(receipt.blob, receipt.ref)) {
       // Clipboard image not supported on this phone browser -> share sheet is the only way to attach the PNG.

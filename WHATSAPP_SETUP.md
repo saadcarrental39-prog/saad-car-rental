@@ -38,3 +38,20 @@ Redeploy. Test with one booking. The `functions/` folder must be in the project 
 - Spam protection: the endpoint checks file type/size and fields. For extra safety add Cloudflare
   Turnstile or a rate-limit rule (Cloudflare > Security > WAF > Rate limiting) on `/api/booking`.
 - Meta charges per conversation/template (utility templates are cheap); see Meta's pricing for Pakistan.
+
+---
+# Phone fallback without Meta API: receipt link (works with WhatsApp and WhatsApp Business)
+A browser can never attach an image to a chat by itself. Until the Meta API above is set up, phones use this instead:
+receipt is stored on your own site -> the owner's chat opens with the receipt link already typed -> customer taps **Send**.
+WhatsApp shows the receipt picture as the link preview; the owner taps it to see/download the full PNG.
+Needs no Meta account and no extra number. On PC the old "copy image + open chat" flow is kept.
+
+Setup (one time, free):
+1. Cloudflare > Storage & Databases > Workers KV > **Create namespace** (name: `receipts`).
+2. Pages > your project > Settings > Functions > **KV namespace bindings** > Add binding:
+   Variable name `RECEIPTS`, namespace `receipts` (Production; add Preview too if you test there).
+3. Redeploy. Open `https://YOUR-SITE/api/receipt-link` -> should show `{"configured":true}`.
+
+Notes: links are random (128-bit), not indexed by search engines, and expire after 30 days.
+Cloudflare Pages must be served on https (preview needs a public link, not localhost).
+If the Meta API (`/api/booking`) is configured and works, it is always used first and this link is not needed.

@@ -26,7 +26,9 @@ export default function ReceiptView({ d, v, onBack, initial, onDone }) {
       {info?.delivered && <p className="note noprint" style={{ color: "#1d6b3a", fontWeight: 600 }}>✓ Aap ki booking receipt hamari WhatsApp par bhej di gayi hai. Hamari team jald aap se rabta karegi.</p>}
       {info && !info.delivered && (
         <p className="note noprint" style={{ color: "#16181b" }}>
-          {info.needsTap || info.shared
+          {info.linked
+            ? <>{info.opened ? "WhatsApp chat khul gayi hai. " : "WhatsApp chat kholne ke liye neeche button dabayen. "}Receipt ka link message box mein aa gaya hai: bas Send dabayen.</>
+            : info.needsTap || info.shared
             ? "Receipt bhejne ke liye neeche \"Share Receipt on WhatsApp\" dabayen, WhatsApp chunen aur Saad Car Rental ki chat select karen."
             : <>{info.opened ? "WhatsApp chat khul gayi hai. " : "WhatsApp chat kholne ke liye neeche button dabayen. "}
                 {info.copied ? (info.mobile ? "Receipt copy ho chuki hai: message box par ungli dabaa kar rakhein, Paste chunen aur Send karein." : "Receipt copy ho chuki hai: message box mein paste (Ctrl+V) karke Send karein.") : "Receipt save ho gayi hai: chat mein attach (📎) karke Send karein."}</>}
@@ -35,10 +37,10 @@ export default function ReceiptView({ d, v, onBack, initial, onDone }) {
       <p className="row noprint">
         {onBack && <button className="btn" onClick={onBack}>Edit Booking</button>}
         <button className="btn" disabled={!r} onClick={() => r && downloadReceipt(r.blob, r.ref)}>Download PNG</button>
-        {info && !info.delivered && r && canShareFiles(r.blob, r.ref) && <button className="btn btn--dark" onClick={share}>{info.mobile && info.copied ? "Or Share Receipt" : "Share Receipt on WhatsApp"}</button>}
+        {info && !info.delivered && !info.linked && r && canShareFiles(r.blob, r.ref) && <button className="btn btn--dark" onClick={share}>{info.mobile && info.copied ? "Or Share Receipt" : "Share Receipt on WhatsApp"}</button>}
         {waHref()
           ? (info
-              ? <a className={info.delivered ? "btn" : "btn btn--dark"} href={waHref()} target="_blank" rel="noopener noreferrer">{info.delivered ? "Chat with us on WhatsApp" : "Open WhatsApp Chat"}</a>
+              ? <a className={info.delivered ? "btn" : "btn btn--dark"} href={waHref(info.link || "")} target="_blank" rel="noopener noreferrer">{info.delivered ? "Chat with us on WhatsApp" : "Open WhatsApp Chat"}</a>
               : <button className="btn btn--dark" disabled={!r || busy} onClick={send}>Send Receipt on WhatsApp</button>)
           : <span className="note">WhatsApp booking is temporarily unavailable. Please call us.</span>}
         {onDone && info && <button className="btn" onClick={onDone}>Close</button>}
