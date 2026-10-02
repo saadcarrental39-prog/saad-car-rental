@@ -10,6 +10,7 @@ const TTL = 60 * 60 * 24 * 30; // links stay valid for 30 days
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 const isPng = (b) => b.length > 8 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47;
 const isJpg = (b) => b.length > 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff;
+const clean = (s, n = 60) => String(s || "").replace(/[\u0000-\u001f<>*_~`]/g, " ").replace(/\s{2,}/g, " ").trim().slice(0, n);
 const cleanRef = (s) => String(s || "").replace(/[^A-Za-z0-9-]/g, "").slice(0, 30);
 
 export async function onRequestPost({ request, env }) {
@@ -24,9 +25,11 @@ export async function onRequestPost({ request, env }) {
 
   const id = [...crypto.getRandomValues(new Uint8Array(16))].map((x) => x.toString(16).padStart(2, "0")).join("");
   const ref = cleanRef(form.get("ref"));
+  const meta = { ref, name: clean(form.get("name"), 40), phone: clean(form.get("phone"), 20), car: clean(form.get("car"), 50),
+    trip: `${clean(form.get("pickup"), 30)} > ${clean(form.get("drop"), 30)}`, when: `${clean(form.get("date"), 14)} ${clean(form.get("time"), 8)}`.trim() };
   try {
     await Promise.all([
-      env.RECEIPTS.put(`p:${id}`, png, { expirationTtl: TTL, metadata: { ref } }),
+      env.RECEIPTS.put(`p:${id}`, png, { expirationTtl: TTL, metadata: meta }),
       env.RECEIPTS.put(`t:${id}`, jpg, { expirationTtl: TTL }),
     ]);
   } catch { return json({ ok: false, error: "storage" }, 502); }

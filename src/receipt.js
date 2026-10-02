@@ -200,20 +200,20 @@ export async function shareReceipt(blob, ref) {
   }
 }
 
-/** Small JPEG (about 600px wide, well under 300 KB) used as the WhatsApp link preview picture. */
+/** Landscape 1200x630 JPEG (WhatsApp link-preview size, under 300 KB): header + car photo of the receipt. */
 export async function makeThumb(blob) {
   try {
     const url = URL.createObjectURL(blob);
     const img = await loadImg(url);
     URL.revokeObjectURL(url);
     if (!img) return null;
-    const w = 600, h = Math.round((img.naturalHeight / img.naturalWidth) * w);
+    const W = 1200, H = 630, h = Math.round((img.naturalHeight / img.naturalWidth) * W);
     const cv = document.createElement("canvas");
-    cv.width = w; cv.height = h;
+    cv.width = W; cv.height = H;
     const c = cv.getContext("2d");
-    c.fillStyle = "#fff"; c.fillRect(0, 0, w, h);
-    c.drawImage(img, 0, 0, w, h);
-    let out = await new Promise((r) => cv.toBlob(r, "image/jpeg", 0.8));
+    c.fillStyle = "#fff"; c.fillRect(0, 0, W, H);
+    c.drawImage(img, 0, 0, W, h);
+    let out = await new Promise((r) => cv.toBlob(r, "image/jpeg", 0.82));
     if (out && out.size > 280 * 1024) out = await new Promise((r) => cv.toBlob(r, "image/jpeg", 0.55));
     return out;
   } catch { return null; }
