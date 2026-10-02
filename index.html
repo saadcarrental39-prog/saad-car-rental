@@ -10,14 +10,35 @@
 /* Safety net against a white screen: if the app files fail to load (old cached copy, bad network) or the page comes back
    empty from the back button, reload once automatically. Runs at most once per browser tab session. */
 (function () {
-  var K = "saad_recover";
+  var K = "saad_recover", errs = [];
   function recover() { try { if (sessionStorage.getItem(K)) return; sessionStorage.setItem(K, "1"); } catch (e) {} location.reload(); }
   function empty() { var r = document.getElementById("root"); return !r || !r.firstChild; }
-  addEventListener("error", function (e) { var t = e.target; if (t && t.tagName === "SCRIPT") recover(); }, true);
-  addEventListener("unhandledrejection", function () { if (empty()) recover(); });
-  addEventListener("pageshow", function (e) { if (e.persisted && empty()) location.reload(); });
+  function blank() { return !document.body || document.body.innerText.replace(/\s+/g, " ").trim().length < 80; }
+  addEventListener("error", function (e) {
+    var t = e.target;
+    if (t && t !== window && (t.src || t.href)) { if (!/fonts\.(googleapis|gstatic)\.com/.test(t.src || t.href)) errs.push("file failed: " + (t.src || t.href)); }
+    else errs.push(String(e.message || "error") + (e.filename ? " @ " + e.filename.split("/").pop() + ":" + e.lineno : ""));
+    if (t && t.tagName === "SCRIPT") recover();
+  }, true);
+  addEventListener("unhandledrejection", function (e) { errs.push("promise: " + String((e.reason && e.reason.message) || e.reason)); if (empty()) recover(); });
+  addEventListener("pageshow", function (e) { if (e.persisted && (empty() || blank())) location.reload(); });
+  // If the page is still blank after 4 s, show a visible message with the reason (instead of a silent white screen); it disappears by itself once the site appears.
+  var box;
+  function panel() {
+    if (!blank()) { if (box) { box.remove(); box = null; } return; }
+    if (!box) {
+      box = document.createElement("div");
+      box.setAttribute("style", "position:fixed;inset:0;z-index:2147483647;background:#fff;color:#16181b;font:15px/1.5 system-ui,sans-serif;padding:24px;overflow:auto");
+      document.documentElement.appendChild(box);
+    }
+    box.innerHTML = "<h2 style='margin:0 0 8px'>SAAD CAR RENTAL SERVICES</h2><p>The page is taking too long to load.</p>" +
+      "<p><button onclick=\"location.reload()\" style='padding:12px 22px;border-radius:12px;border:0;background:#16181b;color:#fff;font-size:15px'>Reload</button> " +
+      "<a href='tel:+923339850599' style='margin-left:12px;color:#16181b'>Call 0333 9850599</a></p>" +
+      "<pre style='white-space:pre-wrap;font-size:12px;color:#62666c'>" + (errs.length ? errs.slice(0, 5).join("\n").replace(/</g, "&lt;") : "no error recorded (slow network or blocked file)") + "\nonline: " + navigator.onLine + " | page: " + location.pathname + "</pre>";
+  }
+  setTimeout(function () { panel(); setInterval(panel, 700); }, 4000);
   setTimeout(function () { if (empty()) recover(); }, 6000);
-  addEventListener("load", function () { setTimeout(function () { if (!empty()) { try { sessionStorage.removeItem(K); } catch (e) {} } }, 3000); });
+  addEventListener("load", function () { setTimeout(function () { if (!empty() && !blank()) { try { sessionStorage.removeItem(K); } catch (e) {} } }, 3000); });
 })();
 </script></head>
 <body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>
