@@ -5,10 +5,6 @@ import { services } from "../data/services";
 import { useSeo } from "../seo";
 import Reviews from "../components/Reviews";
 import VehicleCarousel from "../components/automotive/VehicleCarousel";
-export function Cars() {
-  useSeo({ title: "Our Fleet – Cars With Professional Driver", description: "Explore the SAAD CAR RENTAL SERVICES fleet in Islamabad, all available with a professional driver.", path: "/cars" });
-  return <div className="pad"><h1>Our Fleet</h1><div className="grid">{fleet.map((c) => <Link key={c.slug} to={`/cars/${c.slug}`} className="card"><h2>{c.title}</h2><p>{c.description}</p><span>View →</span></Link>)}</div></div>;
-}
 export function CarPage() {
   const c = findCategory(useParams().slug);
   useSeo({ title: c?.seo || "Cars", description: c?.description || "", path: `/cars/${c?.slug}` });

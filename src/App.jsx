@@ -4,7 +4,8 @@ import { SITE, telHref, waHref } from "./config";
 import Home from "./pages/Home";
 import BookingModal from "./components/BookingModal";
 import { fleet } from "./data/fleet";
-import { Cars, CarPage, Services, About } from "./pages/Pages";
+import { CarPage, Services, About } from "./pages/Pages";
+import Cars from "./pages/Cars";
 import Contact from "./pages/Contact";
 import Book from "./pages/Book";
 
