@@ -184,6 +184,7 @@ export async function sendReceiptWhatsApp(blob, ref) {
       return "shared";
     } catch (e) {
       if (e?.name === "AbortError") return "cancelled";
+      if (e?.name === "NotAllowedError") return "failed"; // browser wants a fresh tap -> show preview with Send button
     }
   }
   downloadReceipt(blob, ref);
