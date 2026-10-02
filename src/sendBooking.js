@@ -44,8 +44,8 @@ async function postLink(receipt, d, v) {
 /**
  * One click -> receipt PNG -> delivered straight to the owner's WhatsApp by our server (same on phone and PC).
  * Fallback only if the server is not set up / fails:
- *   phone and PC (same): copy PNG + open the owner's chat (download only if copy is impossible;
- *   phone without clipboard-image support: share sheet).
+ *   phone: share sheet with the PNG (WhatsApp image preview + Send); if the browser cannot share files: receipt link in the owner's chat;
+ *   PC: copy PNG + open the owner's chat (download only if copy is impossible).
  * Must be called from a click handler.
  */
 export async function sendBooking(d, v, ready) {
@@ -57,7 +57,14 @@ export async function sendBooking(d, v, ready) {
 
     const mobile = isMobile();
     if (mobile) {
-      // Phones cannot paste an image into a chat automatically -> send a link whose preview shows the receipt picture. Customer only taps Send.
+      // Phone: share sheet with the receipt PNG -> WhatsApp opens the image preview screen (Send button) for the chosen chat.
+      // (A website cannot pre-select the chat; the customer taps WhatsApp > owner's chat > Send.)
+      if (canShareFiles(receipt.blob, receipt.ref)) {
+        const s = await shareReceipt(receipt.blob, receipt.ref);
+        if (s === "shared" || s === "cancelled") return { receipt, delivered: false, shared: true, mobile };
+        return { receipt, delivered: false, needsTap: true, mobile }; // browser wants a fresh tap -> on-screen Share button
+      }
+      // Browser cannot share files -> private receipt link (needs the RECEIPTS KV binding, see WHATSAPP_SETUP.md).
       const link = await postLink(receipt, d, v);
       if (link) return { receipt, delivered: false, linked: true, link, opened: openChat(link), mobile };
     }
