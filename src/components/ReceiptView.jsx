@@ -22,7 +22,8 @@ export default function ReceiptView({ d, v, onBack, initial, onDone }) {
       <p className="eyebrow">{SITE.name}</p>
       <h2>Your Booking Receipt</h2>
       {r ? <img className="rcpt__img" src={r.url} alt={`Booking receipt ${r.ref}`} /> : <p className="note" style={{ color: "#62666c" }}>Preparing receipt…</p>}
-      {info && (
+      {info?.delivered && <p className="note noprint" style={{ color: "#1d6b3a", fontWeight: 600 }}>✓ Aap ki booking receipt hamari WhatsApp par bhej di gayi hai. Hamari team jald aap se rabta karegi.</p>}
+      {info && !info.delivered && (
         <p className="note noprint" style={{ color: "#16181b" }}>
           {info.opened ? "WhatsApp chat khul gayi hai. " : "WhatsApp chat kholne ke liye neeche button dabayen. "}
           {info.copied
@@ -35,7 +36,7 @@ export default function ReceiptView({ d, v, onBack, initial, onDone }) {
         <button className="btn" disabled={!r} onClick={() => r && downloadReceipt(r.blob, r.ref)}>Download PNG</button>
         {waHref()
           ? (info
-              ? <a className="btn btn--dark" href={waHref()} target="_blank" rel="noopener noreferrer">Open WhatsApp Chat</a>
+              ? <a className={info.delivered ? "btn" : "btn btn--dark"} href={waHref()} target="_blank" rel="noopener noreferrer">{info.delivered ? "Chat with us on WhatsApp" : "Open WhatsApp Chat"}</a>
               : <button className="btn btn--dark" disabled={!r || busy} onClick={send}>Send Receipt on WhatsApp</button>)
           : <span className="note">WhatsApp booking is temporarily unavailable. Please call us.</span>}
         {onDone && info && <button className="btn" onClick={onDone}>Close</button>}

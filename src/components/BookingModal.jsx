@@ -26,6 +26,6 @@ export default function BookingModal() {
       {FIELDS.map(([k, l, t, r]) => <label key={k}>{l}{r ? " *" : ""}<input type={t} value={d[k] || ""} maxLength={120} min={t === "number" ? 1 : undefined} onChange={(e) => setD({ ...d, [k]: e.target.value })} /></label>)}
       <label>Additional Requirements<textarea rows="2" maxLength={300} value={d.extra || ""} onChange={(e) => setD({ ...d, extra: e.target.value })} /></label>
       {err && <p role="alert" className="note">{err}</p>}
-      <button className="btn btn--dark" disabled={busy} onClick={send}>{busy ? "Preparing receipt…" : "Book via WhatsApp"}</button></>}
+      <button className="btn btn--dark" disabled={busy} onClick={send}>{busy ? "Sending…" : "Book via WhatsApp"}</button></>}
     </div></div>);
 }

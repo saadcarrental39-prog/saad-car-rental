@@ -18,3 +18,5 @@ Edit `src/data/fleet.js` (one entry per model/colour). Put verified images in `p
 Showrooms on the Home page are set in `ROOMS` at the top of `src/pages/Home.jsx`: add a new category slug there once its images exist in `fleet.js`.
 
 Phone 0333 9850599 (+923339850599), WhatsApp defaults to the same number (override with env vars). 22 years, 5.0 rating, 211 Google reviews are set in `SITE` in `src/config.js`; update them when they change. Live review cards need a Cloudflare Worker + Places API (not built yet). No AggregateRating schema is added on purpose (Google does not allow self-served reviews in LocalBusiness markup).
+## WhatsApp auto-send
+Booking receipt PNG is delivered to the owner's WhatsApp by `functions/api/booking.js` (Cloudflare Pages Function). Setup steps: `WHATSAPP_SETUP.md`.
