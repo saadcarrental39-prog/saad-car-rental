@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { SITE, waHref } from "../config";
-import { makeReceipt, downloadReceipt } from "../receipt";
+import { makeReceipt, downloadReceipt, canShareFiles, shareReceipt } from "../receipt";
 import { sendBooking } from "../sendBooking";
 
 export default function ReceiptView({ d, v, onBack, initial, onDone }) {
@@ -15,6 +15,7 @@ export default function ReceiptView({ d, v, onBack, initial, onDone }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => () => r && URL.revokeObjectURL(r.url), [r]);
 
+  const share = () => r && shareReceipt(r.blob, r.ref);
   const send = async () => { setBusy(true); const res = await sendBooking(d, v, r); setBusy(false); if (res) setInfo(res); };
 
   return (
@@ -25,15 +26,16 @@ export default function ReceiptView({ d, v, onBack, initial, onDone }) {
       {info?.delivered && <p className="note noprint" style={{ color: "#1d6b3a", fontWeight: 600 }}>✓ Aap ki booking receipt hamari WhatsApp par bhej di gayi hai. Hamari team jald aap se rabta karegi.</p>}
       {info && !info.delivered && (
         <p className="note noprint" style={{ color: "#16181b" }}>
-          {info.opened ? "WhatsApp chat khul gayi hai. " : "WhatsApp chat kholne ke liye neeche button dabayen. "}
-          {info.copied
-            ? "Receipt copy ho chuki hai: message box mein paste (Ctrl+V / long-press > Paste) karke Send karein."
-            : "Receipt download ho gayi hai: chat mein attach (📎) karke Send karein."}
+          {info.needsTap || info.shared
+            ? "Receipt bhejne ke liye neeche \"Share Receipt on WhatsApp\" dabayen, WhatsApp chunen aur Saad Car Rental ki chat select karen."
+            : <>{info.opened ? "WhatsApp chat khul gayi hai. " : "WhatsApp chat kholne ke liye neeche button dabayen. "}
+                {info.copied ? "Receipt copy ho chuki hai: message box mein paste (Ctrl+V) karke Send karein." : "Receipt save ho gayi hai: chat mein attach (📎) karke Send karein."}</>}
         </p>
       )}
       <p className="row noprint">
         {onBack && <button className="btn" onClick={onBack}>Edit Booking</button>}
         <button className="btn" disabled={!r} onClick={() => r && downloadReceipt(r.blob, r.ref)}>Download PNG</button>
+        {info && !info.delivered && r && canShareFiles(r.blob, r.ref) && <button className="btn btn--dark" onClick={share}>Share Receipt on WhatsApp</button>}
         {waHref()
           ? (info
               ? <a className={info.delivered ? "btn" : "btn btn--dark"} href={waHref()} target="_blank" rel="noopener noreferrer">{info.delivered ? "Chat with us on WhatsApp" : "Open WhatsApp Chat"}</a>

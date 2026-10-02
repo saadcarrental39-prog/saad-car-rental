@@ -181,3 +181,21 @@ export async function copyImage(blobOrPromise) {
     return false;
   }
 }
+
+const fileOf = (blob, ref) => new File([blob], `${ref}-booking-receipt.png`, { type: "image/png" });
+
+export const isMobile = () => {
+  try { return window.matchMedia("(pointer: coarse)").matches && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent); } catch { return false; }
+};
+export const canShareFiles = (blob, ref) => {
+  try { return !!(navigator.share && navigator.canShare?.({ files: [fileOf(blob, ref)] })); } catch { return false; }
+};
+/** Share sheet with the PNG attached (choose WhatsApp). Returns "shared" | "cancelled" | "failed". */
+export async function shareReceipt(blob, ref) {
+  try {
+    await navigator.share({ files: [fileOf(blob, ref)] });
+    return "shared";
+  } catch (e) {
+    return e?.name === "AbortError" ? "cancelled" : "failed";
+  }
+}

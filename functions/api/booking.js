@@ -54,4 +54,6 @@ export async function onRequestPost({ request, env }) {
   }
 }
 
+// Open https://YOUR-SITE/api/booking in a browser to check setup (shows only true/false, never secrets).
+export const onRequestGet = ({ env }) => json({ configured: !!(env.WA_TOKEN && env.WA_PHONE_ID && env.WA_TO), token: !!env.WA_TOKEN, phoneId: !!env.WA_PHONE_ID, to: !!env.WA_TO, mode: env.WA_MODE || "template", template: env.WA_TEMPLATE || "new_booking" });
 export const onRequest = () => json({ ok: false, error: "method_not_allowed" }, 405);
