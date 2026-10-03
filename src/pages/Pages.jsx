@@ -16,7 +16,7 @@ export function CarPage() {
 export function Services() {
   useSeo({ title: "Chauffeur & Car Rental Services in Islamabad", description: "Airport transfers, business travel, weddings, tours and more, all with a professional driver in Islamabad.", path: "/services" });
   return <div className="pad"><h1>Services</h1><div className="svc">{serviceCards.map((s) => <article className={`svc__card svc__card--${s.tone}`} key={s.name}>
-    <div className="svc__img"><img src={s.img} alt={s.alt} width="1200" height="760" loading="lazy" decoding="async" /></div>
+    <div className={`svc__img${s.poster ? " svc__img--poster" : ""}`}><img src={s.poster || s.img} alt={s.poster ? s.posterAlt || s.name : s.alt} width="1200" height={s.poster ? "800" : "760"} loading="lazy" decoding="async" /></div>
     <div className="svc__body"><h2>{s.name}</h2><Link to="/book">Book Now <span aria-hidden="true">→</span></Link></div></article>)}</div></div>;
 }
 export function About() {
