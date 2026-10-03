@@ -1,7 +1,7 @@
 import { Link, useParams, Navigate } from "react-router-dom";
 import { SITE, telHref, waHref } from "../config";
 import { fleet, findCategory } from "../data/fleet";
-import { services } from "../data/services";
+import { serviceCards } from "../data/services";
 import { useSeo } from "../seo";
 import Reviews from "../components/Reviews";
 import VehicleCarousel from "../components/automotive/VehicleCarousel";
@@ -15,7 +15,9 @@ export function CarPage() {
 }
 export function Services() {
   useSeo({ title: "Chauffeur & Car Rental Services in Islamabad", description: "Airport transfers, business travel, weddings, tours and more, all with a professional driver in Islamabad.", path: "/services" });
-  return <div className="pad"><h1>Services</h1><div className="grid">{services.map((s) => <div className="card" key={s}><h2>{s}</h2><Link to="/book">Book Now →</Link></div>)}</div></div>;
+  return <div className="pad"><h1>Services</h1><div className="svc">{serviceCards.map((s) => <article className={`svc__card svc__card--${s.tone}`} key={s.name}>
+    <div className="svc__img"><img src={s.img} alt={s.alt} width="1200" height="760" loading="lazy" decoding="async" /></div>
+    <div className="svc__body"><h2>{s.name}</h2><Link to="/book">Book Now <span aria-hidden="true">→</span></Link></div></article>)}</div></div>;
 }
 export function About() {
   useSeo({ title: "About Us – 22 Years of Chauffeur Car Rental in Islamabad", description: "SAAD CAR RENTAL SERVICES has provided premium car rental with professional drivers in Islamabad for 22 years. Rated 5.0 on Google from 211 reviews.", path: "/about" });
