@@ -13,7 +13,7 @@
   var K = "saad_recover", errs = [];
   function recover() { try { if (sessionStorage.getItem(K)) return; sessionStorage.setItem(K, "1"); } catch (e) {} location.reload(); }
   function empty() { var r = document.getElementById("root"); return !r || !r.firstChild; }
-  function blank() { return !document.body || document.body.innerText.replace(/\s+/g, " ").trim().length < 80; }
+  function blank() { if (document.querySelector("[data-ok]")) return false; return !document.body || document.body.innerText.replace(/\s+/g, " ").trim().length < 80; }
   addEventListener("error", function (e) {
     var t = e.target;
     if (t && t !== window && (t.src || t.href)) { if (!/fonts\.(googleapis|gstatic)\.com/.test(t.src || t.href)) errs.push("file failed: " + (t.src || t.href)); }

@@ -111,5 +111,7 @@ function Panel({ tok, out, pwa }) {
 export default function Admin() {
   const [tok, setTok] = useState(() => { try { return localStorage.getItem(TK) || ""; } catch { return ""; } }), pwa = usePwa();
   const set = (t) => { try { t ? localStorage.setItem(TK, t) : localStorage.removeItem(TK); } catch { /* ignore */ } setTok(t); };
-  return <div className="adm">{tok ? <Panel tok={tok} out={() => set("")} pwa={pwa} /> : <Login onOk={set} pwa={pwa} />}</div>;
+  const ver = new Date(Number(__BUILD_ID__)).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
+  return <div className="adm" data-ok="1">{tok ? <Panel tok={tok} out={() => set("")} pwa={pwa} /> : <Login onOk={set} pwa={pwa} />}
+    <p className="adm__ver">SAAD CAR RENTAL SERVICES · Owner admin · Sirf authorised owner ke liye · Version: {ver}</p></div>;
 }
