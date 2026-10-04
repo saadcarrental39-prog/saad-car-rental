@@ -25,6 +25,8 @@
   Cache-Control: no-cache
 /admin-sw.js
   Cache-Control: no-cache
+/icons/*
+  Cache-Control: no-cache
 /admin.webmanifest
   Cache-Control: no-cache
 /saad-owner-7k3x9

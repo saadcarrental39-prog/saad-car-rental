@@ -33,3 +33,11 @@ Login kabhi code ya GitHub mein nahi hota, sirf Cloudflare ke Secret mein. Aap n
 - Static gaariyon ki asli list `src/data/fleet.js` mein hai. Admin app sirf us ke upar badlaav lagata hai.
 - Delete ki hui gaari ki photo storage mein reh jati hai (bohat chhoti jagah leti hai).
 - Booking receipt / WhatsApp message mein abhi price nahi aati.
+
+---
+# Premium Admin app: icon, opening animation, auto-update
+- **Icon:** `public/icons/saad-*.png` (aap ki SAAD CAR RENTAL SERVICES wali image se bane). App ke andar ka logo: `public/icons/saad-logo.png`.
+- **Opening animation:** app kholte hi `public/icons/saad-splash.mp4` (aap ki logo video, bina awaaz ke) chalti hai, phir login page aata hai. Screen par tap karne se skip ho jati hai. Dobara dekhne ke liye app band karke phir kholein.
+- **Auto-update:** har `update.bat` (yaani har build) par app ka service worker (`admin-sw.js`) aur `version.json` naye number ke saath ban jate hain. Phone par app khulte hi naya version khud download hota hai aur app ek baar reload ho kar update ho jati hai. Koi aur kaam nahi.
+- **Icon update:** Android (Chrome) apne aap manifest dobara check karta hai aur naya icon laga deta hai, aam taur par 1 din ke andar. **iPhone par icon khud nahi badalta** (Apple ki limit): purana app hata kar Safari se dobara "Add to Home Screen" karein.
+- Naya icon / video badalna ho to `public/icons/` mein wohi naam rakh kar file badlein, phir `update.bat`.

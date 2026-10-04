@@ -2,9 +2,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { baseFleet, applyOverrides } from "../data/fleet";
 import { saveLocal } from "../fleetSync";
 import { ADMIN_PATH } from "../config";
+import "../styles/admin.css";
 
 const TK = "adm-t";
+const LOGO = "/icons/saad-logo.png";
 const MSG = { invalid: "Username ya password ghalat hai.", too_many: "Bohat zyada koshish. 15 minute baad dobara try karein.", admin_not_configured: "Admin abhi setup nahi hua. Cloudflare mein ADMIN_USER aur ADMIN_PASS set karein (README-ADMIN.md).", no_storage: "Storage (KV) bind nahi hua. README-ADMIN.md dekhein.", bad_image: "Photo save nahi hui. Chhoti ya doosri photo try karein.", too_big: "Photo bohat bari hai." };
+const SW = [["white", "#f2f2f0"], ["black", "#17171a"], ["grey", "#8b94a0"], ["gray", "#8b94a0"], ["silver", "#c3c7cd"], ["red", "#b3262b"], ["blue", "#1f56b8"], ["plum", "#6b2d5c"]];
+const swatch = (n = "") => (SW.find(([k]) => String(n).toLowerCase().includes(k)) || [0, "#b4b8be"])[1];
+
 async function api(action, body = {}, token) {
   const r = await fetch("/api/admin", { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ action, ...body }) });
   let j = {}; try { j = await r.json(); } catch { /* not json */ }
@@ -16,102 +21,175 @@ async function shrink(file) { // phone photo -> max 1200px webp (keeps transpare
   for (let i = 0; i < 3; i++) { const c = document.createElement("canvas"); c.width = w; c.height = Math.round((bmp.height * w) / bmp.width); c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height); out = c.toDataURL("image/webp", 0.85); if (out.length < 1.15e6) return out; w = Math.round(w * 0.75); }
   return out;
 }
-function usePwa() { // makes this page installable as an app, only on the hidden admin page
+
+/* ---------- icons ---------- */
+const I = (d) => function Icon() { return <svg viewBox="0 0 24 24" aria-hidden="true" className="ad-i" dangerouslySetInnerHTML={{ __html: d }} />; };
+const ICar = I('<path d="M5 16h14M6.5 16l1.4-5.2A2 2 0 0 1 9.8 9.3h4.4a2 2 0 0 1 1.9 1.5L17.5 16"/><rect x="3.5" y="16" width="17" height="3.5" rx="1.4"/><circle cx="7.5" cy="17.8" r=".6"/><circle cx="16.5" cy="17.8" r=".6"/>');
+const IPlus = I('<path d="M12 5v14M5 12h14"/>');
+const IUser = I('<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.6 3.8-5.5 7.5-5.5s6.7 1.9 7.5 5.5"/>');
+const ISearch = I('<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>');
+const IEye = I('<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>');
+const IEyeOff = I('<path d="M3 3l18 18M10.6 5.7A9.7 9.7 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a16 16 0 0 1-3 3.7M6.6 7.1A15.6 15.6 0 0 0 2.5 12S6 18.5 12 18.5a9.6 9.6 0 0 0 4-.9"/>');
+const IOut = I('<path d="M10 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H10M15 8l4 4-4 4M19 12H9.5"/>');
+const IDown = I('<path d="M12 4v11M7.5 11 12 15.5 16.5 11M5 19.5h14"/>');
+const IGlobe = I('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 3.8 5.2 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.2-3.8-8.5S9.4 5.9 12 3.5z"/>');
+const IImg = I('<rect x="3.5" y="5" width="17" height="14" rx="2.4"/><circle cx="9" cy="10" r="1.6"/><path d="m4.5 17.5 4.8-4.4 3.4 3 2.4-2.2 4.4 3.6"/>');
+
+/* ---------- opening animation (plays when the app is opened), then the login / dashboard appears ---------- */
+function Splash({ done }) {
+  const [out, setOut] = useState(false), fin = useRef(false), v = useRef(null);
+  const end = () => { if (fin.current) return; fin.current = true; setOut(true); setTimeout(done, 480); };
+  useEffect(() => {
+    const el = v.current; if (el) { el.muted = true; const p = el.play(); if (p && p.catch) p.catch(end); }
+    const t = setTimeout(end, 5500); return () => clearTimeout(t);
+  }, []);
+  return <div className={`ad-splash${out ? " is-out" : ""}`} onClick={end} role="presentation"><video ref={v} src="/icons/saad-splash.mp4" autoPlay muted playsInline preload="auto" onEnded={end} onError={end} /></div>;
+}
+
+/* ---------- install + automatic update ---------- */
+function usePwa() {
   const [ev, setEv] = useState(null);
   useEffect(() => {
     const add = (tag, attrs) => { const e = document.createElement(tag); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); document.head.appendChild(e); return e; };
-    const els = [add("link", { rel: "manifest", href: "/admin.webmanifest" }), add("link", { rel: "apple-touch-icon", href: "/admin-icon-180.png" }), add("meta", { name: "theme-color", content: "#16181b" }), add("meta", { name: "robots", content: "noindex,nofollow" }), add("meta", { name: "apple-mobile-web-app-capable", content: "yes" }), add("meta", { name: "apple-mobile-web-app-title", content: "SAAD Admin" })];
+    const els = [add("link", { rel: "manifest", href: "/admin.webmanifest" }), add("link", { rel: "apple-touch-icon", href: "/icons/saad-apple-180.png" }), add("meta", { name: "theme-color", content: "#ffffff" }), add("meta", { name: "robots", content: "noindex,nofollow" }), add("meta", { name: "apple-mobile-web-app-capable", content: "yes" }), add("meta", { name: "mobile-web-app-capable", content: "yes" }), add("meta", { name: "apple-mobile-web-app-status-bar-style", content: "default" }), add("meta", { name: "apple-mobile-web-app-title", content: "SAAD Admin" })];
     const old = document.title; document.title = "SAAD Admin";
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/admin-sw.js", { scope: `${ADMIN_PATH}/` }).catch(() => {});
+    let reg = null; const onVis = () => { if (document.visibilityState === "visible" && reg) reg.update().catch(() => {}); };
+    const had = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
+    const onCtl = () => { if (had && !sessionStorage.getItem("adm-sw")) { sessionStorage.setItem("adm-sw", "1"); location.reload(); } }; // new version took over -> reload once
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/admin-sw.js", { scope: `${ADMIN_PATH}/`, updateViaCache: "none" }).then((r) => { reg = r; r.update().catch(() => {}); }).catch(() => {});
+      navigator.serviceWorker.addEventListener("controllerchange", onCtl);
+    }
+    document.addEventListener("visibilitychange", onVis);
     const h = (e) => { e.preventDefault(); setEv(e); }; addEventListener("beforeinstallprompt", h);
-    return () => { els.forEach((e) => e.remove()); document.title = old; removeEventListener("beforeinstallprompt", h); };
+    return () => { els.forEach((e) => e.remove()); document.title = old; removeEventListener("beforeinstallprompt", h); document.removeEventListener("visibilitychange", onVis); if ("serviceWorker" in navigator) navigator.serviceWorker.removeEventListener("controllerchange", onCtl); };
   }, []);
   const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
   return { ev, standalone, ios, install: async () => { if (!ev) return; ev.prompt(); await ev.userChoice; setEv(null); } };
 }
-const Install = ({ pwa }) => pwa.standalone ? null : pwa.ev ? <button type="button" className="adm__b adm__b--ghost" onClick={pwa.install}>Install app</button>
-  : pwa.ios ? <p className="adm__hint">iPhone: Safari mein Share dabayein, phir <b>Add to Home Screen</b>.</p> : <p className="adm__hint">App install karne ke liye Chrome menu (⋮) mein <b>Install app</b> / <b>Add to Home screen</b> dabayein.</p>;
-
-function Login({ onOk, pwa }) {
-  const [u, setU] = useState(""), [p, setP] = useState(""), [err, setErr] = useState(""), [busy, setBusy] = useState(false);
-  const go = async (e) => { e.preventDefault(); setBusy(true); setErr(""); try { onOk((await api("login", { user: u, pass: p })).token); } catch (x) { setErr(MSG[x.message] || "Login nahi hua. Internet check karein."); } finally { setBusy(false); } };
-  return (<form className="adm__login" onSubmit={go}><h1>SAAD Admin</h1><p>Sirf owner ke liye</p>
-    <label>Username<input value={u} onChange={(e) => setU(e.target.value)} autoCapitalize="none" autoCorrect="off" autoComplete="username" required /></label>
-    <label>Password<input type="password" value={p} onChange={(e) => setP(e.target.value)} autoComplete="current-password" required /></label>
-    {err && <p role="alert" className="adm__err">{err}</p>}<button className="adm__b" disabled={busy}>{busy ? "Ruko…" : "Login"}</button><Install pwa={pwa} /></form>);
+function InstallCard({ pwa }) {
+  if (pwa.standalone) return <p className="ad-note">App phone par install hai. Naya version khud update ho jata hai.</p>;
+  return (<div className="ad-card ad-install"><b>App install karein</b>
+    {pwa.ev ? <button type="button" className="ad-btn" onClick={pwa.install}><IDown />Install app</button>
+      : pwa.ios ? <p className="ad-note">iPhone: Safari mein Share dabayein, phir <b>Add to Home Screen</b>.</p>
+      : <p className="ad-note">Chrome menu (⋮) mein <b>Install app</b> / <b>Add to Home screen</b> dabayein.</p>}</div>);
 }
 
+/* ---------- login ---------- */
+function Login({ onOk }) {
+  const [u, setU] = useState(""), [p, setP] = useState(""), [show, setShow] = useState(false), [err, setErr] = useState(""), [busy, setBusy] = useState(false);
+  const go = async (e) => { e.preventDefault(); setBusy(true); setErr(""); try { onOk((await api("login", { user: u, pass: p })).token); } catch (x) { setErr(MSG[x.message] || "Login nahi hua. Internet check karein."); } finally { setBusy(false); } };
+  return (<div className="ad-login">
+    <div className="ad-login__top"><img src={LOGO} alt="SAAD CAR" width="900" height="284" /><span>RENTAL SERVICES</span></div>
+    <form className="ad-login__form" onSubmit={go}>
+      <h1>Owner login</h1><p className="ad-sub">Apni gaariyon aur prices ko manage karein.</p>
+      <label className="ad-field"><span>Username</span><input value={u} onChange={(e) => setU(e.target.value)} autoCapitalize="none" autoCorrect="off" autoComplete="username" placeholder="Username" required /></label>
+      <label className="ad-field"><span>Password</span><div className="ad-pw"><input type={show ? "text" : "password"} value={p} onChange={(e) => setP(e.target.value)} autoComplete="current-password" placeholder="Password" required />
+        <button type="button" onClick={() => setShow(!show)} aria-label={show ? "Password chhupayein" : "Password dikhayein"}>{show ? <IEyeOff /> : <IEye />}</button></div></label>
+      {err && <p role="alert" className="ad-err">{err}</p>}
+      <button className="ad-btn ad-btn--lg" disabled={busy}>{busy ? "Ruko…" : "Login"}</button>
+    </form>
+    <p className="ad-login__foot">Sirf authorised owner ke liye</p>
+  </div>);
+}
+
+/* ---------- pieces ---------- */
 function Photo({ tok, onUrl, label = "Photo chunein" }) {
   const [st, setSt] = useState(""), ref = useRef(null);
   const pick = async (e) => { const f = e.target.files?.[0]; if (!f) return; setSt("Upload ho rahi hai…"); try { const url = (await api("upload", { image: await shrink(f) }, tok)).url; setSt("Photo lag gayi"); onUrl(url); } catch (x) { setSt(MSG[x.message] || "Upload nahi hui."); } e.target.value = ""; };
-  return (<div className="adm__photo"><input ref={ref} type="file" accept="image/*" onChange={pick} hidden /><button type="button" className="adm__b adm__b--ghost" onClick={() => ref.current.click()}>{label}</button><small>{st || "Behtar: transparent background wali PNG/WebP"}</small></div>);
+  return (<div className="ad-photo"><input ref={ref} type="file" accept="image/*" onChange={pick} hidden /><button type="button" className="ad-btn ad-btn--ghost" onClick={() => ref.current.click()}><IImg />{label}</button><small>{st || "Behtar: transparent background wali PNG/WebP"}</small></div>);
 }
 
-function AddCar({ tok, cats, onAdd, close }) {
+function AddCar({ tok, cats, onAdd }) {
   const [f, setF] = useState({ cat: cats[0].slug, newCat: "", name: "", trim: "", color: "", subtitle: "", price: "", theme: "white", image: "" }), [err, setErr] = useState("");
   const u = (k) => (e) => setF({ ...f, [k]: e.target.value });
   const submit = (e) => {
     e.preventDefault(); if (!f.name.trim() || !f.color.trim()) return setErr("Gaari ka naam aur colour likhein.");
     let cat = f.cat, newCat = null;
     if (cat === "__new") { const t = f.newCat.trim(); if (!t) return setErr("Nayi category ka naam likhein."); let sl = t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "category", n = 2, base = sl; while (cats.some((c) => c.slug === sl)) sl = `${base}-${n++}`; cat = sl; newCat = { slug: sl, title: t }; }
-    onAdd({ id: `x-${Date.now().toString(36)}`, cat, name: f.name.trim(), trim: f.trim.trim(), color: f.color.trim(), subtitle: f.subtitle.trim() || "With Professional Driver", price: f.price ? Number(f.price) : null, theme: f.theme, image: f.image }, newCat); close();
+    onAdd({ id: `x-${Date.now().toString(36)}`, cat, name: f.name.trim(), trim: f.trim.trim(), color: f.color.trim(), subtitle: f.subtitle.trim() || "With Professional Driver", price: f.price ? Number(f.price) : null, theme: f.theme, image: f.image }, newCat);
   };
-  return (<form className="adm__card adm__add" onSubmit={submit}><h2>Nayi gaari add karein</h2>
-    <label>Category<select value={f.cat} onChange={u("cat")}>{cats.map((c) => <option key={c.slug} value={c.slug}>{c.title}</option>)}<option value="__new">+ Nayi category…</option></select></label>
-    {f.cat === "__new" && <label>Nayi category ka naam<input value={f.newCat} onChange={u("newCat")} placeholder="jaise Mercedes S Class" /></label>}
-    <label>Gaari ka naam<input value={f.name} onChange={u("name")} placeholder="jaise Toyota Corolla" required /></label>
-    <label>Model / trim (optional)<input value={f.trim} onChange={u("trim")} placeholder="jaise Altis" /></label>
-    <label>Colour<input value={f.color} onChange={u("color")} placeholder="jaise Pearl White" required /></label>
-    <label>Type (optional)<input value={f.subtitle} onChange={u("subtitle")} placeholder="jaise Luxury SUV" /></label>
-    <label>Price per day (Rs)<input inputMode="numeric" value={f.price} onChange={(e) => setF({ ...f, price: e.target.value.replace(/\D/g, "") })} placeholder="jaise 25000" /></label>
-    <label>Card ka rang<select value={f.theme} onChange={u("theme")}>{[["white", "Safed"], ["black", "Kala"], ["grey", "Grey"], ["red", "Laal"], ["plum", "Plum"], ["blue", "Neela"]].map(([v, t]) => <option key={v} value={v}>{t}</option>)}</select></label>
-    <Photo tok={tok} onUrl={(image) => setF((x) => ({ ...x, image }))} />{f.image && <img className="adm__prev" src={f.image} alt="" />}
-    {!f.image && <small className="adm__hint">Photo ke baghair gaari carousel mein nahi dikhegi.</small>}
-    {err && <p role="alert" className="adm__err">{err}</p>}<div className="adm__acts"><button className="adm__b">Add karein</button><button type="button" className="adm__b adm__b--ghost" onClick={close}>Cancel</button></div></form>);
+  return (<form className="ad-card ad-add" onSubmit={submit}><h2>Nayi gaari add karein</h2>
+    <label className="ad-field"><span>Category</span><select value={f.cat} onChange={u("cat")}>{cats.map((c) => <option key={c.slug} value={c.slug}>{c.title}</option>)}<option value="__new">+ Nayi category…</option></select></label>
+    {f.cat === "__new" && <label className="ad-field"><span>Nayi category ka naam</span><input value={f.newCat} onChange={u("newCat")} placeholder="jaise Mercedes S Class" /></label>}
+    <label className="ad-field"><span>Gaari ka naam</span><input value={f.name} onChange={u("name")} placeholder="jaise Toyota Corolla" required /></label>
+    <div className="ad-two"><label className="ad-field"><span>Model / trim</span><input value={f.trim} onChange={u("trim")} placeholder="jaise Altis" /></label>
+      <label className="ad-field"><span>Colour</span><input value={f.color} onChange={u("color")} placeholder="jaise Pearl White" required /></label></div>
+    <label className="ad-field"><span>Type</span><input value={f.subtitle} onChange={u("subtitle")} placeholder="jaise Luxury SUV" /></label>
+    <label className="ad-field"><span>Price per day (Rs)</span><input inputMode="numeric" value={f.price} onChange={(e) => setF({ ...f, price: e.target.value.replace(/\D/g, "") })} placeholder="jaise 25000" /></label>
+    <label className="ad-field"><span>Card ka rang</span><select value={f.theme} onChange={u("theme")}>{[["white", "Safed"], ["black", "Kala"], ["grey", "Grey"], ["red", "Laal"], ["plum", "Plum"], ["blue", "Neela"]].map(([v, t]) => <option key={v} value={v}>{t}</option>)}</select></label>
+    <Photo tok={tok} onUrl={(image) => setF((x) => ({ ...x, image }))} />{f.image && <img className="ad-prev" src={f.image} alt="" />}
+    {!f.image && <small className="ad-note">Photo ke baghair gaari carousel mein nahi dikhegi.</small>}
+    {err && <p role="alert" className="ad-err">{err}</p>}<button className="ad-btn ad-btn--lg">Add karein</button></form>);
 }
 
 function Row({ v, ov, kind, tok, change, remove }) {
-  const val = (k) => ov?.[k] ?? v[k] ?? "", price = ov && "price" in ov ? ov.price : v.price, hidden = !!ov?.hidden, img = ov?.image || v.image;
-  return (<div className={`adm__row${hidden ? " is-off" : ""}`}>
-    <img src={img} alt="" /><div className="adm__info"><b>{val("name")} {val("trim")}</b><small>{val("color")}</small>
-      <label className="adm__price"><span>Rs</span><input inputMode="numeric" value={price ?? ""} placeholder="Price" aria-label={`Price per day for ${val("name")} ${val("color")}`} onChange={(e) => change({ price: e.target.value.replace(/\D/g, "") ? Number(e.target.value.replace(/\D/g, "")) : null })} /><span>/ day</span></label></div>
-    <label className="adm__sw"><input type="checkbox" checked={!hidden} onChange={(e) => change({ hidden: !e.target.checked })} /><span>{hidden ? "Hidden" : "Visible"}</span></label>
-    <details className="adm__more"><summary>Aur badlein</summary>
-      {[["name", "Naam"], ["trim", "Model / trim"], ["color", "Colour"], ["subtitle", "Type"], ["description", "Chhoti description"]].map(([k, t]) => <label key={k}>{t}<input value={val(k)} onChange={(e) => change({ [k]: e.target.value })} /></label>)}
-      <Photo tok={tok} label="Photo badlein" onUrl={(image) => change({ image })} />
-      {kind === "add" && <button type="button" className="adm__b adm__b--del" onClick={() => confirm("Yeh gaari delete karein?") && remove()}>Gaari delete karein</button>}</details></div>);
+  const val = (k) => ov?.[k] ?? v[k] ?? "", price = ov && "price" in ov ? ov.price : v.price, hidden = ov ? !!ov.hidden : !!v.hidden, img = ov?.image || v.image;
+  return (<div className={`ad-row${hidden ? " is-off" : ""}`}>
+    <div className="ad-thumb"><img src={img} alt="" loading="lazy" /></div>
+    <div className="ad-info"><b>{val("name")} {val("trim")}</b><span><i style={{ background: swatch(val("color")) }} />{val("color")}</span></div>
+    <label className="ad-switch" aria-label={`${val("name")} ${val("color")} website par dikhana`}><input type="checkbox" checked={!hidden} onChange={(e) => change({ hidden: !e.target.checked })} /><span /><em>{hidden ? "Hidden" : "Live"}</em></label>
+    <label className="ad-price"><small>Price / day</small><div><span>Rs</span><input inputMode="numeric" value={price ?? ""} placeholder="—" aria-label={`Price per day for ${val("name")} ${val("color")}`} onChange={(e) => { const d = e.target.value.replace(/\D/g, ""); change({ price: d ? Number(d) : null }); }} /></div></label>
+    <details className="ad-more"><summary>Aur badlein</summary>
+      <div className="ad-more__in">
+        {[["name", "Naam"], ["trim", "Model / trim"], ["color", "Colour"], ["subtitle", "Type"], ["description", "Chhoti description"]].map(([k, t]) => <label className="ad-field" key={k}><span>{t}</span><input value={val(k)} onChange={(e) => change({ [k]: e.target.value })} /></label>)}
+        <Photo tok={tok} label="Photo badlein" onUrl={(image) => change({ image })} />
+        {kind === "add" && <button type="button" className="ad-btn ad-btn--del" onClick={() => confirm("Yeh gaari delete karein?") && remove()}>Gaari delete karein</button>}
+      </div></details></div>);
 }
 
 function Panel({ tok, out, pwa }) {
-  const [ov, setOv] = useState(null), [dirty, setDirty] = useState(false), [msg, setMsg] = useState(""), [busy, setBusy] = useState(false), [adding, setAdding] = useState(false);
+  const [ov, setOv] = useState(null), [dirty, setDirty] = useState(false), [msg, setMsg] = useState(""), [loadErr, setLoadErr] = useState(""), [busy, setBusy] = useState(false), [tab, setTab] = useState("fleet"), [q, setQ] = useState(""), [formKey, setFormKey] = useState(0);
   const norm = (d) => ({ vehicles: {}, added: [], cats: [], ...(d || {}) });
-  useEffect(() => { api("load", {}, tok).then((r) => setOv(norm(r.data))).catch((e) => (e.status === 401 ? out() : setMsg(MSG[e.message] || "Data load nahi hua. Internet check karein."))); }, []);
+  const load = () => { setLoadErr(""); api("load", {}, tok).then((r) => setOv(norm(r.data))).catch((e) => (e.status === 401 ? out() : setLoadErr(MSG[e.message] || "Data load nahi hua. Internet check karein."))); };
+  useEffect(load, []);
+  useEffect(() => { if (!msg) return; const t = setTimeout(() => setMsg(""), 4500); return () => clearTimeout(t); }, [msg]);
   const edit = (fn) => { setOv((o) => { const n = structuredClone(o); fn(n); return n; }); setDirty(true); setMsg(""); };
   const cats = useMemo(() => ov ? [...baseFleet.map((c) => ({ slug: c.slug, title: c.title })), ...ov.cats.filter((c) => !baseFleet.some((b) => b.slug === c.slug))] : [], [ov]);
+  const stats = useMemo(() => {
+    if (!ov) return { total: 0, live: 0, hidden: 0, priced: 0 };
+    const all = [...baseFleet.flatMap((c) => c.vehicles.map((v) => { const o = ov.vehicles[v.id]; return { hidden: !!o?.hidden, price: o && "price" in o ? o.price : v.price }; })), ...ov.added.map((a) => ({ hidden: !!a.hidden, price: a.price }))];
+    return { total: all.length, live: all.filter((x) => !x.hidden).length, hidden: all.filter((x) => x.hidden).length, priced: all.filter((x) => x.price).length };
+  }, [ov]);
   const save = async () => {
     setBusy(true); setMsg("");
     try { const { data } = await api("save", { data: ov }, tok); setOv(norm(data)); applyOverrides(data); saveLocal(data); setDirty(false); setMsg("Save ho gaya. Website par ~30 second mein nazar aayega."); }
     catch (e) { if (e.status === 401) out(); else setMsg(MSG[e.message] || "Save nahi hua. Dobara try karein."); } finally { setBusy(false); }
   };
-  if (!ov) return <p className="adm__load">{msg || "Load ho raha hai…"}</p>;
+  if (!ov) return (<div className="ad-load">{loadErr ? <><p>{loadErr}</p><button type="button" className="ad-btn" onClick={load}>Dobara try karein</button></> : <><span className="ad-spin" /><p>Load ho raha hai…</p></>}</div>);
+  const match = (c, v) => !q.trim() || `${v.name} ${v.trim || ""} ${v.color || ""} ${c.title}`.toLowerCase().includes(q.trim().toLowerCase());
+  const tabs = [["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["me", "Account", IUser]];
   return (<>
-    <header className="adm__top"><div><b>SAAD Admin</b><small>Prices aur gaariyan</small></div><div className="adm__acts"><Install pwa={pwa} /><button type="button" className="adm__b adm__b--ghost" onClick={out}>Logout</button></div></header>
-    <main className="adm__main">
-      {cats.map((c) => { const base = baseFleet.find((b) => b.slug === c.slug)?.vehicles || [], added = ov.added.filter((a) => a.cat === c.slug);
-        return (<section className="adm__card" key={c.slug}><h2>{c.title}</h2>
-          {base.map((v) => <Row key={v.id} v={v} ov={ov.vehicles[v.id]} kind="base" tok={tok} change={(p) => edit((n) => { n.vehicles[v.id] = { ...n.vehicles[v.id], ...p }; })} />)}
-          {added.map((a) => <Row key={a.id} v={{ ...a, image: a.image || "/assets/placeholder-vehicle.svg" }} ov={null} kind="add" tok={tok} change={(p) => edit((n) => { Object.assign(n.added.find((x) => x.id === a.id), p); })} remove={() => edit((n) => { n.added = n.added.filter((x) => x.id !== a.id); })} />)}</section>); })}
-      {adding ? <AddCar tok={tok} cats={cats} close={() => setAdding(false)} onAdd={(item, nc) => edit((n) => { if (nc) n.cats.push(nc); n.added.push(item); })} />
-        : <button type="button" className="adm__b adm__big" onClick={() => setAdding(true)}>+ Nayi gaari add karein</button>}
+    <header className="ad-top"><img src={LOGO} alt="SAAD CAR" width="900" height="284" /><span className="ad-pill">Admin</span></header>
+    <main className="ad-main">
+      {tab === "fleet" && <>
+        <div className="ad-stats">{[["Total", stats.total], ["Live", stats.live], ["Hidden", stats.hidden], ["Price set", stats.priced]].map(([t, n]) => <div key={t}><b>{n}</b><span>{t}</span></div>)}</div>
+        <label className="ad-search"><ISearch /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Gaari ya colour dhoondhein" aria-label="Search" /></label>
+        {cats.map((c) => { const base = (baseFleet.find((b) => b.slug === c.slug)?.vehicles || []).filter((v) => match(c, v)), added = ov.added.filter((a) => a.cat === c.slug && match(c, a)); if (!base.length && !added.length) return null;
+          return (<section className="ad-card" key={c.slug}><h2>{c.title}<small>{base.length + added.length}</small></h2>
+            {base.map((v) => <Row key={v.id} v={v} ov={ov.vehicles[v.id]} kind="base" tok={tok} change={(p) => edit((n) => { n.vehicles[v.id] = { ...n.vehicles[v.id], ...p }; })} />)}
+            {added.map((a) => <Row key={a.id} v={{ ...a, image: a.image || "/assets/placeholder-vehicle.svg" }} ov={null} kind="add" tok={tok} change={(p) => edit((n) => { Object.assign(n.added.find((x) => x.id === a.id), p); })} remove={() => edit((n) => { n.added = n.added.filter((x) => x.id !== a.id); })} />)}</section>); })}
+      </>}
+      {tab === "add" && <AddCar key={formKey} tok={tok} cats={cats} onAdd={(item, nc) => { edit((n) => { if (nc) n.cats.push(nc); n.added.push(item); }); setFormKey((k) => k + 1); setTab("fleet"); setMsg("Gaari add ho gayi. Neeche Save dabana na bhoolein."); }} />}
+      {tab === "me" && <>
+        <section className="ad-card ad-me"><img src={LOGO} alt="SAAD CAR" width="900" height="284" /><b>SAAD CAR RENTAL SERVICES</b><span>Owner admin</span></section>
+        <InstallCard pwa={pwa} />
+        <a className="ad-btn ad-btn--ghost ad-btn--lg" href="/" target="_blank" rel="noopener noreferrer"><IGlobe />Website kholein</a>
+        <button type="button" className="ad-btn ad-btn--ghost ad-btn--lg" onClick={out}><IOut />Logout</button>
+        <p className="ad-ver">Version: {new Date(Number(__BUILD_ID__)).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}<br />Naya update aane par app khud update ho jati hai.</p>
+      </>}
     </main>
-    <div className="adm__bar"><span role="status">{msg || (dirty ? "Badlaav save nahi hue" : "Sab save hai")}</span><button type="button" className="adm__b" disabled={!dirty || busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div></>);
+    {(dirty || busy) && <div className="ad-save" role="status"><span>Badlaav save nahi hue</span><button type="button" className="ad-btn ad-btn--light" disabled={busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div>}
+    {msg && <div className="ad-toast" role="status">{msg}</div>}
+    <nav className="ad-tabs" aria-label="Admin">{tabs.map(([k, t, Ic]) => <button key={k} type="button" className={tab === k ? "on" : ""} aria-current={tab === k ? "page" : undefined} onClick={() => setTab(k)}><Ic />{t}</button>)}</nav>
+  </>);
 }
 
 export default function Admin() {
   const [tok, setTok] = useState(() => { try { return localStorage.getItem(TK) || ""; } catch { return ""; } }), pwa = usePwa();
+  const [splash, setSplash] = useState(() => { try { return !sessionStorage.getItem("adm-sp") && !matchMedia("(prefers-reduced-motion: reduce)").matches; } catch { return false; } });
   const set = (t) => { try { t ? localStorage.setItem(TK, t) : localStorage.removeItem(TK); } catch { /* ignore */ } setTok(t); };
-  const ver = new Date(Number(__BUILD_ID__)).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
-  return <div className="adm" data-ok="1">{tok ? <Panel tok={tok} out={() => set("")} pwa={pwa} /> : <Login onOk={set} pwa={pwa} />}
-    <p className="adm__ver">SAAD CAR RENTAL SERVICES · Owner admin · Sirf authorised owner ke liye · Version: {ver}</p></div>;
+  const endSplash = () => { try { sessionStorage.setItem("adm-sp", "1"); } catch { /* ignore */ } setSplash(false); };
+  return <div className="adm" data-ok="1">{tok ? <Panel tok={tok} out={() => set("")} pwa={pwa} /> : <Login onOk={set} />}{splash && <Splash done={endSplash} />}</div>;
 }

@@ -1,15 +1,20 @@
 {
-  "name": "SAAD Admin",
+  "id": "/saad-owner-7k3x9/",
+  "name": "SAAD CAR Admin",
   "short_name": "SAAD Admin",
-  "description": "Owner app: prices and cars",
+  "description": "SAAD CAR RENTAL SERVICES owner app: prices and cars",
+  "lang": "en",
   "start_url": "/saad-owner-7k3x9/",
   "scope": "/saad-owner-7k3x9/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#16181b",
-  "theme_color": "#16181b",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "categories": ["business", "productivity"],
   "icons": [
-    { "src": "/admin-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/admin-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "/icons/saad-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/saad-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/saad-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/saad-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

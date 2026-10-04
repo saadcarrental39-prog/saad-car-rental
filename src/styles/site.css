@@ -166,27 +166,6 @@ body{display:block;padding:0;background:#fff;color:#16181b;font-family:Manrope,s
 /* price on car cards */
 .lc__price{margin:14px 0 0;color:var(--ink);font-size:1.25rem;line-height:1.2}.lc__price b{font-weight:800;letter-spacing:-.02em}.lc__price span{font-size:.82rem;color:var(--sub);font-weight:600}
 
-/* owner admin app (phone first) */
-.adm{min-height:100svh;background:#f3f2ee;color:#16181b;font-family:inherit;padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
-.adm *{box-sizing:border-box}.adm input,.adm select{width:100%;min-height:46px;padding:10px 12px;border:1px solid #d4d4d0;border-radius:12px;font:inherit;font-size:16px;background:#fff}
-.adm label{display:grid;gap:5px;font-weight:600;font-size:.8rem;margin-top:10px}
-.adm__b{min-height:46px;padding:0 20px;border:0;border-radius:99px;background:#16181b;color:#fff;font:inherit;font-weight:700;font-size:.88rem;cursor:pointer}.adm__b[disabled]{opacity:.45;cursor:not-allowed}
-.adm__b--ghost{background:transparent;color:#16181b;border:1px solid #c9c9c4}.adm__b--del{background:#b3261e;margin-top:12px}.adm__big{display:block;width:100%;margin-top:14px}
-.adm__login{display:grid;gap:4px;width:min(380px,100%);margin:0 auto;padding:max(48px,10svh) 20px 20px}.adm__login h1{font-size:1.8rem}.adm__login p{color:#62666c}.adm__login .adm__b{margin-top:16px}
-.adm__err{color:#b3261e;font-size:.85rem;margin-top:8px}.adm__hint{font-size:.78rem;color:#62666c;margin-top:8px}.adm__load{padding:40px 20px;text-align:center}
-.adm__top{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:max(12px,env(safe-area-inset-top,0px)) 16px 12px;background:#16181b;color:#fff}.adm__top small{display:block;color:#a8aab0;font-size:.72rem}
-.adm__top .adm__b--ghost{color:#fff;border-color:#4a4d54;min-height:38px;padding:0 14px}.adm__top .adm__hint{display:none}.adm__acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.adm__main{display:grid;gap:14px;width:min(720px,100%);margin:0 auto;padding:16px}
-.adm__card{padding:16px;border-radius:20px;background:#fff;border:1px solid #e6e6e3}.adm__card h2{font-size:1.05rem;margin-bottom:6px}
-.adm__row{display:grid;grid-template-columns:76px 1fr auto;gap:10px 12px;align-items:center;padding:12px 0;border-top:1px solid #efefec}.adm__row.is-off{opacity:.55}
-.adm__row>img{width:76px;height:54px;object-fit:contain;border-radius:12px;background:#ecebe6}.adm__info{min-width:0}.adm__info b{font-size:.92rem}.adm__row small{display:block;color:#62666c;font-size:.75rem}
-.adm__price{display:flex!important;align-items:center;gap:6px;margin-top:6px!important}.adm__price input{min-height:42px;font-weight:700}.adm__price span{font-weight:700;font-size:.8rem;color:#62666c;white-space:nowrap}
-.adm__sw{display:flex!important;flex-direction:column;align-items:center;gap:2px;margin:0!important;font-size:.7rem}.adm__sw input{width:22px;height:22px;min-height:0}
-.adm__more{grid-column:1/-1;font-size:.82rem}.adm__more summary{cursor:pointer;color:#55677a;font-weight:700;padding:4px 0}
-.adm__photo{display:grid;gap:4px;justify-items:start;margin-top:12px}.adm__photo small{color:#62666c;font-size:.74rem}.adm__prev{width:140px;border-radius:12px;background:#ecebe6;margin-top:8px}
-.adm__bar{position:fixed;inset:auto 0 0;z-index:6;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid #e6e6e3;box-shadow:0 -10px 24px -18px rgba(0,0,0,.4)}.adm__bar span{font-size:.8rem;color:#3a3f46}
-@media(max-width:380px){.adm__row{grid-template-columns:60px 1fr auto}.adm__row>img{width:60px;height:44px}}
-.adm__ver{text-align:center;color:#8a8d93;font-size:.7rem;line-height:1.5;padding:18px 16px 4px}
 
 /* SAAD CAR logo (replaces the text "SAAD CAR"; "RENTAL SERVICES" text stays) */
 .logo{display:inline-flex;align-items:center;gap:.7em}
