@@ -1,0 +1,15 @@
+{
+  "name": "SAAD Admin",
+  "short_name": "SAAD Admin",
+  "description": "Owner app: prices and cars",
+  "start_url": "/saad-owner-7k3x9/",
+  "scope": "/saad-owner-7k3x9/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#16181b",
+  "theme_color": "#16181b",
+  "icons": [
+    { "src": "/admin-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/admin-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

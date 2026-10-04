@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Helvetica', Arial, sans-serif; color: #000000; background: #FFFFFF; padding: 32px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #2563EB; padding-bottom: 16px; margin-bottom: 24px; }
+  .business-name { font-size: 24px; font-weight: bold; color: #000000; }
+  .business-sub { font-size: 12px; color: #1A1A1A; margin-top: 4px; }
+  .doc-title { font-size: 20px; font-weight: bold; color: #2563EB; text-align: right; }
+  .meta { font-size: 12px; color: #1A1A1A; text-align: right; margin-top: 4px; }
+  .section { margin-bottom: 20px; }
+  .section-title { font-size: 12px; text-transform: uppercase; color: #1A1A1A; margin-bottom: 4px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  th { background: #2563EB; color: #FFFFFF; text-align: left; padding: 8px; font-size: 12px; }
+  td { padding: 8px; border-bottom: 1px solid #E5E7EB; font-size: 12px; }
+  .totals { margin-top: 16px; width: 300px; margin-left: auto; }
+  .totals-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; }
+  .totals-row.grand { font-weight: bold; font-size: 16px; border-top: 2px solid #000000; padding-top: 8px; }
+  .footer { margin-top: 40px; font-size: 11px; color: #1A1A1A; border-top: 1px solid #E5E7EB; padding-top: 12px; }
+  .signature { margin-top: 60px; display: flex; justify-content: space-between; }
+  .signature div { width: 40%; border-top: 1px solid #000000; text-align: center; padding-top: 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="business-name">{{business_name}}</div>
+      <div class="business-sub">{{owner_1_name}}: {{owner_1_phone}} &nbsp;|&nbsp; {{owner_2_name}}: {{owner_2_phone}}</div>
+      <div class="business-sub">Service Areas: {{service_areas}}</div>
+    </div>
+    <div>
+      <div class="doc-title">QUOTATION</div>
+      <div class="meta">#{{quotation_no}}</div>
+      <div class="meta">Date: {{date}}</div>
+      <div class="meta">Valid Until: {{valid_until}}</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Bill To</div>
+    <div>{{customer_name}}</div>
+    <div>{{customer_phone}}</div>
+    <div>{{customer_address}}</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>#</th><th>Description</th><th>Qty</th><th>Unit</th><th>Rate</th><th>Amount</th></tr>
+    </thead>
+    <tbody>
+      {{#each items}}
+      <tr>
+        <td>{{inc @index}}</td>
+        <td>{{this.description}}</td>
+        <td>{{this.quantity}}</td>
+        <td>{{this.unit}}</td>
+        <td>{{this.rate}}</td>
+        <td>{{this.amount}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <div class="totals">
+    <div class="totals-row"><span>Subtotal</span><span>Rs. {{subtotal}}</span></div>
+    <div class="totals-row"><span>Discount</span><span>- Rs. {{discount_amount}}</span></div>
+    <div class="totals-row grand"><span>Total</span><span>Rs. {{total_amount}}</span></div>
+  </div>
+
+  <div class="signature">
+    <div>Customer Signature</div>
+    <div>{{business_name}}</div>
+  </div>
+
+  <div class="footer">
+    {{notes}}
+    <br/>This quotation is valid until {{valid_until}}. Prices are locked at the time of this document and will not change due to future market rate updates.
+  </div>
+</body>
+</html>

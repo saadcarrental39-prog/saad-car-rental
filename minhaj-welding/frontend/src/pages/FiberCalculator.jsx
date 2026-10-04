@@ -1,0 +1,147 @@
+import React, { useEffect, useState, useCallback } from 'react';
+import api from '../services/api';
+import FeetInchInput from '../components/FeetInchInput';
+import BreakdownTable from '../components/BreakdownTable';
+import RateSelector from '../components/RateSelector';
+import PriceSummary from '../components/PriceSummary';
+import ActionBar from '../components/ActionBar';
+
+export default function FiberCalculator() {
+  const [categoryId, setCategoryId] = useState(null);
+  const [styles, setStyles] = useState([]);
+  const [styleId, setStyleId] = useState('');
+  const [customers, setCustomers] = useState([]);
+  const [customerId, setCustomerId] = useState('');
+
+  const [width, setWidth] = useState({ ft: '', in: '' });
+  const [height, setHeight] = useState({ ft: '', in: '' });
+  const [blockSize, setBlockSize] = useState(2);
+  const [color, setColor] = useState('');
+  const [manualValue, setManualValue] = useState('');
+  const [manualReason, setManualReason] = useState('');
+
+  const [rateValue, setRateValue] = useState({ rate_source: 'current' });
+  const [activeRate, setActiveRate] = useState(null);
+  const [extras, setExtras] = useState({});
+  const [result, setResult] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [savedId, setSavedId] = useState(null);
+  const [error, setError] = useState('');
+
+  const style = styles.find((s) => String(s.id) === String(styleId));
+
+  useEffect(() => {
+    api.get('/catalog/categories').then((res) => {
+      const cat = res.data.find((c) => c.name === 'Fiber Sheet');
+      if (cat) {
+        setCategoryId(cat.id);
+        api.get('/catalog/styles', { params: { category_id: cat.id } }).then((r) => {
+          setStyles(r.data);
+          if (r.data.length) setStyleId(r.data[0].id);
+        });
+      }
+    });
+    api.get('/customers').then((res) => setCustomers(res.data));
+  }, []);
+
+  useEffect(() => {
+    if (styleId) api.get('/rates', { params: { style_id: styleId } }).then((res) => setActiveRate(res.data[0] || null));
+  }, [styleId]);
+
+  const buildInputs = () => ({
+    width_ft: width.ft, width_in: width.in, height_ft: height.ft, height_in: height.in,
+    block_size_ft: blockSize, color,
+  });
+
+  const calculate = useCallback(() => {
+    if (!style || width.ft === '' || height.ft === '') return;
+    setError('');
+    api.post('/measurements/calculate', {
+      category_id: categoryId, style_id: Number(styleId), formula_key: style.formula_key,
+      inputs: buildInputs(), manual_value: manualValue === '' ? null : manualValue, manual_reason: manualReason,
+      rate_source: rateValue.rate_source, custom_rate: rateValue.custom_rate, historical_rate_id: rateValue.historical_rate_id,
+      discount_amount: extras.discount_amount, discount_percent: extras.discount_percent,
+      labour_amount: extras.labour_amount, transport_amount: extras.transport_amount,
+    }).then((res) => setResult(res.data)).catch((err) => setError(err.response?.data?.error || 'Calculation failed'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [style, width, height, blockSize, color, manualValue, rateValue, extras]);
+
+  useEffect(() => { calculate(); }, [calculate]);
+
+  const handleSave = () => {
+    if (!result) return;
+    setSaving(true);
+    api.post('/measurements', {
+      customer_id: customerId || null, category_id: categoryId, style_id: Number(styleId),
+      formula_key: style.formula_key, formula_version: style.formula_version,
+      inputs: buildInputs(), manual_value: manualValue === '' ? null : manualValue, manual_reason: manualReason,
+      rate_source: rateValue.rate_source, custom_rate: rateValue.custom_rate, historical_rate_id: rateValue.historical_rate_id,
+      discount_amount: extras.discount_amount, discount_percent: extras.discount_percent,
+      labour_amount: extras.labour_amount, transport_amount: extras.transport_amount,
+    }).then((res) => setSavedId(res.data.id)).catch((err) => setError(err.response?.data?.error || 'Save failed'))
+      .finally(() => setSaving(false));
+  };
+
+  return (
+    <div className="max-w-4xl">
+      <h1 className="text-xl font-bold mb-1">Fiber Sheet Calculator</h1>
+      <p className="text-text-secondary text-sm mb-4">Square-foot sheet area + frame pipe perimeter + internal block (khana) frame, shown separately.</p>
+
+      <div className="grid md:grid-cols-2 gap-4">
+        <div className="space-y-4">
+          <div className="card space-y-3">
+            <div>
+              <label className="text-sm font-medium mb-1 block">Ply</label>
+              <select className="input-field" value={styleId} onChange={(e) => setStyleId(e.target.value)}>
+                {styles.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1 block">Customer (optional)</label>
+              <select className="input-field" value={customerId} onChange={(e) => setCustomerId(e.target.value)}>
+                <option value="">Walk-in / not selected</option>
+                {customers.map((c) => <option key={c.id} value={c.id}>{c.name} — {c.phone}</option>)}
+              </select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <FeetInchInput label="Width" value={width} onChange={setWidth} />
+              <FeetInchInput label="Height" value={height} onChange={setHeight} />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-sm font-medium mb-1 block">Block Size (ft)</label>
+                <input type="number" className="input-field" min="0" value={blockSize}
+                  onChange={(e) => setBlockSize(Number(e.target.value))} />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1 block">Color</label>
+                <input type="text" className="input-field" placeholder="e.g. White" value={color}
+                  onChange={(e) => setColor(e.target.value)} />
+              </div>
+            </div>
+            <div className="border-t border-border pt-3">
+              <label className="text-sm font-medium mb-1 block">Manual Override (optional)</label>
+              <input type="number" className="input-field" placeholder="Override area (Sq Ft)"
+                value={manualValue} onChange={(e) => setManualValue(e.target.value)} />
+              {manualValue !== '' && (
+                <input type="text" className="input-field mt-2" placeholder="Reason for override"
+                  value={manualReason} onChange={(e) => setManualReason(e.target.value)} />
+              )}
+            </div>
+          </div>
+          <RateSelector categoryId={categoryId} styleId={styleId} activeRate={activeRate} value={rateValue} onChange={setRateValue} />
+        </div>
+
+        <div className="space-y-4">
+          {error && <div className="badge badge-danger">{error}</div>}
+          {result && <BreakdownTable breakdown={result.calc_breakdown} total={result.final_value} unit={result.unit} />}
+          <PriceSummary extras={extras} onExtrasChange={setExtras} result={result} />
+          <div className="card">
+            <ActionBar onSave={handleSave} saving={saving} onPrint={() => window.print()} />
+            {savedId && <div className="text-success text-sm mt-2">Saved ✓ (Measurement #{savedId})</div>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

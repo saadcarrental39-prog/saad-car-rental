@@ -1,6 +1,6 @@
-import { Component, useEffect, useState } from "react";
+import { Component, Suspense, lazy, useEffect, useState } from "react";
 import { Routes, Route, Link, NavLink, useLocation } from "react-router-dom";
-import { SITE, telHref, waHref } from "./config";
+import { SITE, ADMIN_PATH, telHref, waHref } from "./config";
 import Home from "./pages/Home";
 import RecentBookings from "./components/RecentBookings";
 import BookingModal from "./components/BookingModal";
@@ -9,6 +9,7 @@ import { CarPage, Services, About } from "./pages/Pages";
 import Cars from "./pages/Cars";
 import Contact from "./pages/Contact";
 import Book from "./pages/Book";
+const Admin = lazy(() => import("./pages/Admin"));
 
 // If anything ever crashes, recover instead of showing a white screen.
 class Guard extends Component {
@@ -21,6 +22,7 @@ function ScrollTop() { const { pathname } = useLocation(); useEffect(() => { win
 export default function App() {
   const [open, setOpen] = useState(false); const { pathname } = useLocation();
   useEffect(() => { setOpen(false); }, [pathname]);
+  if (pathname === ADMIN_PATH || pathname.startsWith(`${ADMIN_PATH}/`)) return <Suspense fallback={null}><Admin /></Suspense>;
   return (
     <>
       <ScrollTop />

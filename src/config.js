@@ -1,4 +1,6 @@
 const env = import.meta.env;
+// Hidden owner/admin page. Not linked anywhere. If you change it, also change it in public/admin.webmanifest.
+export const ADMIN_PATH = "/saad-owner-7k3x9";
 export const SITE = {
   name: "SAAD CAR RENTAL SERVICES", tagline: "Premium Car Rental With Professional Driver",
   url: (env.VITE_SITE_URL || "https://YOUR_DOMAIN.com").replace(/\/$/, ""),

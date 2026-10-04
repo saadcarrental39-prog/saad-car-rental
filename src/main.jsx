@@ -1,9 +1,16 @@
+import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
+import { initFleet } from "./fleetSync";
 import "./styles/automotive-carousel.css";
 import "./styles/site.css";
-createRoot(document.getElementById("root")).render(<BrowserRouter><App /></BrowserRouter>);
+function Root() { // remounts once if the owner changed prices since this visitor's last visit
+  const [k, setK] = useState(0);
+  useEffect(() => { const f = () => setK((x) => x + 1); addEventListener("fleet-updated", f); return () => removeEventListener("fleet-updated", f); }, []);
+  return <BrowserRouter><App key={k} /></BrowserRouter>;
+}
+initFleet().finally(() => createRoot(document.getElementById("root")).render(<Root />));
 
 // Auto-refresh when a new version is deployed, so nobody keeps running old files.
 if (import.meta.env.PROD) {

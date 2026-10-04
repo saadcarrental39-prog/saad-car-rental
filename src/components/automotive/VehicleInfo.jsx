@@ -13,6 +13,7 @@ export default function VehicleInfo({ v }) {
       <ul className="lc__chips">
         <li>{v.color}</li><li>With Professional Driver</li>
       </ul>
+      <p className="lc__price">{v.price ? <><b>Rs {Number(v.price).toLocaleString("en-PK")}</b><span> / day</span></> : <span>Call for price</span>}</p>
       <div className="lc__cta">
         <button type="button" className="lc__btn-primary" onClick={() => window.dispatchEvent(new CustomEvent("open-booking", { detail: v.id }))}>Book With Driver  <Arrow /></button>
         <Link className="lc__btn-ghost" to={`/cars/${v.category}`}>Details</Link>

@@ -11,7 +11,7 @@ const T = {
 const B = [{ rotate: 0, radius: "42% 58% 55% 45% / 45% 40% 60% 55%" }, { rotate: 18, radius: "58% 42% 40% 60% / 55% 55% 45% 45%" }, { rotate: -14, radius: "50% 50% 38% 62% / 42% 58% 42% 58%" }];
 const car = (category, id, o, i = 0) => ({ id, category, name: o.name, trim: o.trim || "", tag: o.tag || "", subtitle: o.subtitle || "With Professional Driver",
   color: o.color || "Colour to be confirmed", image: o.image || PH, placeholder: !o.image, description: o.description || "Details to be confirmed.",
-  theme: T[o.theme || "white"], blob: B[i % 3] });
+  theme: T[o.theme || "white"], blob: B[i % 3], price: o.price || null });
 
 const cats = [
   { slug: "land-cruiser-v8", title: "Land Cruiser V8", seo: "Land Cruiser V8 rental with driver in Islamabad", description: "Toyota Land Cruiser V8 with a professional driver for airport transfers, weddings, executive and long-distance travel.",
@@ -40,6 +40,29 @@ const cats = [
   { slug: "range-rover", title: "Range Rover", seo: "Range Rover rental with driver in Islamabad", description: "Range Rover with a professional driver for VIP and executive transportation.", models: [["range-rover-1", { name: "Range Rover", tag: "RR", theme: "black" }]] },
   { slug: "coaster", title: "Coaster", seo: "Toyota Coaster rental with driver in Islamabad", description: "Toyota Coaster with a professional driver for groups, events and tours.", models: [["coaster-1", { name: "Coaster", tag: "CO", theme: "grey" }]] },
 ];
-export const fleet = cats.map((c) => ({ ...c, vehicles: c.models.map(([id, o], i) => car(c.slug, id, o, i)) }));
+const BASE = cats.map((c) => ({ ...c, vehicles: c.models.map(([id, o], i) => car(c.slug, id, o, i)) }));
+export const baseFleet = BASE; // untouched defaults (the admin app lists these)
+export const fleet = BASE.map((c) => ({ ...c, vehicles: [...c.vehicles] }));
 export const allVehicles = fleet.flatMap((c) => c.vehicles);
 export const findCategory = (slug) => fleet.find((c) => c.slug === slug);
+
+// Prices / extra cars saved from the admin app (served by /api/fleet) are applied here, in place, before the site renders.
+const patch = (v, o) => {
+  if (!o) return v; const n = { ...v };
+  ["name", "trim", "color", "subtitle", "description"].forEach((k) => { if (o[k]) n[k] = o[k]; });
+  if ("price" in o) n.price = o.price || null;
+  if (o.image) { n.image = o.image; n.placeholder = false; }
+  n.hidden = !!o.hidden; return n;
+};
+export function applyOverrides(d) {
+  d = d && typeof d === "object" ? d : {};
+  const list = BASE.map((c) => ({ ...c, vehicles: c.vehicles.map((v) => patch(v, d.vehicles?.[v.id])) }));
+  (d.cats || []).forEach((c) => { if (!list.some((x) => x.slug === c.slug)) list.push({ slug: c.slug, title: c.title, seo: `${c.title} rental with driver in Islamabad`, description: c.description || `${c.title} with a professional driver.`, vehicles: [] }); });
+  (d.added || []).forEach((a) => {
+    const c = list.find((x) => x.slug === a.cat); if (!c) return;
+    c.vehicles.push(patch(car(a.cat, a.id, { name: a.name, trim: a.trim, tag: String(a.name).replace(/[^A-Za-z0-9]/g, "").slice(0, 2).toUpperCase(), color: a.color, image: a.image, subtitle: a.subtitle, description: a.description, theme: a.theme, price: a.price }, c.vehicles.length), { hidden: a.hidden }));
+  });
+  const final = list.map((c) => ({ ...c, vehicles: c.vehicles.filter((v) => !v.hidden) })).filter((c) => c.vehicles.length);
+  if (!final.length) return;                                   // never leave the site empty
+  fleet.length = 0; fleet.push(...final); allVehicles.length = 0; allVehicles.push(...fleet.flatMap((c) => c.vehicles));
+}
