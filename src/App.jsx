@@ -27,7 +27,7 @@ export default function App() {
     <>
       <ScrollTop />
       <a className="skip" href="#main">Skip to content</a>
-      <header className="hdr"><Link to="/" className="logo">SAAD <span>CAR RENTAL SERVICES</span></Link>
+      <header className="hdr"><Link to="/" className="logo"><img className="logo__img" src="/assets/brand/saadcar-logo-dark.svg" alt="SAAD CAR" width="3840" height="1228" /> <span>RENTAL SERVICES</span></Link>
         <nav aria-label="Main">{[["/", "Home"], ["/cars", "Cars"], ["/services", "Services"], ["/about", "About"], ["/contact", "Contact"]].map(([to, t]) => <NavLink key={to} to={to} end={to === "/"}>{t}</NavLink>)}</nav>
         <Link to="/book" className="btn btn--dark">Book Now</Link>
         <button className="burger" aria-expanded={open} aria-controls="menu" aria-label="Menu" onClick={() => setOpen(!open)}>{open ? "✕" : "☰"}</button></header>
@@ -38,7 +38,7 @@ export default function App() {
         <Routes><Route path="/" element={<Home />} /><Route path="/cars" element={<Cars />} /><Route path="/cars/:slug" element={<CarPage />} />
           <Route path="/services" element={<Services />} /><Route path="/about" element={<About />} /><Route path="/contact" element={<Contact />} /><Route path="/book" element={<Book />} /><Route path="*" element={<Home />} /></Routes>
       </Guard></main>
-      <footer className="ftr"><div><strong>{SITE.name}</strong><p>{SITE.tagline}</p></div><address>{SITE.address.map((l) => <span key={l}>{l}<br /></span>)}<a href={SITE.maps} target="_blank" rel="noopener noreferrer">Google Maps</a></address>
+      <footer className="ftr"><div><strong className="ftr__brand"><img src="/assets/brand/saadcar-logo-light.svg" alt="SAAD CAR" width="3840" height="1228" loading="lazy" /> <span>RENTAL SERVICES</span></strong><p>{SITE.tagline}</p></div><address>{SITE.address.map((l) => <span key={l}>{l}<br /></span>)}<a href={SITE.maps} target="_blank" rel="noopener noreferrer">Google Maps</a></address>
         <nav aria-label="Footer"><Link to="/">Home</Link>{["cars", "services", "about", "contact", "book"].map((p) => <Link key={p} to={`/${p}`}>{p[0].toUpperCase() + p.slice(1)}</Link>)}</nav>
         <nav aria-label="Fleet">{fleet.map((c) => <Link key={c.slug} to={`/cars/${c.slug}`}>{c.title}</Link>)}</nav>
         <small>© {new Date().getFullYear()} {SITE.name} · build {typeof __BUILD_ID__ !== "undefined" ? __BUILD_ID__.slice(-6) : "dev"}</small></footer>

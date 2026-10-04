@@ -56,6 +56,7 @@ export async function makeReceipt(d, v, ref = refNo()) {
   try { await document.fonts?.load(`700 20px Manrope`); await document.fonts?.load(`500 20px Manrope`); } catch { /* fallback font */ }
   const g = (k) => clean(d[k]) || "-";
   const img = await loadImg(v.image);
+  const logo = await loadImg("/assets/brand/saadcar-logo-light-1200.png");
 
   const rows = [
     ["CUSTOMER", [["Name", g("name")], ["Phone", g("phone")], ...(clean(d.email) ? [["Email", g("email")]] : [])]],
@@ -95,7 +96,8 @@ export async function makeReceipt(d, v, ref = refNo()) {
   // header
   c.fillStyle = INK; c.fillRect(0, 0, W, 170);
   c.fillStyle = "#fff"; c.font = `800 34px ${FONT}`; c.textAlign = "left";
-  c.fillText(SITE.name, 40, 70);
+  if (logo) { const lh = 58, lw = lh * (logo.width / logo.height); c.drawImage(logo, 40, 18, lw, lh); c.font = `500 17px ${FONT}`; c.fillStyle = "#fff"; c.fillText("RENTAL SERVICES", 40 + lw + 16, 64); }
+  else c.fillText(SITE.name, 40, 70);
   c.font = `500 20px ${FONT}`; c.fillStyle = "#c9ccd1";
   c.fillText(SITE.tagline, 40, 104);
   c.font = `700 17px ${FONT}`; c.fillStyle = "#fff";

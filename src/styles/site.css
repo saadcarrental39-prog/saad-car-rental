@@ -187,3 +187,10 @@ body{display:block;padding:0;background:#fff;color:#16181b;font-family:Manrope,s
 .adm__bar{position:fixed;inset:auto 0 0;z-index:6;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:#fff;border-top:1px solid #e6e6e3;box-shadow:0 -10px 24px -18px rgba(0,0,0,.4)}.adm__bar span{font-size:.8rem;color:#3a3f46}
 @media(max-width:380px){.adm__row{grid-template-columns:60px 1fr auto}.adm__row>img{width:60px;height:44px}}
 .adm__ver{text-align:center;color:#8a8d93;font-size:.7rem;line-height:1.5;padding:18px 16px 4px}
+
+/* SAAD CAR logo (replaces the text "SAAD CAR"; "RENTAL SERVICES" text stays) */
+.logo{display:inline-flex;align-items:center;gap:.7em}
+.logo__img{display:block;height:36px;width:auto}
+.ftr__brand{display:inline-flex;align-items:center;gap:.7em;flex-wrap:wrap}.ftr__brand img{display:block;height:46px;width:auto}
+.ftr__brand span{font-size:.78rem;font-weight:500;letter-spacing:.2em}
+@media(max-width:900px){.logo__img{height:32px}}

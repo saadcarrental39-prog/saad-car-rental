@@ -1,6 +1,0 @@
-tunnel: minhaj-welding
-credentials-file: C:\Users\YOUR_USER\.cloudflared\<TUNNEL-ID>.json
-ingress:
-  - hostname: api.minhajwelding.com
-    service: http://localhost:3001
-  - service: http_status:404
