@@ -1,5 +1,5 @@
 import { waHref } from "./config";
-import { makeReceipt, makeThumb, downloadReceipt, copyImage, isMobile, canShareFiles, shareReceipt } from "./receipt";
+import { makeReceipt, makeThumb, downloadReceipt, copyImage, isMobile } from "./receipt";
 
 export function openChat(text = "") {
   const url = waHref(text);
@@ -57,25 +57,21 @@ export async function sendBooking(d, v, ready) {
 
     const mobile = isMobile();
     if (mobile) {
-      // Phone: share sheet with the receipt PNG -> WhatsApp opens the image preview screen (Send button) for the chosen chat.
-      // (A website cannot pre-select the chat; the customer taps WhatsApp > owner's chat > Send.)
-      if (canShareFiles(receipt.blob, receipt.ref)) {
-        const s = await shareReceipt(receipt.blob, receipt.ref);
-        if (s === "shared" || s === "cancelled") return { receipt, delivered: false, shared: true, mobile };
-        return { receipt, delivered: false, needsTap: true, mobile }; // browser wants a fresh tap -> on-screen Share button
-      }
-      // Browser cannot share files -> private receipt link (needs the RECEIPTS KV binding, see WHATSAPP_SETUP.md).
+      // Phone: open the OWNER's chat directly (never the contact list). A website cannot attach a file to a chosen chat,
+      // so the receipt goes in as a private link: WhatsApp shows the receipt picture as the link preview, customer taps Send.
       const link = await postLink(receipt, d, v);
-      if (link) return { receipt, delivered: false, linked: true, link, opened: openChat(link), mobile };
+      const car = `${v.name} ${v.trim || ""} ${v.color || ""}`.replace(/\s+/g, " ").trim();
+      if (link) {
+        const text = `New booking ${receipt.ref}\n${car}\n${link}`;
+        return { receipt, delivered: false, linked: true, link, text, opened: openChat(text), mobile };
+      }
+      // Receipt links not set up / failed: still open the owner's chat with the booking details typed in (no contact list).
+      const lines = [`New booking ${receipt.ref}`, car, `Name: ${d.name || ""}`, `Phone: ${d.phone || ""}`, `Pickup: ${d.pickup || ""}`, `Drop: ${d.drop || ""}`, `When: ${d.date || ""} ${d.time || ""}`.trim()];
+      const text = lines.join("\n");
+      return { receipt, delivered: false, textOnly: true, text, opened: openChat(text), mobile };
     }
     // PC (and phone if links are not set up): copy the PNG, then open the owner's chat (number already filled in).
     const copied = await copyImage(receipt.blob);
-    if (!copied && mobile && canShareFiles(receipt.blob, receipt.ref)) {
-      // Clipboard image not supported on this phone browser -> share sheet is the only way to attach the PNG.
-      const s = await shareReceipt(receipt.blob, receipt.ref);
-      if (s !== "failed") return { receipt, delivered: false, shared: true, mobile };
-      return { receipt, delivered: false, needsTap: true, mobile };
-    }
     if (!copied) downloadReceipt(receipt.blob, receipt.ref);
     const opened = openChat();
     return { receipt, delivered: false, copied, opened, mobile };
