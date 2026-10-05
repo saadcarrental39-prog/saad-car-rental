@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { SITE, waHref } from "../config";
 import { makeReceipt, downloadReceipt, canShareFiles, shareReceipt } from "../receipt";
-import { sendBooking } from "../sendBooking";
+import { sendBooking, buildMessage } from "../sendBooking";
 
 export default function ReceiptView({ d, v, onBack, initial, onDone }) {
   const [r, setR] = useState(initial?.receipt || null);
@@ -15,7 +15,7 @@ export default function ReceiptView({ d, v, onBack, initial, onDone }) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => () => r && URL.revokeObjectURL(r.url), [r]);
 
-  const share = () => r && shareReceipt(r.blob, r.ref);
+  const share = () => r && shareReceipt(r.blob, r.ref, buildMessage(d, v, r.ref));
   const send = async () => { setBusy(true); const res = await sendBooking(d, v, r); setBusy(false); if (res) setInfo(res); };
 
   return (
@@ -31,7 +31,7 @@ export default function ReceiptView({ d, v, onBack, initial, onDone }) {
             : info.linked
             ? <>{info.opened ? "WhatsApp chat khul gayi hai. " : "WhatsApp chat kholne ke liye neeche button dabayen. "}Receipt ka link message box mein aa gaya hai: bas Send dabayen.</>
             : info.needsTap || info.shared
-            ? (info.shared ? "Share screen mein WhatsApp chunen, hamari chat select karen aur Send dabayen. Dobara kholne ke liye neeche \"Share Receipt on WhatsApp\" dabayen." : "Receipt bhejne ke liye neeche \"Share Receipt on WhatsApp\" dabayen, WhatsApp chunen, hamari chat select karen aur Send dabayen.")
+            ? (info.shared ? "WhatsApp mein hamari chat \"Saad Car Rental\" chunen: receipt ki picture aur text caption mein aa jayega, bas Send dabayen. Dobara kholne ke liye neeche \"Share Receipt on WhatsApp\" dabayen." : "Receipt bhejne ke liye neeche \"Share Receipt on WhatsApp\" dabayen, WhatsApp mein hamari chat chunen aur Send dabayen.")
             : <>{info.opened ? "WhatsApp chat khul gayi hai. " : "WhatsApp chat kholne ke liye neeche button dabayen. "}
                 {info.copied ? (info.mobile ? "Receipt copy ho chuki hai: message box par ungli dabaa kar rakhein, Paste chunen aur Send karein." : "Receipt copy ho chuki hai: message box mein paste (Ctrl+V) karke Send karein.") : "Receipt save ho gayi hai: chat mein attach (📎) karke Send karein."}</>}
         </p>
@@ -39,7 +39,7 @@ export default function ReceiptView({ d, v, onBack, initial, onDone }) {
       <p className="row noprint">
         {onBack && <button className="btn" onClick={onBack}>Edit Booking</button>}
         <button className="btn" disabled={!r} onClick={() => r && downloadReceipt(r.blob, r.ref)}>Download PNG</button>
-        {info && !info.delivered && (!info.linked || false) && r && canShareFiles(r.blob, r.ref) && <button className="btn btn--dark" onClick={share}>Share Receipt on WhatsApp</button>}
+        {info && !info.delivered && r && canShareFiles(r.blob, r.ref) && <button className="btn btn--dark" onClick={share}>Share Receipt on WhatsApp</button>}
         {waHref()
           ? (info
               ? <a className={info.delivered ? "btn" : "btn btn--dark"} href={waHref(info.text || info.link || "")} target="_blank" rel="noopener noreferrer">{info.delivered ? "Chat with us on WhatsApp" : "Open WhatsApp Chat"}</a>

@@ -193,9 +193,10 @@ export const canShareFiles = (blob, ref) => {
   try { return !!(navigator.share && navigator.canShare?.({ files: [fileOf(blob, ref)] })); } catch { return false; }
 };
 /** Share sheet with the PNG attached (choose WhatsApp). Returns "shared" | "cancelled" | "failed". */
-export async function shareReceipt(blob, ref) {
+export async function shareReceipt(blob, ref, text = "") {
   try {
-    await navigator.share({ files: [fileOf(blob, ref)] });
+    // text = caption: WhatsApp shows the image preview with this caption and the Send button.
+    await navigator.share(text ? { files: [fileOf(blob, ref)], text } : { files: [fileOf(blob, ref)] });
     return "shared";
   } catch (e) {
     return e?.name === "AbortError" ? "cancelled" : "failed";

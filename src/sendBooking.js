@@ -1,5 +1,19 @@
 import { waHref } from "./config";
-import { makeReceipt, makeThumb, downloadReceipt, copyImage, isMobile } from "./receipt";
+import { makeReceipt, makeThumb, downloadReceipt, copyImage, isMobile, canShareFiles, shareReceipt } from "./receipt";
+
+const prettyDate = (s) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ""); if (!m) return s || ""; return `${+m[3]} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+m[2] - 1]} ${m[1]}`; };
+const prettyTime = (s) => { const m = /^(\d{1,2}):(\d{2})/.exec(s || ""); if (!m) return s || ""; const h = +m[1]; return `${h % 12 || 12}:${m[2]} ${h >= 12 ? "PM" : "AM"}`; };
+/** Premium WhatsApp caption/message (WhatsApp *bold* and _italic_). Exported so the receipt screen can reuse it. */
+export function buildMessage(d, v, ref) {
+  const car = `${v.name} ${v.trim || ""} ${v.color || ""}`.replace(/\s+/g, " ").trim();
+  const L = ["🚘 *SAAD CAR RENTAL SERVICES*", "✨ _Premium Car Rental With Professional Driver_", "━━━━━━━━━━━━━━━", `🧾 *New Booking Request*  #${ref}`, "",
+    `🚗 *Vehicle:* ${car}`, `👤 *Name:* ${d.name || ""}`, `📞 *Phone:* ${d.phone || ""}`, `📍 *Pickup:* ${d.pickup || ""}`, `🏁 *Drop-off:* ${d.drop || ""}`,
+    `📅 *Date:* ${prettyDate(d.date)}`, `⏰ *Time:* ${prettyTime(d.time)}`];
+  if (d.pax) L.push(`👥 *Passengers:* ${d.pax}`);
+  if (d.extra && String(d.extra).trim()) L.push(`📝 *Notes:* ${String(d.extra).trim()}`);
+  L.push("━━━━━━━━━━━━━━━", "✅ Please confirm my booking. Thank you! 🙏");
+  return L.join("\n");
+}
 
 export function openChat(text = "") {
   const url = waHref(text);
@@ -57,17 +71,20 @@ export async function sendBooking(d, v, ready) {
 
     const mobile = isMobile();
     if (mobile) {
-      // Phone: open the OWNER's chat directly (never the contact list). A website cannot attach a file to a chosen chat,
-      // so the receipt goes in as a private link: WhatsApp shows the receipt picture as the link preview, customer taps Send.
-      const link = await postLink(receipt, d, v);
-      const car = `${v.name} ${v.trim || ""} ${v.color || ""}`.replace(/\s+/g, " ").trim();
-      if (link) {
-        const text = `New booking ${receipt.ref}\n${car}\n${link}`;
-        return { receipt, delivered: false, linked: true, link, text, opened: openChat(text), mobile };
+      const text = buildMessage(d, v, receipt.ref);
+      // Phone, best case: share sheet with the receipt IMAGE + the premium text as caption. In WhatsApp the customer picks
+      // the Saad Car Rental chat once, sees the image preview with the caption and taps Send. (A website cannot pre-select the chat.)
+      if (canShareFiles(receipt.blob, receipt.ref)) {
+        const s = await shareReceipt(receipt.blob, receipt.ref, text);
+        if (s === "shared" || s === "cancelled") return { receipt, delivered: false, shared: true, text, mobile };
+        return { receipt, delivered: false, needsTap: true, text, mobile }; // browser wants a fresh tap -> on-screen Share button
       }
-      // Receipt links not set up / failed: still open the owner's chat with the booking details typed in (no contact list).
-      const lines = [`New booking ${receipt.ref}`, car, `Name: ${d.name || ""}`, `Phone: ${d.phone || ""}`, `Pickup: ${d.pickup || ""}`, `Drop: ${d.drop || ""}`, `When: ${d.date || ""} ${d.time || ""}`.trim()];
-      const text = lines.join("\n");
+      // Browser cannot share files: owner's chat opens directly with the text (+ private receipt link whose preview shows the image).
+      const link = await postLink(receipt, d, v);
+      if (link) {
+        const t = `${text}\n\n🧾 *Receipt:* ${link}`;
+        return { receipt, delivered: false, linked: true, link, text: t, opened: openChat(t), mobile };
+      }
       return { receipt, delivered: false, textOnly: true, text, opened: openChat(text), mobile };
     }
     // PC (and phone if links are not set up): copy the PNG, then open the owner's chat (number already filled in).
