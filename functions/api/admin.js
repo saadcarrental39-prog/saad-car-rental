@@ -2,6 +2,7 @@
 // The password is checked HERE on the server (never in the browser). Set in Cloudflare Pages > Settings > Variables:
 //   ADMIN_USER, ADMIN_PASS (secret)   optional: ADMIN_SECRET (extra signing secret)
 // Storage: KV binding SITEDATA (or the existing RECEIPTS binding).
+import { getVapid, subId } from "../_lib/push.js";
 const enc = new TextEncoder();
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 const same = (a, b) => { a = String(a); b = String(b); let d = a.length ^ b.length; for (let i = 0; i < Math.max(a.length, b.length); i++) d |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0); return d === 0; };
@@ -52,6 +53,29 @@ export async function onRequestPost({ request, env }) {
     return json({ error: "invalid" }, 401);
   }
   if (!(await valid(env, (request.headers.get("authorization") || "").replace(/^Bearer\s+/i, "")))) return json({ error: "unauthorized" }, 401);
+  if (b.action === "orders") {                                       // newest first; unread = seen is 0
+    const l = await kv.list({ prefix: "ord:", limit: 300 });
+    return json({ orders: l.keys.map((k) => k.metadata).filter(Boolean), unread: l.keys.filter((k) => k.metadata && !k.metadata.seen).length });
+  }
+  if (b.action === "order_seen") {
+    const ids = new Set((Array.isArray(b.ids) ? b.ids : []).map(String).slice(0, 100)); if (!ids.size) return json({ ok: true });
+    const l = await kv.list({ prefix: "ord:", limit: 300 });
+    await Promise.all(l.keys.filter((k) => k.metadata && ids.has(k.metadata.id) && !k.metadata.seen).map((k) => kv.put(k.name, "1", { expirationTtl: 60 * 60 * 24 * 120, metadata: { ...k.metadata, seen: 1 } })));
+    return json({ ok: true });
+  }
+  if (b.action === "order_del") {
+    const id = String(b.id || ""); if (!/^[a-f0-9]{20}$/.test(id)) return json({ error: "bad_request" }, 400);
+    const l = await kv.list({ prefix: "ord:", limit: 300 });
+    await Promise.all([kv.delete(`oimg:${id}`), ...l.keys.filter((k) => k.name.endsWith(`:${id}`)).map((k) => kv.delete(k.name))]);   // oid:<id> stays, so a repeat post cannot bring it back
+    return json({ ok: true });
+  }
+  if (b.action === "push_key") return json({ key: (await getVapid(kv)).pub });
+  if (b.action === "push_sub") {
+    const sub = b.sub; if (!sub?.endpoint || !/^https:\/\//.test(sub.endpoint) || !sub.keys?.p256dh || !sub.keys?.auth) return json({ error: "bad_request" }, 400);
+    await kv.put(`push:sub:${await subId(sub.endpoint)}`, JSON.stringify({ endpoint: sub.endpoint, keys: { p256dh: String(sub.keys.p256dh), auth: String(sub.keys.auth) } }));
+    return json({ ok: true });
+  }
+  if (b.action === "push_off") { if (b.endpoint) await kv.delete(`push:sub:${await subId(String(b.endpoint))}`); return json({ ok: true }); }
   if (b.action === "load") { try { return json({ data: JSON.parse((await kv.get("site:fleet")) || "{}") }); } catch { return json({ data: {} }); } }
   if (b.action === "save") {
     const data = clean(b.data), old = await kv.get("site:fleet");
@@ -70,4 +94,14 @@ export async function onRequestPost({ request, env }) {
     return json({ url: `/api/img/${id}` });
   }
   return json({ error: "bad_action" }, 400);
+}
+
+// GET /api/admin?img=<orderId>&t=<token>  -> the receipt picture (token in the URL because <img> cannot send headers)
+export async function onRequestGet({ request, env }) {
+  if (!env.ADMIN_USER || !env.ADMIN_PASS) return json({ error: "admin_not_configured" }, 503);
+  const kv = env.SITEDATA || env.RECEIPTS; if (!kv) return json({ error: "no_storage" }, 503);
+  const u = new URL(request.url), id = u.searchParams.get("img") || "";
+  if (!/^[a-f0-9]{20}$/.test(id) || !(await valid(env, u.searchParams.get("t") || ""))) return json({ error: "unauthorized" }, 401);
+  const buf = await kv.get(`oimg:${id}`, "arrayBuffer"); if (!buf) return json({ error: "not_found" }, 404);
+  return new Response(buf, { headers: { "content-type": "image/png", "cache-control": "private, max-age=86400", "x-robots-tag": "noindex" } });
 }

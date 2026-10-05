@@ -35,3 +35,6 @@
 /saad-owner-7k3x9/*
   Cache-Control: no-cache
   X-Robots-Tag: noindex, nofollow
+
+/sounds/*
+  Cache-Control: no-cache

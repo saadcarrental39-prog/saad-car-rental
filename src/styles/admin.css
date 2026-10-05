@@ -95,7 +95,7 @@
 .ad-ver{text-align:center;color:#9a9da4;font-size:.72rem;line-height:1.7;padding:6px 0}
 
 /* bottom bars */
-.ad-tabs{position:fixed;inset:auto 0 0;z-index:7;display:grid;grid-template-columns:repeat(3,1fr);padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:rgba(255,255,255,.9);backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);border-top:1px solid var(--ad-line)}
+.ad-tabs{position:fixed;inset:auto 0 0;z-index:7;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px));background:rgba(255,255,255,.9);backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);border-top:1px solid var(--ad-line)}
 .ad-tabs button{display:grid;justify-items:center;gap:4px;padding:8px 4px;border:0;background:none;font-size:.68rem;font-weight:700;letter-spacing:.04em;color:#9a9da4;cursor:pointer;position:relative;transition:color .2s}
 .ad-tabs button.on{color:var(--ad-ink)}
 .ad-tabs button.on::before{content:"";position:absolute;top:-9px;width:26px;height:3px;border-radius:0 0 4px 4px;background:var(--ad-ink)}
@@ -107,3 +107,25 @@
 @keyframes adUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @media(max-width:380px){.ad-row{grid-template-columns:68px 1fr auto}.ad-thumb{width:68px;height:50px}.ad-two{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.adm *{animation:none!important;transition:none!important}}
+
+/* booking orders */
+.ad-ic{position:relative;display:inline-grid}
+.ad-count{position:absolute;top:-7px;right:-12px;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:#e11d2e;color:#fff;font-style:normal;font-size:.68rem;font-weight:800;line-height:20px;text-align:center;box-shadow:0 0 0 2px #fff;animation:adPop .5s ease both}
+@keyframes adPop{0%{transform:scale(.3)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+.ad-alert{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:14px 18px;border:0;border-radius:18px;background:#e11d2e;color:#fff;font:inherit;font-weight:700;cursor:pointer;animation:adPop .5s ease both}
+.ad-alert b{background:#fff;color:#e11d2e;border-radius:99px;padding:5px 12px;font-size:.78rem}
+.ad-ok{color:#1d6b3a}.ad-link{border:0;background:none;color:var(--ad-ink);font-weight:700;text-decoration:underline;cursor:pointer;padding:0 0 0 6px}
+.ad-empty{display:grid;justify-items:center;gap:8px;text-align:center;padding:34px 18px;color:var(--ad-sub)}.ad-empty b{color:var(--ad-ink)}.ad-empty .ad-i{width:34px;height:34px}
+.ad-ord{display:grid;gap:14px}
+.ad-ord.is-new{border-color:#e11d2e;box-shadow:0 0 0 3px rgba(225,29,46,.12)}
+.ad-ord header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.ad-ord header b{display:block;font-size:1.05rem;letter-spacing:-.02em}.ad-ord header small{color:var(--ad-sub);font-size:.76rem;font-weight:600}
+.ad-ord header em{font-style:normal;background:#e11d2e;color:#fff;font-size:.66rem;font-weight:800;letter-spacing:.1em;padding:5px 10px;border-radius:99px}
+.ad-rcpt{display:block;width:100%;height:230px;padding:0;border:1px solid var(--ad-line);border-radius:18px;background:var(--ad-soft);overflow:hidden;cursor:zoom-in}
+.ad-rcpt img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.ad-ord dl{display:grid;gap:0;margin:0}.ad-ord dl div{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-top:1px solid var(--ad-line);font-size:.88rem}
+.ad-ord dt{color:var(--ad-sub);font-weight:600;white-space:nowrap}.ad-ord dd{margin:0;font-weight:700;text-align:right;overflow-wrap:anywhere}
+.ad-acts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.ad-acts .ad-btn{padding:0 8px;min-height:46px;font-size:.8rem;gap:6px}.ad-acts .ad-btn--del{grid-column:1/-1;margin-top:0}
+.ad-lb{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.92);overflow:auto;padding:56px 12px 24px;-webkit-overflow-scrolling:touch}
+.ad-lb img{display:block;width:min(560px,100%);margin:0 auto;border-radius:12px;background:#fff}
+.ad-lb button{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:14px;width:44px;height:44px;border:0;border-radius:50%;background:#fff;font-size:1.7rem;line-height:1;cursor:pointer}

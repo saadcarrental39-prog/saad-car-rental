@@ -33,6 +33,10 @@ const IEyeOff = I('<path d="M3 3l18 18M10.6 5.7A9.7 9.7 0 0 1 12 5.5c6 0 9.5 6.5
 const IOut = I('<path d="M10 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H10M15 8l4 4-4 4M19 12H9.5"/>');
 const IDown = I('<path d="M12 4v11M7.5 11 12 15.5 16.5 11M5 19.5h14"/>');
 const IGlobe = I('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 3.8 5.2 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.2-3.8-8.5S9.4 5.9 12 3.5z"/>');
+const IBell = I('<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>');
+const IPhone = I('<path d="M6.5 4h3l1.6 4-2 1.3a10 10 0 0 0 4.6 4.6l1.3-2 4 1.6v3a2 2 0 0 1-2.2 2A14.5 14.5 0 0 1 4.5 6.2 2 2 0 0 1 6.5 4z"/>');
+const ITrash = I('<path d="M4.5 7h15M9.5 7V4.8h5V7M6.5 7l.8 12.2h9.4L17.5 7M10 11v5M14 11v5"/>');
+const IChat = I('<path d="M4.5 18.5 5.6 15A7.5 7.5 0 1 1 9 18z"/>');
 const IImg = I('<rect x="3.5" y="5" width="17" height="14" rx="2.4"/><circle cx="9" cy="10" r="1.6"/><path d="m4.5 17.5 4.8-4.4 3.4 3 2.4-2.2 4.4 3.6"/>');
 
 /* ---------- opening animation (plays when the app is opened), then the login / dashboard appears ---------- */
@@ -139,10 +143,113 @@ function Row({ v, ov, kind, tok, change, remove }) {
       </div></details></div>);
 }
 
+
+/* ---------- booking orders: list, tone, app-icon count, phone notifications ---------- */
+const TONE = "/sounds/order-tone.mp3";
+const b64ToU8 = (b) => { const p = (b + "=".repeat((4 - (b.length % 4)) % 4)).replace(/-/g, "+").replace(/_/g, "/"), r = atob(p); return Uint8Array.from(r, (c) => c.charCodeAt(0)); };
+const fmtDate = (s) => { const d = new Date(`${s}T00:00:00`); return isNaN(d) ? s : d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); };
+const fmtTime = (s) => { const m = /^(\d{1,2}):(\d{2})/.exec(s || ""); if (!m) return s || ""; const h = +m[1]; return `${h % 12 || 12}:${m[2]} ${h >= 12 ? "PM" : "AM"}`; };
+const waNum = (p) => { let d = String(p || "").replace(/\D/g, ""); if (d.startsWith("00")) d = d.slice(2); else if (d.startsWith("0")) d = `92${d.slice(1)}`; return d; };
+const ago = (ts) => { const m = Math.max(0, Math.round((Date.now() - ts) / 60000)); return m < 1 ? "abhi" : m < 60 ? `${m} min pehle` : m < 1440 ? `${Math.round(m / 60)} ghante pehle` : new Date(ts).toLocaleDateString("en-GB", { day: "numeric", month: "short" }); };
+
+function useOrders(tok, out, tab) {
+  const [orders, setOrders] = useState(null), [fresh, setFresh] = useState(() => new Set()), [blocked, setBlocked] = useState(false), [banner, setBanner] = useState("");
+  const known = useRef(null), el = useRef(null), ringState = useRef({ stop: false }), pending = useRef(false), tabRef = useRef(tab);
+  tabRef.current = tab;
+  const audio = () => { if (!el.current) { el.current = new Audio(TONE); el.current.preload = "auto"; el.current.volume = 1; } return el.current; };
+  const stopRing = () => { ringState.current.stop = true; pending.current = false; const a = el.current; if (a) { a.onended = null; a.pause(); } };
+  const ring = (times = 3) => {
+    stopRing(); const a = audio(), st = { stop: false }; ringState.current = st; let n = 0;
+    const next = () => { if (st.stop || n >= times) return; n++; a.currentTime = 0; a.play().then(() => { setBlocked(false); pending.current = false; }).catch(() => { pending.current = true; setBlocked(true); }); };
+    a.onended = () => setTimeout(next, 450); next();
+  };
+  // the first tap anywhere unlocks sound on phones (browser rule); a tone that was blocked plays right then
+  useEffect(() => {
+    const h = () => { const a = audio(); if (pending.current) { ring(3); return; } if (!a.dataset.primed) { a.dataset.primed = "1"; a.muted = true; a.play().then(() => { a.pause(); a.currentTime = 0; a.muted = false; }).catch(() => { a.muted = false; }); } };
+    addEventListener("pointerdown", h, { passive: true }); return () => removeEventListener("pointerdown", h);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const refresh = async () => {
+    try {
+      const list = (await api("orders", {}, tok)).orders || [], unseen = list.filter((o) => !o.seen);
+      if (known.current === null) { known.current = new Set(list.map((o) => o.id)); setFresh(new Set(unseen.map((o) => o.id))); if (unseen.length && tabRef.current !== "orders") { setBanner(`🔔 ${unseen.length} naya booking order`); ring(2); } }
+      else { const add = list.filter((o) => !known.current.has(o.id)); add.forEach((o) => known.current.add(o.id)); if (add.length) { setFresh((f) => new Set([...f, ...add.map((o) => o.id)])); setBanner(`🔔 ${add.length} naya booking order`); ring(3); } }
+      setOrders(list);
+    } catch (e) { if (e.status === 401) out(); }
+  };
+  useEffect(() => {
+    refresh(); const t = setInterval(() => document.visibilityState === "visible" && refresh(), 12000);
+    const vis = () => document.visibilityState === "visible" && refresh();
+    const msg = (e) => { if (e.data?.type === "new-order") refresh(); };
+    document.addEventListener("visibilitychange", vis); navigator.serviceWorker?.addEventListener("message", msg);
+    return () => { clearInterval(t); document.removeEventListener("visibilitychange", vis); navigator.serviceWorker?.removeEventListener("message", msg); stopRing(); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (tab === "orders") { stopRing(); setBanner(""); } }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { // viewing the Orders tab marks them as seen (count goes down)
+    if (tab !== "orders" || !orders) return; const ids = orders.filter((o) => !o.seen).map((o) => o.id); if (!ids.length) return;
+    const t = setTimeout(async () => { try { await api("order_seen", { ids }, tok); setOrders((os) => os && os.map((o) => (ids.includes(o.id) ? { ...o, seen: 1 } : o))); } catch { /* retry on next refresh */ } }, 1500);
+    return () => clearTimeout(t);
+  }, [tab, orders]); // eslint-disable-line react-hooks/exhaustive-deps
+  const unread = orders ? orders.filter((o) => !o.seen).length : 0;
+  useEffect(() => { // red count on the phone's app icon + in the tab title
+    try { unread ? navigator.setAppBadge?.(unread) : navigator.clearAppBadge?.(); } catch { /* not supported */ }
+    document.title = unread ? `(${unread}) SAAD Admin` : "SAAD Admin";
+  }, [unread]);
+  const del = async (id) => { await api("order_del", { id }, tok); setOrders((os) => os.filter((o) => o.id !== id)); };
+  return { orders, unread, fresh, blocked, banner, setBanner, ring, del, refresh };
+}
+
+function PushCard({ tok, ring, pwa }) {
+  const ok = "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+  const [perm, setPerm] = useState(ok ? Notification.permission : "unsupported"), [on, setOn] = useState(false), [msg, setMsg] = useState("");
+  useEffect(() => {
+    if (!ok || perm !== "granted") return;
+    navigator.serviceWorker.ready.then(async (reg) => { const sub = await reg.pushManager.getSubscription(); if (sub) { setOn(true); api("push_sub", { sub: sub.toJSON() }, tok).catch(() => {}); } }).catch(() => {});
+  }, [perm]); // eslint-disable-line react-hooks/exhaustive-deps
+  const enable = async () => {
+    ring(1);
+    try {
+      const p = await Notification.requestPermission(); setPerm(p);
+      if (p !== "granted") return setMsg("Notification allow nahi hui. Phone Settings > Apps > SAAD Admin > Notifications mein allow karein.");
+      const reg = await navigator.serviceWorker.ready, { key } = await api("push_key", {}, tok);
+      const sub = (await reg.pushManager.getSubscription()) || (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToU8(key) }));
+      await api("push_sub", { sub: sub.toJSON() }, tok); setOn(true); setMsg("Notifications on ho gayin. App band hone par bhi order ka alert aayega.");
+    } catch { setMsg("Notification on nahi hui. Internet check karke dobara try karein."); }
+  };
+  if (!ok) return <p className="ad-note">Is browser mein phone notifications support nahi. Chrome (Android) ya installed app (iPhone) istemal karein.</p>;
+  if (pwa.ios && !pwa.standalone) return <p className="ad-note">iPhone par notification ke liye pehle Account tab se app ko Home Screen par install karein, phir wahan se kholein.</p>;
+  if (on && perm === "granted") return <p className="ad-note ad-ok">✅ Phone notification on hai. <button type="button" className="ad-link" onClick={() => ring(1)}>🔊 Tone test</button></p>;
+  return (<div className="ad-card ad-install"><b>🔔 Order notification on karein</b><p className="ad-note">Naya booking order aate hi phone par alert aur tone aayegi, chahe app band ho.</p>
+    <button type="button" className="ad-btn" onClick={enable}><IBell />Notifications on karein</button>{msg && <p className="ad-note">{msg}</p>}</div>);
+}
+
+function Orders({ tok, st, pwa }) {
+  const { orders, fresh, blocked, ring, del } = st, [view, setView] = useState(""), [busy, setBusy] = useState("");
+  const src = (id) => `/api/admin?img=${id}&t=${encodeURIComponent(tok)}`;
+  if (!orders) return <div className="ad-load" style={{ minHeight: "40svh" }}><span className="ad-spin" /><p>Orders load ho rahe hain…</p></div>;
+  return (<>
+    <PushCard tok={tok} ring={ring} pwa={pwa} />
+    {blocked && <button type="button" className="ad-btn ad-btn--ghost ad-btn--lg" onClick={() => ring(2)}>🔊 Tone ke liye yahan tap karein</button>}
+    {!orders.length && <section className="ad-card ad-empty"><IBell /><b>Abhi koi order nahi</b><span>Website se booking aate hi yahan receipt ke saath nazar aayegi.</span></section>}
+    {orders.map((o) => (<article className={`ad-card ad-ord${fresh.has(o.id) ? " is-new" : ""}`} key={o.id}>
+      <header><div><b>{o.car || "Booking"}</b><small>#{o.ref} · {ago(o.ts)}</small></div>{fresh.has(o.id) && <em>NEW</em>}</header>
+      <button type="button" className="ad-rcpt" onClick={() => setView(o.id)} aria-label="Receipt bari karein"><img src={src(o.id)} alt={`Receipt ${o.ref}`} loading="lazy" /></button>
+      <dl>{[["👤 Naam", o.name], ["📞 Phone", o.phone], ["📍 Pickup", o.pickup], ["🏁 Drop-off", o.drop], ["📅 Date", fmtDate(o.date)], ["⏰ Time", fmtTime(o.time)], ["👥 Passengers", o.pax], ["📝 Notes", o.extra]].filter(([, v]) => v).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+      <div className="ad-acts">
+        <a className="ad-btn ad-btn--ghost" href={`tel:${String(o.phone).replace(/[^\d+]/g, "")}`}><IPhone />Call</a>
+        <a className="ad-btn ad-btn--ghost" href={`https://wa.me/${waNum(o.phone)}`} target="_blank" rel="noopener noreferrer"><IChat />WhatsApp</a>
+        <a className="ad-btn ad-btn--ghost" href={src(o.id)} download={`${o.ref}.png`}><IDown />Receipt</a>
+        <button type="button" className="ad-btn ad-btn--del" disabled={busy === o.id} onClick={async () => { if (!confirm("Yeh order delete karein? Receipt bhi hat jayegi.")) return; setBusy(o.id); try { await del(o.id); } catch { alert("Delete nahi hua. Internet check karein."); } setBusy(""); }}><ITrash />Delete</button>
+      </div></article>))}
+    {view && <div className="ad-lb" onClick={() => setView("")} role="dialog" aria-label="Receipt"><button type="button" aria-label="Band karein">×</button><img src={src(view)} alt="Receipt" /></div>}
+  </>);
+}
+
 function Panel({ tok, out, pwa }) {
-  const [ov, setOv] = useState(null), [dirty, setDirty] = useState(false), [msg, setMsg] = useState(""), [loadErr, setLoadErr] = useState(""), [busy, setBusy] = useState(false), [tab, setTab] = useState("fleet"), [q, setQ] = useState(""), [formKey, setFormKey] = useState(0);
+  const [ov, setOv] = useState(null), [dirty, setDirty] = useState(false), [msg, setMsg] = useState(""), [loadErr, setLoadErr] = useState(""), [busy, setBusy] = useState(false), [tab, setTab] = useState(() => (new URLSearchParams(location.search).get("tab") === "fleet" ? "fleet" : "orders")), [q, setQ] = useState(""), [formKey, setFormKey] = useState(0);
   const norm = (d) => ({ vehicles: {}, added: [], cats: [], ...(d || {}) });
   const load = () => { setLoadErr(""); api("load", {}, tok).then((r) => setOv(norm(r.data))).catch((e) => (e.status === 401 ? out() : setLoadErr(MSG[e.message] || "Data load nahi hua. Internet check karein."))); };
+  const st = useOrders(tok, out, tab);
+  useEffect(() => { const m = (e) => e.data?.type === "open-orders" && setTab("orders"); navigator.serviceWorker?.addEventListener("message", m); return () => navigator.serviceWorker?.removeEventListener("message", m); }, []);
   useEffect(load, []);
   useEffect(() => { if (!msg) return; const t = setTimeout(() => setMsg(""), 4500); return () => clearTimeout(t); }, [msg]);
   const edit = (fn) => { setOv((o) => { const n = structuredClone(o); fn(n); return n; }); setDirty(true); setMsg(""); };
@@ -159,10 +266,12 @@ function Panel({ tok, out, pwa }) {
   };
   if (!ov) return (<div className="ad-load">{loadErr ? <><p>{loadErr}</p><button type="button" className="ad-btn" onClick={load}>Dobara try karein</button></> : <><span className="ad-spin" /><p>Load ho raha hai…</p></>}</div>);
   const match = (c, v) => !q.trim() || `${v.name} ${v.trim || ""} ${v.color || ""} ${c.title}`.toLowerCase().includes(q.trim().toLowerCase());
-  const tabs = [["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["me", "Account", IUser]];
+  const tabs = [["orders", "Orders", IBell], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["me", "Account", IUser]];
   return (<>
     <header className="ad-top"><img src={LOGO} alt="SAAD CAR" width="900" height="284" /><span className="ad-pill">Admin</span></header>
     <main className="ad-main">
+      {st.banner && tab !== "orders" && <button type="button" className="ad-alert" onClick={() => { st.setBanner(""); setTab("orders"); }}>{st.banner} <b>Dekhein</b></button>}
+      {tab === "orders" && <Orders tok={tok} st={st} pwa={pwa} />}
       {tab === "fleet" && <>
         <div className="ad-stats">{[["Total", stats.total], ["Live", stats.live], ["Hidden", stats.hidden], ["Price set", stats.priced]].map(([t, n]) => <div key={t}><b>{n}</b><span>{t}</span></div>)}</div>
         <label className="ad-search"><ISearch /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Gaari ya colour dhoondhein" aria-label="Search" /></label>
@@ -180,9 +289,9 @@ function Panel({ tok, out, pwa }) {
         <p className="ad-ver">Version: {new Date(Number(__BUILD_ID__)).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}<br />Naya update aane par app khud update ho jati hai.</p>
       </>}
     </main>
-    {(dirty || busy) && <div className="ad-save" role="status"><span>Badlaav save nahi hue</span><button type="button" className="ad-btn ad-btn--light" disabled={busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div>}
+    {(dirty || busy) && tab !== "orders" && <div className="ad-save" role="status"><span>Badlaav save nahi hue</span><button type="button" className="ad-btn ad-btn--light" disabled={busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div>}
     {msg && <div className="ad-toast" role="status">{msg}</div>}
-    <nav className="ad-tabs" aria-label="Admin">{tabs.map(([k, t, Ic]) => <button key={k} type="button" className={tab === k ? "on" : ""} aria-current={tab === k ? "page" : undefined} onClick={() => setTab(k)}><Ic />{t}</button>)}</nav>
+    <nav className="ad-tabs" aria-label="Admin">{tabs.map(([k, t, Ic]) => <button key={k} type="button" className={tab === k ? "on" : ""} aria-current={tab === k ? "page" : undefined} onClick={() => setTab(k)}><span className="ad-ic"><Ic />{k === "orders" && st.unread > 0 && <i className="ad-count">{st.unread > 99 ? "99+" : st.unread}</i>}</span>{t}</button>)}</nav>
   </>);
 }
 

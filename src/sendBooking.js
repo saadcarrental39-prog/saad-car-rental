@@ -38,6 +38,19 @@ async function postToServer(receipt, d, v) {
   return r.ok && j?.ok === true;
 }
 
+// Save the order (+ receipt picture) for the owner's Admin app. Never throws; duplicates are ignored by the server.
+async function saveOrder(receipt, d, v) {
+  try {
+    const f = new FormData();
+    f.append("file", receipt.blob, `${receipt.ref}.png`);
+    f.append("ref", receipt.ref);
+    f.append("car", `${v.name} ${v.trim || ""} ${v.color || ""}`.replace(/\s+/g, " ").trim());
+    for (const k of ["name", "phone", "pickup", "drop", "date", "time", "pax", "extra"]) f.append(k, d[k] || "");
+    const r = await fetch("/api/orders", { method: "POST", body: f });
+    return r.ok;
+  } catch { return false; }
+}
+
 // Phone fallback: store the receipt on our server, get a private link, and open the owner's chat with that link typed in.
 async function postLink(receipt, d, v) {
   try {
@@ -65,9 +78,12 @@ async function postLink(receipt, d, v) {
 export async function sendBooking(d, v, ready) {
   try {
     const receipt = ready || (await makeReceipt(d, v));
+    const orderP = saveOrder(receipt, d, v);
+    const orderDone = () => Promise.race([orderP, new Promise((r) => setTimeout(r, 6000))]);
     let delivered = false;
     try { delivered = await postToServer(receipt, d, v); } catch (e) { console.warn("[booking] server unreachable", e); }
-    if (delivered) return { receipt, delivered: true };
+    if (delivered) { await orderDone(); return { receipt, delivered: true }; }
+    await orderDone(); // order is saved in the Admin app before the chat opens (the page may be left when WhatsApp opens)
 
     const mobile = isMobile();
     if (mobile) {
