@@ -1,5 +1,5 @@
 import { waHref } from "./config";
-import { makeReceipt, makeThumb, downloadReceipt, copyImage, isMobile } from "./receipt";
+import { makeReceipt, isMobile } from "./receipt";
 
 const prettyDate = (s) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ""); if (!m) return s || ""; return `${+m[3]} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+m[2] - 1]} ${m[1]}`; };
 const prettyTime = (s) => { const m = /^(\d{1,2}):(\d{2})/.exec(s || ""); if (!m) return s || ""; const h = +m[1]; return `${h % 12 || 12}:${m[2]} ${h >= 12 ? "PM" : "AM"}`; };
@@ -25,19 +25,6 @@ export function openChat(text = "") {
   try { window.location.assign(url); return true; } catch { return false; }
 }
 
-async function postToServer(receipt, d, v) {
-  const f = new FormData();
-  f.append("file", receipt.blob, `${receipt.ref}.png`);
-  f.append("ref", receipt.ref);
-  f.append("car", `${v.name} ${v.trim || ""} ${v.color || ""}`.replace(/\s+/g, " ").trim());
-  for (const k of ["name", "phone", "pickup", "drop", "date", "time"]) f.append(k, d[k] || "");
-  const r = await fetch("/api/booking", { method: "POST", body: f });
-  let j = null;
-  try { j = await r.json(); } catch { /* not json */ }
-  if (!(r.ok && j?.ok === true)) console.warn("[booking] server delivery failed:", r.status, j?.error || "", j?.detail || "");
-  return r.ok && j?.ok === true;
-}
-
 // Save the order (+ receipt picture) for the owner's Admin app. Never throws; duplicates are ignored by the server.
 async function saveOrder(receipt, d, v) {
   try {
@@ -51,59 +38,20 @@ async function saveOrder(receipt, d, v) {
   } catch { return false; }
 }
 
-// Phone fallback: store the receipt on our server, get a private link, and open the owner's chat with that link typed in.
-async function postLink(receipt, d, v) {
-  try {
-    const thumb = await makeThumb(receipt.blob);
-    if (!thumb) return null;
-    const f = new FormData();
-    f.append("file", receipt.blob, `${receipt.ref}.png`);
-    f.append("thumb", thumb, `${receipt.ref}.jpg`);
-    f.append("ref", receipt.ref);
-    f.append("car", `${v.name} ${v.trim || ""} ${v.color || ""}`.replace(/\s+/g, " ").trim());
-    for (const k of ["name", "phone", "pickup", "drop", "date", "time"]) f.append(k, d[k] || "");
-    const r = await fetch("/api/receipt-link", { method: "POST", body: f });
-    const j = await r.json();
-    return r.ok && j?.ok === true && /^https:\/\//.test(j.url || "") ? j.url : null;
-  } catch (e) { console.warn("[booking] receipt link failed", e); return null; }
-}
-
 /**
- * One click -> receipt PNG -> delivered straight to the owner's WhatsApp by our server (same on phone and PC).
- * Fallback only if the server is not set up / fails:
- *   phone: share sheet with the PNG (WhatsApp image preview + Send); if the browser cannot share files: receipt link in the owner's chat;
- *   PC: copy PNG + open the owner's chat (download only if copy is impossible).
+ * One click -> receipt PNG is saved in the owner's Admin app (Orders tab, with push notification + tone)
+ *            -> the owner's WhatsApp chat opens with the premium text typed in -> customer only taps Send.
+ * The receipt picture is NOT sent through WhatsApp any more (a website cannot attach files to a chat anyway).
  * Must be called from a click handler.
  */
 export async function sendBooking(d, v, ready) {
   try {
     const receipt = ready || (await makeReceipt(d, v));
     const orderP = saveOrder(receipt, d, v);
-    const orderDone = () => Promise.race([orderP, new Promise((r) => setTimeout(r, 6000))]);
-    let delivered = false;
-    try { delivered = await postToServer(receipt, d, v); } catch (e) { console.warn("[booking] server unreachable", e); }
-    if (delivered) { await orderDone(); return { receipt, delivered: true }; }
-    await orderDone(); // order is saved in the Admin app before the chat opens (the page may be left when WhatsApp opens)
-
-    const mobile = isMobile();
-    if (mobile) {
-      const text = buildMessage(d, v, receipt.ref);
-      // Phone: open the OWNER's chat directly (never the contact list) with the premium text typed in; customer taps Send.
-      // A website cannot attach an image file to a chosen chat, so the receipt goes in as a private link: WhatsApp shows the
-      // receipt picture as a preview card inside the message. (The receipt screen also has a "Share Receipt" button for the raw image.)
-      const link = await postLink(receipt, d, v);
-      if (link) {
-        const t = `${text}\n\n🧾 *Receipt:* ${link}`;
-        return { receipt, delivered: false, linked: true, link, text: t, opened: openChat(t), mobile };
-      }
-      // Receipt links not set up (RECEIPTS KV missing): still open the owner's chat with the premium text.
-      return { receipt, delivered: false, textOnly: true, text, opened: openChat(text), mobile };
-    }
-    // PC (and phone if links are not set up): copy the PNG, then open the owner's chat (number already filled in).
-    const copied = await copyImage(receipt.blob);
-    if (!copied) downloadReceipt(receipt.blob, receipt.ref);
-    const opened = openChat();
-    return { receipt, delivered: false, copied, opened, mobile };
+    // wait (max 6 s) so the order is saved before the page is left for WhatsApp
+    const saved = await Promise.race([orderP, new Promise((r) => setTimeout(() => r(false), 6000))]);
+    const text = buildMessage(d, v, receipt.ref);
+    return { receipt, delivered: false, textOnly: true, saved: !!saved, text, opened: openChat(text), mobile: isMobile() };
   } catch {
     return null;
   }

@@ -1,7 +1,7 @@
 # Booking Orders in the Admin app (receipt picture, tone, count, notification)
 
 ## Kya hota hai
-1. Customer website par **Book via WhatsApp** dabata hai -> booking + receipt ki picture Cloudflare storage mein save hoti hai (`/api/orders`).
+1. Customer website par **Book via WhatsApp** dabata hai -> booking + receipt ki picture Cloudflare storage mein save hoti hai (`/api/orders`), aur saath hi aap ki WhatsApp chat (+92 333 9850599) khulti hai jis mein sirf **premium text** hota hai. Customer ko sirf Send dabana hai. Receipt ki picture WhatsApp mein nahi jati, sirf app mein aati hai.
 2. Aap ke Admin app ke **Orders** tab mein order aata hai: receipt ki picture (tap karke bari), naam, phone, pickup, drop, date, time, passengers, notes.
 3. Har order par: **Call**, **WhatsApp** (customer ko), **Receipt** download, **Delete**.
 4. Naye order par: premium tone (`public/sounds/order-tone.mp3`) 3 baar bajti hai, Orders tab par **laal count** (jaise WhatsApp), app ke icon par count, aur upar "naya booking order" ka banner.
