@@ -1,5 +1,5 @@
 import { waHref } from "./config";
-import { makeReceipt, makeThumb, downloadReceipt, copyImage, isMobile, canShareFiles, shareReceipt } from "./receipt";
+import { makeReceipt, makeThumb, downloadReceipt, copyImage, isMobile } from "./receipt";
 
 const prettyDate = (s) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ""); if (!m) return s || ""; return `${+m[3]} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+m[2] - 1]} ${m[1]}`; };
 const prettyTime = (s) => { const m = /^(\d{1,2}):(\d{2})/.exec(s || ""); if (!m) return s || ""; const h = +m[1]; return `${h % 12 || 12}:${m[2]} ${h >= 12 ? "PM" : "AM"}`; };
@@ -72,19 +72,15 @@ export async function sendBooking(d, v, ready) {
     const mobile = isMobile();
     if (mobile) {
       const text = buildMessage(d, v, receipt.ref);
-      // Phone, best case: share sheet with the receipt IMAGE + the premium text as caption. In WhatsApp the customer picks
-      // the Saad Car Rental chat once, sees the image preview with the caption and taps Send. (A website cannot pre-select the chat.)
-      if (canShareFiles(receipt.blob, receipt.ref)) {
-        const s = await shareReceipt(receipt.blob, receipt.ref, text);
-        if (s === "shared" || s === "cancelled") return { receipt, delivered: false, shared: true, text, mobile };
-        return { receipt, delivered: false, needsTap: true, text, mobile }; // browser wants a fresh tap -> on-screen Share button
-      }
-      // Browser cannot share files: owner's chat opens directly with the text (+ private receipt link whose preview shows the image).
+      // Phone: open the OWNER's chat directly (never the contact list) with the premium text typed in; customer taps Send.
+      // A website cannot attach an image file to a chosen chat, so the receipt goes in as a private link: WhatsApp shows the
+      // receipt picture as a preview card inside the message. (The receipt screen also has a "Share Receipt" button for the raw image.)
       const link = await postLink(receipt, d, v);
       if (link) {
         const t = `${text}\n\n🧾 *Receipt:* ${link}`;
         return { receipt, delivered: false, linked: true, link, text: t, opened: openChat(t), mobile };
       }
+      // Receipt links not set up (RECEIPTS KV missing): still open the owner's chat with the premium text.
       return { receipt, delivered: false, textOnly: true, text, opened: openChat(text), mobile };
     }
     // PC (and phone if links are not set up): copy the PNG, then open the owner's chat (number already filled in).

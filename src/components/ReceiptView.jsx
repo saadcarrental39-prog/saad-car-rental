@@ -29,7 +29,7 @@ export default function ReceiptView({ d, v, onBack, initial, onDone }) {
           {info.textOnly
             ? <>{info.opened ? "WhatsApp chat khul gayi hai. " : "WhatsApp chat kholne ke liye neeche button dabayen. "}Booking ki details message box mein aa gayi hain: bas Send dabayen. Receipt ki picture bhejne ke liye neeche \"Share Receipt on WhatsApp\" bhi use kar sakte hain.</>
             : info.linked
-            ? <>{info.opened ? "WhatsApp chat khul gayi hai. " : "WhatsApp chat kholne ke liye neeche button dabayen. "}Receipt ka link message box mein aa gaya hai: bas Send dabayen.</>
+            ? <>{info.opened ? "WhatsApp chat khul gayi hai. " : "WhatsApp chat kholne ke liye neeche button dabayen. "}Premium message aur receipt ka link message box mein aa gaya hai: bas Send dabayen, receipt ki picture message ke andar preview mein dikhegi.</>
             : info.needsTap || info.shared
             ? (info.shared ? "WhatsApp mein hamari chat \"Saad Car Rental\" chunen: receipt ki picture aur text caption mein aa jayega, bas Send dabayen. Dobara kholne ke liye neeche \"Share Receipt on WhatsApp\" dabayen." : "Receipt bhejne ke liye neeche \"Share Receipt on WhatsApp\" dabayen, WhatsApp mein hamari chat chunen aur Send dabayen.")
             : <>{info.opened ? "WhatsApp chat khul gayi hai. " : "WhatsApp chat kholne ke liye neeche button dabayen. "}
