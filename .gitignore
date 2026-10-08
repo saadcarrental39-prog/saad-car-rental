@@ -5,3 +5,5 @@ dist-reports
 .env
 .env.*
 !.env.example
+
+incoming-images/done/
