@@ -1,3 +1,8 @@
+# Replaced at build time by scripts/prerender.mjs (uses the domain from business.config.js). Kept here so `vite dev` also has one.
 User-agent: *
 Allow: /
-Sitemap: https://YOUR_DOMAIN.com/sitemap.xml
+Disallow: /api/
+Disallow: /r/
+Disallow: /saad-owner-7k3x9
+
+Sitemap: https://www.saadcarremtal.com/sitemap.xml

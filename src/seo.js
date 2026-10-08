@@ -1,16 +1,20 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { pageByPath, headFor, notFoundHead } from "./seo/registry";
+import { applyHead } from "./seo/head";
 import { SITE } from "./config";
-const set = (sel, attr, val, make) => { let e = document.head.querySelector(sel); if (!e) { e = document.createElement(make[0]); e.setAttribute(make[1], make[2]); document.head.appendChild(e); } e.setAttribute(attr, val); };
-export function useSeo({ title, description, path = "/" }) {
+import { trackPageType } from "./analytics";
+
+// Every page gets its head from the registry (same data the prerender used), so title, description, canonical, robots,
+// Open Graph, Twitter and JSON-LD stay correct when visitors navigate inside the app.
+// A page that is not in the registry may pass { title, description } as a fallback; { notFound: true } makes it noindex.
+export function useSeo(fallback = {}) {
+  const { pathname } = useLocation();
   useEffect(() => {
-    const url = SITE.url + path; document.title = `${title} | ${SITE.name}`;
-    set('meta[name="description"]', "content", description, ["meta", "name", "description"]);
-    set('link[rel="canonical"]', "href", url, ["link", "rel", "canonical"]);
-    set('meta[property="og:title"]', "content", title, ["meta", "property", "og:title"]);
-    set('meta[property="og:description"]', "content", description, ["meta", "property", "og:description"]);
-    set('meta[property="og:url"]', "content", url, ["meta", "property", "og:url"]);
-    const ld = document.getElementById("ld") || Object.assign(document.createElement("script"), { id: "ld", type: "application/ld+json" });
-    ld.textContent = JSON.stringify({ "@context": "https://schema.org", "@type": "AutoRental", name: SITE.name, url: SITE.url, address: { "@type": "PostalAddress", streetAddress: "Office No 12, 3rd Floor, Shah Nawaz Plaza, G-11 Markaz", addressLocality: "Islamabad", postalCode: "44000", addressCountry: "PK" }, hasMap: SITE.maps });
-    document.head.appendChild(ld);
-  }, [title, description, path]);
+    const path = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;
+    const page = pageByPath(path);
+    if (fallback.notFound) return applyHead(notFoundHead());
+    if (page) { trackPageType(page.kind, page.slug); return applyHead(headFor(page)); }
+    if (fallback.title) applyHead({ title: `${fallback.title} | ${SITE.shortName}`, description: fallback.description || "", robots: "noindex, follow", canonical: null, og: null, jsonLd: null });
+  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 }

@@ -4,6 +4,7 @@ import { allVehicles } from "../data/fleet";
 import { useSeo } from "../seo";
 import { clean } from "../booking";
 import { openChat } from "../sendBooking";
+import { track } from "../analytics";
 
 const TOPICS = ["Booking enquiry", "Airport transfer", "Wedding / event", "Corporate / business travel", "Long distance / tours", "Other"];
 const PHONE_OK = /^[\d+\s()-]{7,20}$/;
@@ -53,10 +54,10 @@ export default function Contact() {
   const submit = async (e) => {
     e.preventDefault();
     if (d.website) return; // honeypot: real people never fill this
-    if (!clean(d.name)) return setErr("Please enter your name.");
-    if (!PHONE_OK.test(clean(d.phone))) return setErr("Please enter a valid phone number.");
-    if (!clean(d.message)) return setErr("Please tell us a little about your trip or question.");
-    setErr(""); setBusy(true);
+    if (!clean(d.name)) { track("form_error", { form: "contact" }); return setErr("Please enter your name."); }
+    if (!PHONE_OK.test(clean(d.phone))) { track("form_error", { form: "contact" }); return setErr("Please enter a valid phone number."); }
+    if (!clean(d.message)) { track("form_error", { form: "contact" }); return setErr("Please tell us a little about your trip or question."); }
+    setErr(""); setBusy(true); track("quote_submit", { form: "contact" });
     const ok = await sendToServer(d);
     if (ok) { setBusy(false); return setDone({ mode: "sent" }); }
     // Server not set up / offline: open our WhatsApp chat with the message already typed in.

@@ -1,7 +1,7 @@
 node_modules
 dist
+dist-reports
+.seo-build
 .env
-.env.local
-.env.*.local
-.DS_Store
-*.log
+.env.*
+!.env.example

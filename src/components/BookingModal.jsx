@@ -4,6 +4,7 @@ import { allVehicles } from "../data/fleet";
 import { clean } from "../booking";
 import ReceiptView from "./ReceiptView";
 import { sendBooking } from "../sendBooking";
+import { track } from "../analytics";
 const FIELDS = [["name", "Full Name", "text", 1], ["phone", "Phone Number", "tel", 1], ["pickup", "Pickup Location", "text", 1], ["drop", "Drop-off Location", "text", 1], ["date", "Travel Date", "date", 1], ["time", "Pickup Time", "time", 1], ["pax", "Passengers", "number"]];
 export default function BookingModal() {
   const [vid, setVid] = useState(null); const [d, setD] = useState({ pax: "1" }); const [err, setErr] = useState(""); const [step, setStep] = useState("form"); const [busy, setBusy] = useState(false); const [sent, setSent] = useState(null);
@@ -16,7 +17,7 @@ export default function BookingModal() {
   if (!vid) return null;
   const v = allVehicles.find((x) => x.id === vid) || allVehicles[0];
   const miss = FIELDS.filter((f) => f[3] && !clean(d[f[0]]));
-  const send = async () => { if (miss.length) setErr(`Please fill: ${miss.map((f) => f[1]).join(", ")}`); else { setErr(""); setBusy(true); const res = await sendBooking({ ...d, whatsapp: d.phone }, v); setBusy(false); setSent(res); setStep("receipt"); } };
+  const send = async () => { if (miss.length) { track("form_error", { form: "booking-modal" }); setErr(`Please fill: ${miss.map((f) => f[1]).join(", ")}`); } else { setErr(""); setBusy(true); track("quote_submit", { form: "booking-modal" }); const res = await sendBooking({ ...d, whatsapp: d.phone }, v); setBusy(false); setSent(res); setStep("receipt"); } };
   return (<div className="mdl" onMouseDown={(e) => e.target === e.currentTarget && setVid(null)}>
     <div className="mdl__box" role="dialog" aria-modal="true" aria-labelledby="mdl-t">
       <button className="mdl__x" onClick={() => setVid(null)} aria-label="Close booking form">×</button>

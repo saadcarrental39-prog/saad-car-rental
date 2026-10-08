@@ -10,7 +10,7 @@ const T = {
 };
 const B = [{ rotate: 0, radius: "42% 58% 55% 45% / 45% 40% 60% 55%" }, { rotate: 18, radius: "58% 42% 40% 60% / 55% 55% 45% 45%" }, { rotate: -14, radius: "50% 50% 38% 62% / 42% 58% 42% 58%" }];
 const car = (category, id, o, i = 0) => ({ id, category, name: o.name, trim: o.trim || "", tag: o.tag || "", subtitle: o.subtitle || "With Professional Driver",
-  color: o.color || "Colour to be confirmed", image: o.image || PH, placeholder: !o.image, description: o.description || "Details to be confirmed.",
+  color: o.color || "Colour on request", image: o.image || PH, placeholder: !o.image, description: o.description || "Available on request.",
   theme: T[o.theme || "white"], blob: B[i % 3], price: o.price || null });
 
 const cats = [

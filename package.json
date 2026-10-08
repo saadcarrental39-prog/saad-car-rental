@@ -1,4 +1,24 @@
-{ "name": "saad-car-rental", "private": true, "version": "1.0.0", "type": "module",
-  "scripts": { "dev": "vite", "build": "vite build", "preview": "vite preview" },
-  "dependencies": { "gsap": "^3.12.5", "react": "^18.3.1", "react-dom": "^18.3.1", "react-router-dom": "^6.26.0" },
-  "devDependencies": { "@vitejs/plugin-react": "^4.3.1", "vite": "^5.4.0" } }
+{
+  "name": "saad-car-rental",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/prerender.mjs && node scripts/seo-audit.mjs",
+    "build:fast": "vite build",
+    "seo:audit": "node scripts/seo-audit.mjs",
+    "seo:og": "node scripts/export-pages.mjs && python3 scripts/make-og.py",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.0"
+  }
+}

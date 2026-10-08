@@ -5,11 +5,14 @@ import App from "./App";
 import { initFleet } from "./fleetSync";
 import "./styles/automotive-carousel.css";
 import "./styles/site.css";
+import "./styles/seo.css";
+import { initAnalytics } from "./analytics";
 function Root() { // remounts once if the owner changed prices since this visitor's last visit
   const [k, setK] = useState(0);
   useEffect(() => { const f = () => setK((x) => x + 1); addEventListener("fleet-updated", f); return () => removeEventListener("fleet-updated", f); }, []);
   return <BrowserRouter><App key={k} /></BrowserRouter>;
 }
+initAnalytics();
 initFleet().finally(() => createRoot(document.getElementById("root")).render(<Root />));
 
 // Auto-refresh when a new version is deployed, so nobody keeps running old files.
