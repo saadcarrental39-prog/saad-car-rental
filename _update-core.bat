@@ -90,7 +90,17 @@ rem ---------- STEP: push ----------
 :push
 call :step "GitHub par upload ho raha hai: git push"
 git push -u origin "!BRANCH!"
+if not errorlevel 1 goto :pushok
+echo.
+echo  GitHub par naye changes hain. Unhein khud merge kiya ja raha hai: git pull --rebase
+git pull --rebase --autostash origin "!BRANCH!"
+if errorlevel 1 (
+  git rebase --abort >nul 2>&1
+  goto :pushfail
+)
+git push -u origin "!BRANCH!"
 if errorlevel 1 goto :pushfail
+:pushok
 for /f "delims=" %%c in ('git log -1 --pretty=format:"%%h  %%s"') do set "LAST=%%c"
 
 color 0A
