@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { baseFleet, applyOverrides } from "../data/fleet";
 import { saveLocal } from "../fleetSync";
 import { ADMIN_PATH } from "../config";
 import "../styles/admin.css";
+import Insights from "../components/Insights";
 
 const TK = "adm-t";
 const LOGO = "/icons/saad-logo.png";
@@ -25,6 +26,7 @@ async function shrink(file) { // phone photo -> max 1200px webp (keeps transpare
 /* ---------- icons ---------- */
 const I = (d) => function Icon() { return <svg viewBox="0 0 24 24" aria-hidden="true" className="ad-i" dangerouslySetInnerHTML={{ __html: d }} />; };
 const ICar = I('<path d="M5 16h14M6.5 16l1.4-5.2A2 2 0 0 1 9.8 9.3h4.4a2 2 0 0 1 1.9 1.5L17.5 16"/><rect x="3.5" y="16" width="17" height="3.5" rx="1.4"/><circle cx="7.5" cy="17.8" r=".6"/><circle cx="16.5" cy="17.8" r=".6"/>');
+const IChart = I('<path d="M4.5 19.5h15M7 16v-4.5M12 16V7M17 16v-7"/><path d="m6 8.5 4-3 3.5 2.2L18 4.5"/>');
 const IPlus = I('<path d="M12 5v14M5 12h14"/>');
 const IUser = I('<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c.8-3.6 3.8-5.5 7.5-5.5s6.7 1.9 7.5 5.5"/>');
 const ISearch = I('<circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/>');
@@ -245,10 +247,11 @@ function Orders({ tok, st, pwa }) {
 }
 
 function Panel({ tok, out, pwa }) {
-  const [ov, setOv] = useState(null), [dirty, setDirty] = useState(false), [msg, setMsg] = useState(""), [loadErr, setLoadErr] = useState(""), [busy, setBusy] = useState(false), [tab, setTab] = useState(() => (new URLSearchParams(location.search).get("tab") === "fleet" ? "fleet" : "orders")), [q, setQ] = useState(""), [formKey, setFormKey] = useState(0);
+  const [ov, setOv] = useState(null), [dirty, setDirty] = useState(false), [msg, setMsg] = useState(""), [loadErr, setLoadErr] = useState(""), [busy, setBusy] = useState(false), [tab, setTab] = useState(() => { const t = new URLSearchParams(location.search).get("tab"); return t === "fleet" || t === "orders" ? t : "home"; }), [q, setQ] = useState(""), [formKey, setFormKey] = useState(0);
   const norm = (d) => ({ vehicles: {}, added: [], cats: [], ...(d || {}) });
   const load = () => { setLoadErr(""); api("load", {}, tok).then((r) => setOv(norm(r.data))).catch((e) => (e.status === 401 ? out() : setLoadErr(MSG[e.message] || "Data load nahi hua. Internet check karein."))); };
   const st = useOrders(tok, out, tab);
+  const insApi = useCallback((a, b) => api(a, b, tok), [tok]);
   useEffect(() => { const m = (e) => e.data?.type === "open-orders" && setTab("orders"); navigator.serviceWorker?.addEventListener("message", m); return () => navigator.serviceWorker?.removeEventListener("message", m); }, []);
   useEffect(load, []);
   useEffect(() => { if (!msg) return; const t = setTimeout(() => setMsg(""), 4500); return () => clearTimeout(t); }, [msg]);
@@ -266,11 +269,12 @@ function Panel({ tok, out, pwa }) {
   };
   if (!ov) return (<div className="ad-load">{loadErr ? <><p>{loadErr}</p><button type="button" className="ad-btn" onClick={load}>Dobara try karein</button></> : <><span className="ad-spin" /><p>Load ho raha hai…</p></>}</div>);
   const match = (c, v) => !q.trim() || `${v.name} ${v.trim || ""} ${v.color || ""} ${c.title}`.toLowerCase().includes(q.trim().toLowerCase());
-  const tabs = [["orders", "Orders", IBell], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["me", "Account", IUser]];
+  const tabs = [["home", "Dashboard", IChart], ["orders", "Orders", IBell], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["me", "Account", IUser]];
   return (<>
     <header className="ad-top"><img src={LOGO} alt="SAAD CAR" width="900" height="284" /><span className="ad-pill">Admin</span></header>
     <main className="ad-main">
       {st.banner && tab !== "orders" && <button type="button" className="ad-alert" onClick={() => { st.setBanner(""); setTab("orders"); }}>{st.banner} <b>Dekhein</b></button>}
+      {tab === "home" && <Insights api={insApi} out={out} />}
       {tab === "orders" && <Orders tok={tok} st={st} pwa={pwa} />}
       {tab === "fleet" && <>
         <div className="ad-stats">{[["Total", stats.total], ["Live", stats.live], ["Hidden", stats.hidden], ["Price set", stats.priced]].map(([t, n]) => <div key={t}><b>{n}</b><span>{t}</span></div>)}</div>
@@ -289,7 +293,7 @@ function Panel({ tok, out, pwa }) {
         <p className="ad-ver">Version: {new Date(Number(__BUILD_ID__)).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}<br />Naya update aane par app khud update ho jati hai.</p>
       </>}
     </main>
-    {(dirty || busy) && tab !== "orders" && <div className="ad-save" role="status"><span>Badlaav save nahi hue</span><button type="button" className="ad-btn ad-btn--light" disabled={busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div>}
+    {(dirty || busy) && tab !== "orders" && tab !== "home" && <div className="ad-save" role="status"><span>Badlaav save nahi hue</span><button type="button" className="ad-btn ad-btn--light" disabled={busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div>}
     {msg && <div className="ad-toast" role="status">{msg}</div>}
     <nav className="ad-tabs" aria-label="Admin">{tabs.map(([k, t, Ic]) => <button key={k} type="button" className={tab === k ? "on" : ""} aria-current={tab === k ? "page" : undefined} onClick={() => setTab(k)}><span className="ad-ic"><Ic />{k === "orders" && st.unread > 0 && <i className="ad-count">{st.unread > 99 ? "99+" : st.unread}</i>}</span>{t}</button>)}</nav>
   </>);
@@ -298,6 +302,7 @@ function Panel({ tok, out, pwa }) {
 export default function Admin() {
   const [tok, setTok] = useState(() => { try { return localStorage.getItem(TK) || ""; } catch { return ""; } }), pwa = usePwa();
   const [splash, setSplash] = useState(() => { try { return !sessionStorage.getItem("adm-sp") && !matchMedia("(prefers-reduced-motion: reduce)").matches; } catch { return false; } });
+  useEffect(() => { try { if (tok && localStorage.getItem("saad_owner") === null) localStorage.setItem("saad_owner", "1"); } catch { /* ignore */ } }, [tok]);
   const set = (t) => { try { t ? localStorage.setItem(TK, t) : localStorage.removeItem(TK); } catch { /* ignore */ } setTok(t); };
   const endSplash = () => { try { sessionStorage.setItem("adm-sp", "1"); } catch { /* ignore */ } setSplash(false); };
   return <div className="adm" data-ok="1">{tok ? <Panel tok={tok} out={() => set("")} pwa={pwa} /> : <Login onOk={set} />}{splash && <Splash done={endSplash} />}</div>;
