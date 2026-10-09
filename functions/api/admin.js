@@ -3,7 +3,7 @@
 //   ADMIN_USER, ADMIN_PASS (secret)   optional: ADMIN_SECRET (extra signing secret)
 // Storage: KV binding SITEDATA (or the existing RECEIPTS binding).
 import { getVapid, subId } from "../_lib/push.js";
-import { stats } from "../_lib/stats.js";
+import { stats, dayOf, addDays, RANGE_DAYS } from "../_lib/stats.js";
 const enc = new TextEncoder();
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 const same = (a, b) => { a = String(a); b = String(b); let d = a.length ^ b.length; for (let i = 0; i < Math.max(a.length, b.length); i++) d |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0); return d === 0; };
@@ -41,6 +41,14 @@ function clean(d) {
   }
   return out;
 }
+
+async function orderCounts(kv, range) {
+  try {
+    const l = await kv.list({ prefix: "ord:", limit: 1000 }), days = l.keys.map((k) => dayOf(Number(k.metadata?.ts) || 0)).filter((d) => d > "2000"), today = dayOf(Date.now()), n = RANGE_DAYS[range] || 7;
+    const between = (a, b) => days.filter((d) => d >= a && d <= b).length, from = addDays(today, -(n - 1)), pTo = addDays(from, -1);
+    return { cur: between(from, today), prev: between(addDays(pTo, -(n - 1)), pTo), today: between(today, today), week: between(addDays(today, -6), today), month: between(addDays(today, -29), today) };
+  } catch { return null; }
+}
 export async function onRequestPost({ request, env }) {
   if (!env.ADMIN_USER || !env.ADMIN_PASS) return json({ error: "admin_not_configured" }, 503);
   const kv = env.SITEDATA || env.RECEIPTS; if (!kv) return json({ error: "no_storage" }, 503);
@@ -72,7 +80,11 @@ export async function onRequestPost({ request, env }) {
   }
   if (b.action === "stats") {                                       // website analytics for the Insights tab (data lives in D1, binding DB)
     if (!env.DB) return json({ error: "no_db" }, 503);
-    try { return json(await stats(env.DB, String(b.range || "7d"))); } catch { return json({ error: "stats_failed" }, 500); }
+    try {
+      const data = await stats(env.DB, String(b.range || "7d"));
+      data.orders = await orderCounts(kv, data.range);          // bookings received through the website (Orders tab), same period + previous period
+      return json(data);
+    } catch { return json({ error: "stats_failed" }, 500); }
   }
   if (b.action === "push_key") return json({ key: (await getVapid(kv)).pub });
   if (b.action === "push_sub") {
