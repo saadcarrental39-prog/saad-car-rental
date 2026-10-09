@@ -7,6 +7,7 @@ import { fleet, allVehicles } from "../data/fleet";
 import { useSeo } from "../seo";
 import VehicleCarousel from "../components/automotive/VehicleCarousel";
 import Reviews from "../components/Reviews";
+import { RvRating, RvCount } from "../components/reviews/Live";
 import HeroShowcase from "../components/HeroShowcase";
 import { HomeSeoSections } from "../seo/pages";
 gsap.registerPlugin(ScrollTrigger);
@@ -29,7 +30,7 @@ export default function Home() {
   return (<>
     <section className="hero" ref={hero}><div className="hero__txt"><p className="eyebrow">{SITE.name}</p><h1>Car Rental in Islamabad With Professional Driver</h1>
       <p className="hero__tag">Premium cars. Professional drivers.</p><p>Book premium vehicles with professional drivers for business, travel, events, airport transfers and private journeys.</p>
-      <div className="trust"><span><b>{SITE.years}</b> years serving Islamabad</span><span><b>{SITE.rating} ★</b> {SITE.reviewCount} Google reviews</span></div>
+      <div className="trust"><span><b>{SITE.years}</b> years serving Islamabad</span><span><b><RvRating /> ★</b> <RvCount /> Google reviews</span></div>
       <div className="row"><a className="btn btn--dark" href="#fleet">Explore Cars</a><Link className="btn" to="/book">Book Now</Link>{telHref && <a className="btn" href={telHref}>Call Now</a>}{waHref() && <a className="btn" href={waHref()} target="_blank" rel="noopener noreferrer">WhatsApp</a>}</div></div>
       <HeroShowcase images={heroImages} /></section>
     <section id="fleet" className="sec"><h2 className="h2">Explore Our Fleet</h2><p className="lead">All vehicles available with a professional driver.</p>

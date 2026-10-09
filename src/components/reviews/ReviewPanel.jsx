@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { SITE } from "../../config";
 import Stars from "./Stars";
-import { list, isSample, summary, useEsc } from "./data";
+import { list, isSample, useEsc } from "./data";
+import { useReviewSummary } from "./store";
 const COL = ["#1a73e8", "#e8710a", "#188038", "#a142f4", "#d93025", "#12857a", "#b06000"];
 const Av = ({ r, i }) => r.photo ? <img className="rvp__av" src={r.photo} alt="" width="44" height="44" referrerPolicy="no-referrer" /> : <i className="rvp__av" style={{ background: COL[i % COL.length] }} aria-hidden="true">{r.name.trim().slice(0, 1).toUpperCase()}</i>;
 // The full reviews window (opens when the rating line in the car card is clicked).
 export default function ReviewPanel() {
-  const [d, setD] = useState(0);
+  const [d, setD] = useState(0), s = useReviewSummary();
   useEffect(() => { const o = (e) => setD(Number(e.detail) || 1); addEventListener("open-reviews", o); return () => removeEventListener("open-reviews", o); }, []);
   useEsc(!!d, () => setD(0));
   if (!d) return null;
-  const s = summary(), rs = list(), line = d === 3;
+  const rs = list(), line = d === 3;
   return (<div className={`rvp rvp--d${d}`} onMouseDown={(e) => e.target === e.currentTarget && setD(0)}>
     <div className="rvp__box" role="dialog" aria-modal="true" aria-labelledby="rvp-t">
       <button type="button" className="rvp__x" onClick={() => setD(0)} aria-label="Close reviews">×</button>

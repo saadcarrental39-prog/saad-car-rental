@@ -90,6 +90,20 @@ export async function onRequestPost({ request, env }) {
     if (!env.DB) return json({ error: "no_db" }, 503);
     try { return json(await liveFeed(env.DB, Math.max(0, Number(b.since) || 0))); } catch { return json({ error: "live_failed" }, 500); }
   }
+  if (b.action === "reviews_get") {                                  // Google review numbers shown on the website (manual backup + live status)
+    const get = async (k) => { try { return JSON.parse((await kv.get(k)) || "null"); } catch { return null; } }, g = await get("reviews:g");
+    return json({ manual: await get("reviews:manual"), google: g ? { rating: g.rating ?? null, count: g.count ?? null, ts: g.ts || 0, err: g.err || "" } : null, configured: !!(env.GOOGLE_PLACES_API_KEY && env.GOOGLE_PLACE_ID) });
+  }
+  if (b.action === "reviews_set") {
+    const count = Math.round(Number(b.count)), rating = Math.round(Number(b.rating) * 10) / 10;
+    if (!(count >= 0 && count <= 1e6)) return json({ error: "bad_count" }, 400);
+    if (!(rating >= 1 && rating <= 5)) return json({ error: "bad_rating" }, 400);
+    await kv.put("reviews:manual", JSON.stringify({ rating, count, ts: Date.now() })); return json({ ok: true });
+  }
+  if (b.action === "reviews_refresh") {                              // ask Google again on the next /api/reviews?summary=1 call
+    try { const g = JSON.parse((await kv.get("reviews:g")) || "null"); if (g) await kv.put("reviews:g", JSON.stringify({ ...g, tried: 0 })); } catch { /* nothing stored yet */ }
+    return json({ ok: true });
+  }
   if (b.action === "push_key") return json({ key: (await getVapid(kv)).pub });
   if (b.action === "push_sub") {
     const sub = b.sub; if (!sub?.endpoint || !/^https:\/\//.test(sub.endpoint) || !sub.keys?.p256dh || !sub.keys?.auth) return json({ error: "bad_request" }, 400);

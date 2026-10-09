@@ -5,6 +5,7 @@ import { useSeo } from "../seo";
 import { clean } from "../booking";
 import { openChat } from "../sendBooking";
 import { track } from "../analytics";
+import { RvRating, RvCount } from "../components/reviews/Live";
 
 const TOPICS = ["Booking enquiry", "Airport transfer", "Wedding / event", "Corporate / business travel", "Long distance / tours", "Other"];
 const PHONE_OK = /^[\d+\s()-]{7,20}$/;
@@ -82,7 +83,7 @@ export default function Contact() {
           </div>
           <ul className="ct-trust" aria-label="Why choose us">
             <li><b>{SITE.years}+</b> years in Islamabad</li>
-            <li><b>{SITE.rating} ★</b> {SITE.reviewCount} Google reviews</li>
+            <li><b><RvRating /> ★</b> <RvCount /> Google reviews</li>
             <li><b>100%</b> with professional driver</li>
           </ul>
         </div>

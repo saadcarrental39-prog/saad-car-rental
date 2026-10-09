@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { SITE } from "../../config";
 // Local-only sample so you can see the design with `npm run dev` (Pages Functions don't run in plain Vite).
 // In the production build this branch is removed, so sample data can never appear on the live site.
 const SAMPLE = { sample: true, google: { rating: 5, count: 211, mapsUrl: "", writeUrl: "", reviews: [
@@ -20,4 +21,24 @@ export function useReviews() {
     return () => { on = false; window.removeEventListener("reviews-updated", h); };
   }, []);
   return d;
+}
+
+/* ---------- live Google rating + review count for every number on the website ----------
+   Shows the fixed number from business.config.js first, then switches to the live Google number (server asks Google at most once an hour). */
+const SUM_KEY = "saad_rvsum";
+let sumCache = null;
+export function loadSummary() {
+  if (!sumCache) sumCache = fetch("/api/reviews?summary=1", { headers: { accept: "application/json" } })
+    .then((r) => (r.ok && (r.headers.get("content-type") || "").includes("json") ? r.json() : null))
+    .then((d) => (d && d.count != null ? d : null)).catch(() => null);
+  return sumCache;
+}
+export function useReviewSummary() {
+  const [d, setD] = useState(() => { try { const v = JSON.parse(sessionStorage.getItem(SUM_KEY) || "null"); return v && v.count != null ? v : null; } catch { return null; } });
+  useEffect(() => {
+    let on = true;
+    loadSummary().then((x) => { if (x && on) { setD(x); try { sessionStorage.setItem(SUM_KEY, JSON.stringify(x)); } catch { /* ignore */ } } });
+    return () => { on = false; };
+  }, []);
+  return { rating: d && d.rating != null ? Number(d.rating).toFixed(1) : SITE.rating, count: d ? d.count : SITE.reviewCount, live: !!d };
 }

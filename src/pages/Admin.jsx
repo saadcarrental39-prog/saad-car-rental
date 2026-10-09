@@ -246,6 +246,34 @@ function Orders({ tok, st, pwa }) {
   </>);
 }
 
+/* Google review numbers shown on the website. Live from Google when the API key is set; otherwise (or as backup) typed here. */
+function ReviewsCard({ tok }) {
+  const [info, setInfo] = useState(null), [rating, setRating] = useState(""), [count, setCount] = useState(""), [msg, setMsg] = useState(""), [busy, setBusy] = useState(false);
+  const refresh = useCallback(async () => { try { const j = await (await fetch(`/api/reviews?summary=1&t=${Date.now()}`)).json(); setInfo(j); return j; } catch { return null; } }, []);
+  useEffect(() => { refresh().then((j) => { if (j && j.count != null) { setCount(String(j.count)); setRating(j.rating != null ? Number(j.rating).toFixed(1) : ""); } }); }, [refresh]);
+  const save = async () => {
+    setBusy(true); setMsg("");
+    try { await api("reviews_set", { rating, count }, tok); await refresh(); setMsg("✅ Save ho gaya. Website par ab ye number dikhega."); }
+    catch (e) { setMsg(e.message === "bad_count" ? "Reviews ka number sahi likhein, jaise 218." : e.message === "bad_rating" ? "Rating 1 se 5 ke beech likhein, jaise 5.0." : "Save nahi hua. Dobara try karein."); }
+    setBusy(false);
+  };
+  const sync = async () => {
+    setBusy(true); setMsg("");
+    try { await api("reviews_refresh", {}, tok); const j = await refresh(); setMsg(j && j.source === "google" ? `✅ Google se update hua: ${j.count} reviews.` : j && j.error ? `❌ Google ne jawab nahi diya (${j.error}). API key / billing check karein.` : "Google API abhi set nahi hai. Neeche wala number haath se likh sakte hain."); }
+    catch { setMsg("Update nahi hua. Dobara try karein."); }
+    setBusy(false);
+  };
+  const src = !info ? "…" : info.source === "google" ? "✅ Live Google se jura hai (har ghante khud update)" : info.source === "manual" ? "✍️ Haath se likha number chal raha hai" : "Website abhi purana fixed number dikha rahi hai";
+  return (<section className="ad-card"><h2>Google reviews (website par)</h2>
+    <p className="ad-note">{src}{info && info.configured && info.source !== "google" && info.error ? ` · Google error: ${info.error}` : ""}</p>
+    <div className="ad-two"><label className="ad-field"><span>Rating</span><input inputMode="decimal" value={rating} onChange={(e) => setRating(e.target.value)} placeholder="5.0" /></label>
+      <label className="ad-field"><span>Total reviews</span><input inputMode="numeric" value={count} onChange={(e) => setCount(e.target.value.replace(/\D/g, ""))} placeholder="218" /></label></div>
+    <button type="button" className="ad-btn ad-btn--lg" style={{ marginTop: 14 }} disabled={busy || !count || !rating} onClick={save}>{busy ? "Ek second…" : "Number save karein"}</button>
+    {info && info.configured && <button type="button" className="ad-btn ad-btn--ghost ad-btn--lg" style={{ marginTop: 10 }} disabled={busy} onClick={sync}>Abhi Google se update karein</button>}
+    {msg && <p className="ad-note" style={{ marginTop: 12 }}>{msg}</p>}
+    <p className="ad-note" style={{ marginTop: 12 }}>Google API key lagi ho to ye number khud Google se aata hai aur haath ka number sirf backup hai.</p></section>);
+}
+
 function Panel({ tok, out, pwa }) {
   const [ov, setOv] = useState(null), [dirty, setDirty] = useState(false), [msg, setMsg] = useState(""), [loadErr, setLoadErr] = useState(""), [busy, setBusy] = useState(false), [tab, setTab] = useState(() => { const t = new URLSearchParams(location.search).get("tab"); return t === "fleet" || t === "orders" ? t : "home"; }), [q, setQ] = useState(""), [formKey, setFormKey] = useState(0);
   const norm = (d) => ({ vehicles: {}, added: [], cats: [], ...(d || {}) });
@@ -288,6 +316,7 @@ function Panel({ tok, out, pwa }) {
       {tab === "me" && <>
         <section className="ad-card ad-me"><img src={LOGO} alt="SAAD CAR" width="900" height="284" /><b>SAAD CAR RENTAL SERVICES</b><span>Owner admin</span></section>
         <InstallCard pwa={pwa} />
+        <ReviewsCard tok={tok} />
         <a className="ad-btn ad-btn--ghost ad-btn--lg" href="/" target="_blank" rel="noopener noreferrer"><IGlobe />Website kholein</a>
         <button type="button" className="ad-btn ad-btn--ghost ad-btn--lg" onClick={out}><IOut />Logout</button>
         <p className="ad-ver">Version: {new Date(Number(__BUILD_ID__)).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}<br />Naya update aane par app khud update ho jati hai.</p>

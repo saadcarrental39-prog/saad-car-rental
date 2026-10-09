@@ -33,7 +33,40 @@ async function googleData(env, ctx) {
   } catch { return null; }
 }
 
+/* ---------- live rating + count for the whole website:  GET /api/reviews?summary=1 ----------
+   Cost control: Google is asked for ONLY rating + userRatingCount, and at most once per hour for the whole site
+   (the time of the last attempt is kept in KV), about 720 calls a month. If Google fails, the last good number stays.
+   Order of truth: Google live  ->  number typed in the Admin app  ->  fixed number in business.config.js (the page decides). */
+const store = (env) => env.SITEDATA || env.RECEIPTS || env.REVIEWS_KV || null;
+const getJ = async (kv, k) => { try { return JSON.parse((await kv.get(k)) || "null"); } catch { return null; } };
+const FRESH = 60 * 60e3, RETRY = 10 * 60e3;
+async function liveSummary(env, ctx) {
+  const key = env.GOOGLE_PLACES_API_KEY, pid = env.GOOGLE_PLACE_ID, kv = store(env);
+  if (!key || !pid) return { configured: false, g: null, err: "" };
+  let g = kv ? await getJ(kv, "reviews:g") : null; const now = Date.now();
+  if (!kv) { const hit = await caches.default.match("https://reviews.internal/summary-v1"); if (hit) g = await hit.json(); }
+  if (!g || now - (g.tried || 0) > FRESH) {
+    try {
+      const r = await fetch(`https://places.googleapis.com/v1/places/${encodeURIComponent(pid)}`, { headers: { "X-Goog-Api-Key": key, "X-Goog-FieldMask": "rating,userRatingCount" } });
+      if (!r.ok) throw new Error(`google_${r.status}`);
+      const p = await r.json(); if (!(Number(p.userRatingCount) >= 0)) throw new Error("no_count");
+      g = { rating: p.rating ?? null, count: Number(p.userRatingCount), ts: now, tried: now };
+    } catch (e) { g = { ...(g || {}), tried: now - (FRESH - RETRY), err: String((e && e.message) || e).slice(0, 60) }; }   // failed: keep the last good number, retry in ~10 minutes
+    const save = kv ? kv.put("reviews:g", JSON.stringify(g)) : caches.default.put("https://reviews.internal/summary-v1", new Response(JSON.stringify(g), { headers: { "cache-control": "public, max-age=3600" } }));
+    ctx.waitUntil ? ctx.waitUntil(save) : await save;
+  }
+  return { configured: true, g: g && g.count != null ? g : null, err: (g && g.err) || "" };
+}
+async function summary(ctx) {
+  const { env } = ctx, kv = store(env), { configured, g, err } = await liveSummary(env, ctx); let out = null;
+  if (g) out = { rating: g.rating, count: g.count, source: "google", updated: g.ts };
+  else { const m = kv ? await getJ(kv, "reviews:manual") : null; if (m && m.count != null) out = { rating: m.rating, count: m.count, source: "manual", updated: m.ts }; }
+  return new Response(JSON.stringify({ ok: true, ...(out || { rating: null, count: null, source: "static" }), configured, ...(err ? { error: err } : {}) }),
+    { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=120" } });
+}
+
 export async function onRequestGet(ctx) {
+  if (new URL(ctx.request.url).searchParams.get("summary") === "1") return summary(ctx);
   const [google, site] = await Promise.all([googleData(ctx.env, ctx), readSite(ctx.env)]);
   return J({ google, site, configured: { google: !!google, store: !!ctx.env.REVIEWS_KV } });
 }
