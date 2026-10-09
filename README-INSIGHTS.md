@@ -18,10 +18,9 @@ purane visitors ka data khud us mein bhar jata hai (ek baar).
 - Dashboard har **4 second** mein khud check karta hai aur baqi numbers bhi naye visit par 2 second mein update ho jate hain.
 - "Online" = pichle ~100 second mein dikhne wala visitor. Website har 30 second mein chhota "ping" bhejti hai jab tak page khula aur screen par ho.
 
-## Indicator aur Tracking test
+## Indicator
 - **Hara radar (slow smooth blink) + "LIVE"** = tracking system chal raha hai aur database se jura hai (visitors 0 hon tab bhi). Jab koi online ho to blink thora tez aur number hara ho jata hai.
 - **Grey "OFFLINE"** = dashboard server / database se baat nahi kar pa raha.
-- **"Tracking test karein"** button (LIVE card ke neeche): ek test visit server ko bhejta hai aur batata hai ke kaam hua ya kahan masla hai (database jura nahi, server nahi mila, waghera). Kamyab ho to LIVE mein 1 visitor dikhta hai.
 - Website ki visits ab `/api/visit` par jati hain (ad-blockers `collect` naam block kar dete hain). Purana `/api/collect` bhi chalta hai.
 
 ## Dashboard mein kya hai
