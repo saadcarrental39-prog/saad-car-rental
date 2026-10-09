@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SITE, telHref, waHref } from "../config";
 import { allVehicles } from "../data/fleet";
 import { useSeo } from "../seo";
 import { clean } from "../booking";
 import { openChat } from "../sendBooking";
 import { track } from "../analytics";
+import { captureLead, completeLead } from "../leads";
 import { RvRating, RvCount } from "../components/reviews/Live";
 
 const TOPICS = ["Booking enquiry", "Airport transfer", "Wedding / event", "Corporate / business travel", "Long distance / tours", "Other"];
@@ -51,6 +52,8 @@ export default function Contact() {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(null); // null | { mode: "sent" | "chat", opened: bool }
   const set = (k) => (e) => setD((x) => ({ ...x, [k]: e.target.value }));
+  const lx = { car: d.car, extra: [d.topic, d.message].filter(Boolean).join(" | ") };
+  useEffect(() => { if (!done) captureLead("contact", d, lx); }, [d, done]); // eslint-disable-line react-hooks/exhaustive-deps  (saves what was typed, even if Send is never pressed)
 
   const submit = async (e) => {
     e.preventDefault();
@@ -58,7 +61,7 @@ export default function Contact() {
     if (!clean(d.name)) { track("form_error", { form: "contact" }); return setErr("Please enter your name."); }
     if (!PHONE_OK.test(clean(d.phone))) { track("form_error", { form: "contact" }); return setErr("Please enter a valid phone number."); }
     if (!clean(d.message)) { track("form_error", { form: "contact" }); return setErr("Please tell us a little about your trip or question."); }
-    setErr(""); setBusy(true); track("quote_submit", { form: "contact" });
+    setErr(""); setBusy(true); track("quote_submit", { form: "contact" }); completeLead("contact", d, lx);
     const ok = await sendToServer(d);
     if (ok) { setBusy(false); return setDone({ mode: "sent" }); }
     // Server not set up / offline: open our WhatsApp chat with the message already typed in.
@@ -138,6 +141,7 @@ export default function Contact() {
                   <label>Full name *<input type="text" name="name" autoComplete="name" value={d.name || ""} onChange={set("name")} maxLength={80} placeholder="Your name" /></label>
                   <label>Phone / WhatsApp *<input type="tel" name="phone" autoComplete="tel" inputMode="tel" value={d.phone || ""} onChange={set("phone")} maxLength={25} placeholder="03XX XXXXXXX" /></label>
                 </div>
+                <label>Email (optional)<input type="email" name="email" autoComplete="email" inputMode="email" value={d.email || ""} onChange={set("email")} maxLength={80} placeholder="you@example.com" /></label>
                 <div className="ct-row">
                   <label>Enquiry type<select value={d.topic} onChange={set("topic")}>{TOPICS.map((t) => <option key={t}>{t}</option>)}</select></label>
                   <label>Preferred vehicle<select value={d.car} onChange={set("car")}><option value="">Not sure yet</option>{allVehicles.filter((v) => !v.placeholder).map((v) => { const n = `${v.name} ${v.trim || ""} – ${v.color}`.replace(/\s+/g, " "); return <option key={v.id} value={n}>{n}</option>; })}</select></label>
@@ -148,7 +152,7 @@ export default function Contact() {
                 <input className="ct-hp" type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={d.website} onChange={set("website")} />
                 {err && <p role="alert" className="ct-err">{err}</p>}
                 <button className="ct-btn ct-btn--dark ct-submit" type="submit" disabled={busy}>{busy ? "Sending…" : <><span>Send via WhatsApp</span>{Ico.arrow}</>}</button>
-                <p className="ct-fine">We only use your details to reply to this enquiry.</p>
+                <p className="ct-fine">We save the details you type (name, phone, email) so we can reply to you, even if you do not press send.</p>
               </form>
             )}
           </div>

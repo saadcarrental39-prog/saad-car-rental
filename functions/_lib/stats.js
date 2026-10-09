@@ -15,6 +15,9 @@ const SCHEMA = [
   // one row per visitor = the moment they were first seen. "New visitors" are simply the rows of a period (fast, no full-table scan).
   `CREATE TABLE IF NOT EXISTS vfirst (vid TEXT PRIMARY KEY, ts INTEGER NOT NULL, day TEXT NOT NULL, hr INTEGER NOT NULL)`,
   `CREATE INDEX IF NOT EXISTS vfirst_day ON vfirst (day)`,
+  // customers / leads typed into the website forms (also the ones who never pressed Send). One row per visitor per form.
+  `CREATE TABLE IF NOT EXISTS leads (vid TEXT NOT NULL, src TEXT NOT NULL, created INTEGER NOT NULL, updated INTEGER NOT NULL, name TEXT NOT NULL DEFAULT '', phone TEXT NOT NULL DEFAULT '', email TEXT NOT NULL DEFAULT '', whatsapp TEXT NOT NULL DEFAULT '', car TEXT NOT NULL DEFAULT '', pickup TEXT NOT NULL DEFAULT '', dropoff TEXT NOT NULL DEFAULT '', day TEXT NOT NULL DEFAULT '', tm TEXT NOT NULL DEFAULT '', pax TEXT NOT NULL DEFAULT '', extra TEXT NOT NULL DEFAULT '', city TEXT NOT NULL DEFAULT '', dev TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT 'partial', seen INTEGER NOT NULL DEFAULT 0, called INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (vid, src))`,
+  `CREATE INDEX IF NOT EXISTS leads_updated ON leads (updated)`,
 ];
 let ready = null;
 async function init(db) {

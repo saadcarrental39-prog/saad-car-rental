@@ -35,6 +35,8 @@ const IEyeOff = I('<path d="M3 3l18 18M10.6 5.7A9.7 9.7 0 0 1 12 5.5c6 0 9.5 6.5
 const IOut = I('<path d="M10 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2H10M15 8l4 4-4 4M19 12H9.5"/>');
 const IDown = I('<path d="M12 4v11M7.5 11 12 15.5 16.5 11M5 19.5h14"/>');
 const IGlobe = I('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 3.8 5.2 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.2-3.8-8.5S9.4 5.9 12 3.5z"/>');
+const IPeople = I('<circle cx="9" cy="8.5" r="3.2"/><path d="M3 19.5c.6-3.3 3.1-5 6-5s5.4 1.7 6 5"/><path d="M16 5.6a3.2 3.2 0 0 1 0 5.8M18 14.7c1.8.6 3 2.3 3.4 4.8"/>');
+const IMail = I('<rect x="3.5" y="5.5" width="17" height="13" rx="2.2"/><path d="m4.5 7.5 7.5 6 7.5-6"/>');
 const IBell = I('<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>');
 const IPhone = I('<path d="M6.5 4h3l1.6 4-2 1.3a10 10 0 0 0 4.6 4.6l1.3-2 4 1.6v3a2 2 0 0 1-2.2 2A14.5 14.5 0 0 1 4.5 6.2 2 2 0 0 1 6.5 4z"/>');
 const ITrash = I('<path d="M4.5 7h15M9.5 7V4.8h5V7M6.5 7l.8 12.2h9.4L17.5 7M10 11v5M14 11v5"/>');
@@ -246,6 +248,53 @@ function Orders({ tok, st, pwa }) {
   </>);
 }
 
+/* ---------- Clients: everything visitors typed into the website forms, also when they never pressed Send ---------- */
+const LSRC = { book: "Book page", modal: "Booking popup", contact: "Contact form" };
+const lkey = (l) => `${l.vid}|${l.src}`;
+function leadsCsv(rows) {
+  const H = ["Date", "Status", "Form", "Name", "Phone", "Email", "WhatsApp", "Car", "Pickup", "Drop-off", "Travel date", "Time", "Passengers", "Notes", "City", "Device", "Contacted"];
+  const q = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`, body = rows.map((l) => [new Date(l.updated).toISOString().slice(0, 16).replace("T", " "), l.status === "sent" ? "Send kiya" : "Adhoora", LSRC[l.src] || l.src, l.name, l.phone, l.email, l.whatsapp, l.car, l.pickup, l.dropoff, l.day, l.tm, l.pax, l.extra, l.city, l.dev, l.called ? "Yes" : "No"].map(q).join(","));
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\ufeff" + [H.map(q).join(","), ...body].join("\n")], { type: "text/csv" }));
+  a.download = `saad-clients-${new Date().toISOString().slice(0, 10)}.csv`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function Leads({ tok, out, onSeen }) {
+  const outRef = useRef(out); outRef.current = out;   // keeps load() stable so the refresh timer is never reset
+  const [rows, setRows] = useState(null), [err, setErr] = useState(""), [f, setF] = useState("all"), [q, setQ] = useState(""), [fresh, setFresh] = useState(() => new Set()), [busy, setBusy] = useState("");
+  const load = useCallback(async () => {
+    try {
+      const r = await api("leads", {}, tok); setErr(""); setRows(r.rows);
+      const nu = r.rows.filter((x) => !x.seen);
+      if (nu.length) { setFresh((s) => new Set([...s, ...nu.map(lkey)])); api("lead_seen", {}, tok).catch(() => {}); }   // opening the tab = seen
+      onSeen && onSeen();
+    } catch (e) { if (e.status === 401) return outRef.current(); setErr(e.message === "no_db" ? "no_db" : "fail"); }
+  }, [tok, onSeen]);
+  useEffect(() => { load(); const t = setInterval(() => document.visibilityState === "visible" && load(), 20000); return () => clearInterval(t); }, [load]);
+  if (err === "no_db") return <section className="ad-card"><h2>Clients ke liye database chahiye</h2><p className="ad-note">Dashboard wala D1 database (variable name <b>DB</b>) abhi Cloudflare mein bind nahi hai. Dashboard tab par jo 3 steps likhe hain wo kar lein, phir yahan sab clients nazar aayenge.</p></section>;
+  if (!rows) return <div className="ad-load" style={{ minHeight: "40svh" }}>{err ? <><p>Load nahi hua. Internet check karein.</p><button type="button" className="ad-btn" onClick={load}>Dobara try karein</button></> : <><span className="ad-spin" /><p>Clients load ho rahe hain…</p></>}</div>;
+  const n = { all: rows.length, partial: rows.filter((l) => l.status !== "sent").length, sent: rows.filter((l) => l.status === "sent").length, todo: rows.filter((l) => !l.called).length };
+  const s = q.trim().toLowerCase(), list = rows.filter((l) => (f === "all" || (f === "partial" && l.status !== "sent") || (f === "sent" && l.status === "sent") || (f === "todo" && !l.called)) && (!s || [l.name, l.phone, l.email, l.car, l.pickup, l.dropoff].some((v) => String(v || "").toLowerCase().includes(s))));
+  const call = async (l) => { setBusy(lkey(l)); try { await api("lead_update", { vid: l.vid, src: l.src, called: !l.called }, tok); setRows((r) => r.map((x) => (lkey(x) === lkey(l) ? { ...x, called: x.called ? 0 : 1 } : x))); } catch { alert("Save nahi hua. Internet check karein."); } setBusy(""); };
+  const del = async (l) => { if (!confirm(`${l.name || l.phone || l.email} ka record delete karein?`)) return; setBusy(lkey(l)); try { await api("lead_delete", { vid: l.vid, src: l.src }, tok); setRows((r) => r.filter((x) => lkey(x) !== lkey(l))); } catch { alert("Delete nahi hua. Internet check karein."); } setBusy(""); };
+  return (<>
+    <section className="ad-card ad-leadhd"><div><h2>Clients ka data</h2><p className="ad-note">Jo bhi website ke form mein naam, phone ya email likhta hai, wo yahan save ho jata hai, chahe usne Send na dabaya ho.</p></div>
+      <button type="button" className="ad-btn ad-btn--ghost" onClick={() => leadsCsv(rows)} disabled={!rows.length}><IDown />Excel (CSV) download</button></section>
+    <div className="ad-fl" role="group" aria-label="Filter">{[["all", "Sab"], ["partial", "Adhoore"], ["sent", "Send kiye"], ["todo", "Rabta baqi"]].map(([k, t]) => <button key={k} type="button" aria-pressed={f === k} className={f === k ? "on" : ""} onClick={() => setF(k)}>{t} <b>{n[k]}</b></button>)}</div>
+    <label className="ad-field"><span>Dhoondein</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Naam, phone, email ya gaari" /></label>
+    {!rows.length && <section className="ad-card ad-empty"><IPeople /><b>Abhi koi client nahi</b><span>Website ke form mein koi phone ya email likhte hi yahan aa jayega, aur phone par notification bhi aayega.</span></section>}
+    {rows.length > 0 && !list.length && <p className="ad-note" style={{ textAlign: "center", padding: "18px 0" }}>Is filter mein koi record nahi.</p>}
+    {list.map((l) => (<article className={`ad-card ad-ord ad-lead${fresh.has(lkey(l)) ? " is-new" : ""}`} key={lkey(l)}>
+      <header><div><b>{l.name || "Naam nahi likha"}</b><small>{LSRC[l.src] || l.src} · {ago(l.updated)}</small></div><span className={`ad-st ad-st--${l.status}`}>{l.status === "sent" ? "SEND KIYA" : "ADHOORA"}</span></header>
+      <dl>{[["📞 Phone", l.phone], ["💬 WhatsApp", l.whatsapp && l.whatsapp !== l.phone ? l.whatsapp : ""], ["✉️ Email", l.email], ["🚗 Gaari", l.car], ["📍 Pickup", l.pickup], ["🏁 Drop-off", l.dropoff], ["📅 Date", l.day && fmtDate(l.day)], ["⏰ Time", l.tm && fmtTime(l.tm)], ["👥 Passengers", l.pax], ["📝 Notes", l.extra], ["🌍 Shehr", [l.city, l.dev].filter(Boolean).join(" · ")]].filter(([, v]) => v).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+      <div className="ad-acts">
+        {l.phone && <a className="ad-btn ad-btn--ghost" href={`tel:${String(l.phone).replace(/[^\d+]/g, "")}`}><IPhone />Call</a>}
+        {l.phone && <a className="ad-btn ad-btn--ghost" href={`https://wa.me/${waNum(l.whatsapp || l.phone)}`} target="_blank" rel="noopener noreferrer"><IChat />WhatsApp</a>}
+        {l.email && <a className="ad-btn ad-btn--ghost" href={`mailto:${l.email}`}><IMail />Email</a>}
+        <button type="button" className={`ad-btn ${l.called ? "ad-btn--ok" : "ad-btn--ghost"}`} disabled={busy === lkey(l)} onClick={() => call(l)}>{l.called ? "✅ Rabta ho gaya" : "Rabta ho gaya?"}</button>
+        <button type="button" className="ad-btn ad-btn--del" disabled={busy === lkey(l)} onClick={() => del(l)}><ITrash />Delete</button>
+      </div></article>))}
+  </>);
+}
+
 /* Google review numbers shown on the website. Live from Google when the API key is set; otherwise (or as backup) typed here. */
 function ReviewsCard({ tok }) {
   const [info, setInfo] = useState(null), [rating, setRating] = useState(""), [count, setCount] = useState(""), [msg, setMsg] = useState(""), [busy, setBusy] = useState(false);
@@ -275,12 +324,19 @@ function ReviewsCard({ tok }) {
 }
 
 function Panel({ tok, out, pwa }) {
-  const [ov, setOv] = useState(null), [dirty, setDirty] = useState(false), [msg, setMsg] = useState(""), [loadErr, setLoadErr] = useState(""), [busy, setBusy] = useState(false), [tab, setTab] = useState(() => { const t = new URLSearchParams(location.search).get("tab"); return t === "fleet" || t === "orders" ? t : "home"; }), [q, setQ] = useState(""), [formKey, setFormKey] = useState(0);
+  const [ov, setOv] = useState(null), [dirty, setDirty] = useState(false), [msg, setMsg] = useState(""), [loadErr, setLoadErr] = useState(""), [busy, setBusy] = useState(false), [tab, setTab] = useState(() => { const t = new URLSearchParams(location.search).get("tab"); return t === "fleet" || t === "orders" || t === "leads" ? t : "home"; }), [q, setQ] = useState(""), [formKey, setFormKey] = useState(0); const [leadN, setLeadN] = useState(0);
   const norm = (d) => ({ vehicles: {}, added: [], cats: [], ...(d || {}) });
   const load = () => { setLoadErr(""); api("load", {}, tok).then((r) => setOv(norm(r.data))).catch((e) => (e.status === 401 ? out() : setLoadErr(MSG[e.message] || "Data load nahi hua. Internet check karein."))); };
   const st = useOrders(tok, out, tab);
   const insApi = useCallback((a, b) => api(a, b, tok), [tok]);
-  useEffect(() => { const m = (e) => e.data?.type === "open-orders" && setTab("orders"); navigator.serviceWorker?.addEventListener("message", m); return () => navigator.serviceWorker?.removeEventListener("message", m); }, []);
+  const tabRef = useRef(tab); tabRef.current = tab;
+  const refreshLeadN = useCallback(() => { if (tabRef.current === "leads") return; api("lead_count", {}, tok).then((r) => setLeadN(r.unseen || 0)).catch(() => {}); }, [tok]);   // red badge on the Clients tab
+  useEffect(() => { refreshLeadN(); const t = setInterval(() => document.visibilityState === "visible" && refreshLeadN(), 30000); return () => clearInterval(t); }, [refreshLeadN]);
+  useEffect(() => {
+    const m = (e) => { const t = e.data?.type; if (t === "open-orders") setTab("orders"); else if (t === "open-tab" && ["orders", "leads", "fleet", "home"].includes(e.data.tab)) setTab(e.data.tab); else if (t === "new-lead") refreshLeadN(); };
+    navigator.serviceWorker?.addEventListener("message", m); return () => navigator.serviceWorker?.removeEventListener("message", m);
+  }, [refreshLeadN]);
+  const onLeadsSeen = useCallback(() => setLeadN(0), []);
   useEffect(load, []);
   useEffect(() => { if (!msg) return; const t = setTimeout(() => setMsg(""), 4500); return () => clearTimeout(t); }, [msg]);
   const edit = (fn) => { setOv((o) => { const n = structuredClone(o); fn(n); return n; }); setDirty(true); setMsg(""); };
@@ -297,13 +353,14 @@ function Panel({ tok, out, pwa }) {
   };
   if (!ov) return (<div className="ad-load">{loadErr ? <><p>{loadErr}</p><button type="button" className="ad-btn" onClick={load}>Dobara try karein</button></> : <><span className="ad-spin" /><p>Load ho raha hai…</p></>}</div>);
   const match = (c, v) => !q.trim() || `${v.name} ${v.trim || ""} ${v.color || ""} ${c.title}`.toLowerCase().includes(q.trim().toLowerCase());
-  const tabs = [["home", "Dashboard", IChart], ["orders", "Orders", IBell], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["me", "Account", IUser]];
+  const tabs = [["home", "Dashboard", IChart], ["orders", "Orders", IBell], ["leads", "Clients", IPeople], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["me", "Account", IUser]];
   return (<>
     <header className="ad-top"><img src={LOGO} alt="SAAD CAR" width="900" height="284" /><span className="ad-pill">Admin</span></header>
     <main className="ad-main">
       {st.banner && tab !== "orders" && <button type="button" className="ad-alert" onClick={() => { st.setBanner(""); setTab("orders"); }}>{st.banner} <b>Dekhein</b></button>}
       {tab === "home" && <Insights api={insApi} out={out} />}
       {tab === "orders" && <Orders tok={tok} st={st} pwa={pwa} />}
+      {tab === "leads" && <Leads tok={tok} out={out} onSeen={onLeadsSeen} />}
       {tab === "fleet" && <>
         <div className="ad-stats">{[["Total", stats.total], ["Live", stats.live], ["Hidden", stats.hidden], ["Price set", stats.priced]].map(([t, n]) => <div key={t}><b>{n}</b><span>{t}</span></div>)}</div>
         <label className="ad-search"><ISearch /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Gaari ya colour dhoondhein" aria-label="Search" /></label>
@@ -322,9 +379,9 @@ function Panel({ tok, out, pwa }) {
         <p className="ad-ver">Version: {new Date(Number(__BUILD_ID__)).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}<br />Naya update aane par app khud update ho jati hai.</p>
       </>}
     </main>
-    {(dirty || busy) && tab !== "orders" && tab !== "home" && <div className="ad-save" role="status"><span>Badlaav save nahi hue</span><button type="button" className="ad-btn ad-btn--light" disabled={busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div>}
+    {(dirty || busy) && tab !== "orders" && tab !== "home" && tab !== "leads" && <div className="ad-save" role="status"><span>Badlaav save nahi hue</span><button type="button" className="ad-btn ad-btn--light" disabled={busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div>}
     {msg && <div className="ad-toast" role="status">{msg}</div>}
-    <nav className="ad-tabs" aria-label="Admin">{tabs.map(([k, t, Ic]) => <button key={k} type="button" className={tab === k ? "on" : ""} aria-current={tab === k ? "page" : undefined} onClick={() => setTab(k)}><span className="ad-ic"><Ic />{k === "orders" && st.unread > 0 && <i className="ad-count">{st.unread > 99 ? "99+" : st.unread}</i>}</span>{t}</button>)}</nav>
+    <nav className="ad-tabs" aria-label="Admin">{tabs.map(([k, t, Ic]) => <button key={k} type="button" className={tab === k ? "on" : ""} aria-current={tab === k ? "page" : undefined} onClick={() => setTab(k)}><span className="ad-ic"><Ic />{k === "orders" && st.unread > 0 && <i className="ad-count">{st.unread > 99 ? "99+" : st.unread}</i>}{k === "leads" && leadN > 0 && tab !== "leads" && <i className="ad-count">{leadN > 99 ? "99+" : leadN}</i>}</span>{t}</button>)}</nav>
   </>);
 }
 

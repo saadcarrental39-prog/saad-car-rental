@@ -4,6 +4,7 @@
 // Storage: KV binding SITEDATA (or the existing RECEIPTS binding).
 import { getVapid, subId } from "../_lib/push.js";
 import { stats, liveFeed, dayOf, addDays, RANGE_DAYS } from "../_lib/stats.js";
+import { leadsAdmin } from "../_lib/leads.js";
 const enc = new TextEncoder();
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 const same = (a, b) => { a = String(a); b = String(b); let d = a.length ^ b.length; for (let i = 0; i < Math.max(a.length, b.length); i++) d |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0); return d === 0; };
@@ -89,6 +90,10 @@ export async function onRequestPost({ request, env }) {
   if (b.action === "live") {                                        // who is on the website right now (polled every ~4 s by the dashboard)
     if (!env.DB) return json({ error: "no_db" }, 503);
     try { return json(await liveFeed(env.DB, Math.max(0, Number(b.since) || 0))); } catch { return json({ error: "live_failed" }, 500); }
+  }
+  if (typeof b.action === "string" && b.action.startsWith("lead")) {   // customers / leads typed into the website forms (Clients tab)
+    if (!env.DB) return json({ error: "no_db" }, 503);
+    try { const r = await leadsAdmin(env.DB, b); return json(r, r.status || 200); } catch { return json({ error: "leads_failed" }, 500); }
   }
   if (b.action === "reviews_get") {                                  // Google review numbers shown on the website (manual backup + live status)
     const get = async (k) => { try { return JSON.parse((await kv.get(k)) || "null"); } catch { return null; } }, g = await get("reviews:g");

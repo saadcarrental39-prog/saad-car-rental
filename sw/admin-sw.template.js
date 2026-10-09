@@ -34,15 +34,15 @@ self.addEventListener("fetch", (e) => {
 // ---- New booking order: phone notification + app-icon count (works even when the app is closed) ----
 self.addEventListener("push", (e) => {
   let d = {}; try { d = e.data ? e.data.json() : {}; } catch { /* plain text */ }
-  const n = Number(d.count) || 0;
+  const n = Number(d.count) || 0, lead = d.tab === "leads";
   e.waitUntil((async () => {
-    try { if (n && self.navigator.setAppBadge) await self.navigator.setAppBadge(n); } catch { /* not supported */ }
+    try { if (!lead && n && self.navigator.setAppBadge) await self.navigator.setAppBadge(n); } catch { /* not supported */ }
     const wins = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
-    wins.forEach((w) => w.postMessage({ type: "new-order", count: n }));       // open app: refresh the list and play the tone
+    wins.forEach((w) => w.postMessage({ type: lead ? "new-lead" : "new-order", count: n }));       // open app: refresh the list (orders also play the tone)
     if (wins.some((w) => w.visibilityState === "visible" && w.focused)) return; // app is in front: no extra system banner
     await self.registration.showNotification(d.title || "🚘 New Booking Order", {
-      body: d.body || "Naya booking order aya hai. App kholein.", icon: "/icons/saad-192.png", badge: "/icons/saad-48.png", tag: "saad-order", renotify: true,
-      requireInteraction: true, vibrate: [300, 120, 300, 120, 500], silent: false, data: { url: `${ADMIN}?tab=orders` },
+      body: d.body || "Naya booking order aya hai. App kholein.", icon: "/icons/saad-192.png", badge: "/icons/saad-48.png", tag: lead ? "saad-lead" : "saad-order", renotify: true,
+      requireInteraction: true, vibrate: [300, 120, 300, 120, 500], silent: false, data: { url: `${ADMIN}?tab=${lead ? "leads" : "orders"}`, tab: lead ? "leads" : "orders" },
     });
   })());
 });
@@ -52,6 +52,6 @@ self.addEventListener("notificationclick", (e) => {
   e.waitUntil((async () => {
     const wins = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
     const w = wins.find((x) => x.url.includes(ADMIN));
-    if (w) { await w.focus(); w.postMessage({ type: "open-orders" }); } else await self.clients.openWindow(url);
+    if (w) { await w.focus(); w.postMessage({ type: "open-tab", tab: (e.notification.data && e.notification.data.tab) || "orders" }); } else await self.clients.openWindow(url);
   })());
 });
