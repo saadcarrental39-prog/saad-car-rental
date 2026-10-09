@@ -9,4 +9,6 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (waitUntil) waitUntil(job); else await job;
   return empty();
 }
+// Open  https://YOUR-SITE/api/collect  in a browser to check the connection: {"ok":true,"db":true} means the D1 binding works.
+export const onRequestGet = ({ env }) => new Response(JSON.stringify({ ok: true, db: !!env.DB }), { headers: { "content-type": "application/json", "cache-control": "no-store" } });
 export const onRequest = () => empty();

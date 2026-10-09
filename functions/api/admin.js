@@ -3,7 +3,7 @@
 //   ADMIN_USER, ADMIN_PASS (secret)   optional: ADMIN_SECRET (extra signing secret)
 // Storage: KV binding SITEDATA (or the existing RECEIPTS binding).
 import { getVapid, subId } from "../_lib/push.js";
-import { stats, dayOf, addDays, RANGE_DAYS } from "../_lib/stats.js";
+import { stats, liveFeed, dayOf, addDays, RANGE_DAYS } from "../_lib/stats.js";
 const enc = new TextEncoder();
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 const same = (a, b) => { a = String(a); b = String(b); let d = a.length ^ b.length; for (let i = 0; i < Math.max(a.length, b.length); i++) d |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0); return d === 0; };
@@ -85,6 +85,10 @@ export async function onRequestPost({ request, env }) {
       data.orders = await orderCounts(kv, data.range);          // bookings received through the website (Orders tab), same period + previous period
       return json(data);
     } catch { return json({ error: "stats_failed" }, 500); }
+  }
+  if (b.action === "live") {                                        // who is on the website right now (polled every ~4 s by the dashboard)
+    if (!env.DB) return json({ error: "no_db" }, 503);
+    try { return json(await liveFeed(env.DB, Math.max(0, Number(b.since) || 0))); } catch { return json({ error: "live_failed" }, 500); }
   }
   if (b.action === "push_key") return json({ key: (await getVapid(kv)).pub });
   if (b.action === "push_sub") {

@@ -28,7 +28,7 @@ export const ensure = (db) => (ready ||= init(db).catch((e) => { ready = null; t
 /* ---------- collect: one row per page view / event ---------- */
 const BOT = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|preview|facebookexternalhit|whatsapp|telegram|curl|wget|python|axios|monitor|uptime|gtmetrix|pingdom/i;
 const clip = (x, n) => String(x ?? "").replace(/[\u0000-\u001f<>]/g, " ").trim().slice(0, n);
-const TYPES = new Set(["pv", "phone_click", "whatsapp_click", "email_click", "booking_click", "quote_start", "quote_submit", "form_error", "vehicle_view", "service_view", "route_view", "location_view"]);
+const TYPES = new Set(["pv", "ping", "phone_click", "whatsapp_click", "email_click", "booking_click", "quote_start", "quote_submit", "form_error", "vehicle_view", "service_view", "route_view", "location_view"]);
 
 export async function collect(db, request) {
   if (BOT.test(request.headers.get("user-agent") || "")) return;
@@ -103,9 +103,7 @@ export async function stats(db, rangeKey) {
     places: top(`city`, `type='pv'`, `AND city<>''`, 6), cars: top(`item`, `type='vehicle_view'`, `AND item<>''`, 6),
     spots: top(`item`, `type IN ('route_view','location_view','service_view')`, `AND item<>''`, 6),
     hours: q(`SELECT hr k, COUNT(*) n FROM hits WHERE type='pv' AND day BETWEEN ? AND ? GROUP BY hr`, from, today),
-    live: q(`SELECT COUNT(DISTINCT vid) n FROM hits WHERE ts > ?`, now - 5 * 60e3),
-    feed: q(`SELECT ts, type, path, item, city, dev, src FROM hits WHERE type<>'form_error' ORDER BY ts DESC LIMIT 12`),
-    since: q(`SELECT MIN(ts) f FROM hits`),
+        since: q(`SELECT MIN(ts) f FROM hits`),
   };
   const names = Object.keys(Q), [res, tr] = await Promise.all([db.batch(names.map((k) => Q[k])), trend(db, today)]);
   const R_ = Object.fromEntries(names.map((k, i) => [k, res[i].results || []])), one = (k) => R_[k][0] || {};
@@ -119,9 +117,25 @@ export async function stats(db, rangeKey) {
   const hours = Array(24).fill(0); for (const r of R_.hours) hours[r.k] = num(r.n);
   const per = (k, n) => kpiOf(one(k), 0, one(n).n);
   return {
-    ok: true, range: key, from, to: today, now, since: one("since").f || null, live: num(one("live").n), series: series2,
+    ok: true, range: key, from, to: today, now, since: one("since").f || null, series: series2,
     cur: kpiOf(one("cur"), one("bCur").n, one("nCur").n), prev: kpiOf(one("prev"), one("bPrev").n, one("nPrev").n),
     periods: { today: per("kToday", "nToday"), yesterday: per("kY", "nY"), week: per("kW", "nW"), month: per("kM", "nM") }, trend: tr,
-    pages: R_.pages, sources: R_.sources, devices: R_.devices, places: R_.places, cars: R_.cars, spots: R_.spots, hours, feed: R_.feed,
+    pages: R_.pages, sources: R_.sources, devices: R_.devices, places: R_.places, cars: R_.cars, spots: R_.spots, hours,
   };
+}
+
+/* ---------- LIVE: who is on the website right now + newest activity (polled every few seconds by the dashboard) ----------
+   "online" = visitors seen in the last 100 s. The website sends a tiny "ping" every 30 s while a page is open and visible. */
+export async function liveFeed(db, since) {
+  await ensure(db);
+  const now = Date.now(), q = (s, ...a) => db.prepare(s).bind(...a), cut = now - 100e3, after = since > 0;
+  const EV = `SELECT h.id, h.ts, h.type, h.path, h.item, h.city, h.dev, h.src, (v.ts = h.ts) nw FROM hits h LEFT JOIN vfirst v ON v.vid = h.vid WHERE h.type NOT IN ('ping','form_error')`;
+  const out = await db.batch([
+    q(`SELECT COUNT(DISTINCT vid) n FROM hits WHERE ts > ?`, cut),
+    q(`SELECT path, src, dev, city, MAX(ts) ts FROM hits WHERE ts > ? AND type<>'form_error' GROUP BY vid ORDER BY ts DESC LIMIT 10`, cut),
+    after ? q(`${EV} AND h.id > ? ORDER BY h.id DESC LIMIT 25`, since) : q(`${EV} ORDER BY h.id DESC LIMIT 15`),
+    q(`SELECT MAX(id) m FROM hits`),
+  ]);
+  const rows = (i) => out[i].results || [], ev = rows(2).map((r) => ({ ...r, nw: !!r.nw }));
+  return { ok: true, now, online: num(rows(0)[0]?.n), people: rows(1), events: ev, cursor: num(rows(3)[0]?.m) };
 }

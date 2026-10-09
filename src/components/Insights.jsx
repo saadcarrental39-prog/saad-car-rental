@@ -13,6 +13,10 @@ const SRC_COLOR = { google: "#4285f4", direct: "#c9a24a", facebook: "#1877f2", i
 const DEV = { mobile: ["Mobile", "#e6c36a"], desktop: ["Computer", "#8d93a1"], tablet: ["Tablet", "#4b4f5a"] };
 const EV = { pv: ["👁", "Page dekha"], phone_click: ["📞", "Call button dabaya"], whatsapp_click: ["💬", "WhatsApp dabaya"], email_click: ["✉️", "Email dabaya"], booking_click: ["🚘", "Book Now dabaya"], quote_start: ["📝", "Form shuru kiya"], quote_submit: ["✅", "Booking / inquiry bheji"], vehicle_view: ["🚗", "Gaari dekhi"], service_view: ["🛎", "Service dekhi"], route_view: ["🛣", "Route dekha"], location_view: ["📍", "Location dekhi"] };
 
+const SRC_NAME = { direct: "Seedha link se", google: "Google search se", bing: "Bing se", search: "Search se", facebook: "Facebook se", instagram: "Instagram se", whatsapp: "WhatsApp se", youtube: "YouTube se", tiktok: "TikTok se", x: "X (Twitter) se" };
+const srcName = (s) => SRC_NAME[s] || (s ? `${s} se` : "Seedha link se");
+const DEVICON = { mobile: "📱", desktop: "💻", tablet: "📲" };
+
 const fmt = (n) => { n = Math.round(Number(n) || 0); return n >= 100000 ? `${(n / 1000).toFixed(0)}k` : n >= 10000 ? `${(n / 1000).toFixed(1)}k` : n.toLocaleString("en-US"); };
 const title = (s) => String(s).replace(/[-_]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 const pretty = (p) => { const parts = String(p || "/").split("/").filter(Boolean); return parts.length ? parts.map(title).join(" › ") : "Home"; };
@@ -20,6 +24,13 @@ const dlabel = (d, o = { day: "numeric", month: "short" }) => new Date(`${d}T00:
 const mlabel = (k, long) => new Date(`${k}-01T00:00:00Z`).toLocaleDateString("en-GB", { month: long ? "long" : "short", ...(long ? { year: "numeric" } : {}), timeZone: "UTC" });
 const h12 = (h) => `${h % 12 || 12} ${h % 24 < 12 ? "am" : "pm"}`;
 const ago = (ts) => { const m = Math.max(0, Math.round((Date.now() - ts) / 60000)); return m < 1 ? "abhi" : m < 60 ? `${m} min pehle` : m < 1440 ? `${Math.round(m / 60)} ghante pehle` : `${Math.round(m / 1440)} din pehle`; };
+const where = (f) => [f.city, (DEV[f.dev] || [f.dev || ""])[0]].filter(Boolean).join(" · ");
+function evText(f) {   // [headline, detail] of one live event
+  if (f.type === "pv") return [f.nw ? "🆕 Naya visitor aya" : "🔁 Purana visitor wapas aya", `${srcName(f.src)} · ${pretty(f.path)}`];
+  const [e, t] = EV[f.type] || ["•", f.type];
+  return [`${e} ${t}`, f.item ? title(f.item) : pretty(f.path)];
+}
+const dedupe = (a) => a.filter((f) => !(f.type === "pv" && a.some((g) => /_view$/.test(g.type) && g.path === f.path && Math.abs(g.ts - f.ts) < 5000)));
 const share = (a, b) => (b > 0 ? Math.min(100, (a / b) * 100) : 0);
 const pct = (cur, prev) => (prev > 0 ? Math.round(((cur - prev) / prev) * 100) : null);
 
@@ -95,6 +106,19 @@ function Bars({ rows, label, color, empty = "Abhi data nahi aaya" }) {
 }
 const Card = ({ title: t, sub, children, className = "" }) => (<section className={`ad-card in-card ${className}`}><h2>{t}{sub && <small>{sub}</small>}</h2>{children}</section>);
 
+function LivePanel({ lv, toast, sound, onSound }) {
+  const n = lv ? lv.online : 0, ppl = (lv && lv.people) || [], evs = dedupe((lv && lv.events) || []).slice(0, 8);
+  return (<section className={`in-lv${n ? " is-on" : ""}`} aria-live="polite">
+    <div className="in-lv__top"><div className="in-lv__badge"><i /><b>LIVE</b></div>
+      <button type="button" className={`in-lv__snd${sound ? " on" : ""}`} aria-pressed={sound} onClick={onSound}>{sound ? "🔔 Awaz on" : "🔕 Awaz off"}</button></div>
+    <div className="in-lv__main"><div className="in-lv__n"><Num v={n} /></div><p>{n === 1 ? "visitor abhi website par hai" : "visitors abhi website par hain"}<small>Har 4 second mein khud update hota hai</small></p></div>
+    {toast && <div className="in-lv__toast" key={toast.id}><b>{toast.h}</b><span>{toast.s}</span></div>}
+    {ppl.length > 0 && <ul className="in-lv__ppl">{ppl.map((x, i) => <li key={`${x.ts}-${i}`}><span>{DEVICON[x.dev] || "👤"}</span><div><b>{where(x) || "Location pata nahi"}</b><small>{srcName(x.src)} · {pretty(x.path)}</small></div><time>{ago(x.ts)}</time></li>)}</ul>}
+    {evs.length > 0 && <><h3 className="in-lv__h">Taza activity</h3><ul className="in-feed">{evs.map((f) => { const [h, d] = evText(f); return <li key={f.id}><div><b>{h}</b><small>{[where(f), d].filter(Boolean).join(" · ")}</small></div><time>{ago(f.ts)}</time></li>; })}</ul></>}
+    {!n && !evs.length && <p className="in-empty">Abhi koi visitor nahi. Jaise hi koi website kholega, yahan foran nazar aayega.</p>}
+  </section>);
+}
+
 function Setup() {
   return (<section className="ad-card in-setup"><h2>Dashboard ek baar setup karein</h2>
     <p className="ad-note">Visitors ka data Cloudflare D1 (free) database mein save hota hai. Sirf 3 kaam, ek baar:</p>
@@ -125,14 +149,8 @@ export default function Insights({ api, out }) {
   const [range, setRange] = useState(() => { try { return sessionStorage.getItem("in-r") || "7d"; } catch { return "7d"; } });
   const [view, setView] = useState(() => { try { return sessionStorage.getItem("in-v") || "daily"; } catch { return "daily"; } });
   const [data, setData] = useState(null), [err, setErr] = useState(""), [busy, setBusy] = useState(false), [sel, setSel] = useState(null), [tsel, setTsel] = useState(null);
-  const [mine, setMine] = useState(() => { try { return localStorage.getItem("saad_owner") === "0"; } catch { return false; } });
+  const [mine, setMine] = useState(() => { try { return localStorage.getItem("saad_skip") !== "1"; } catch { return true; } });   // true = this device's visits are counted
   const cache = useRef({}), cur = useRef(range), fns = useRef({ api, out }); cur.current = range; fns.current = { api, out };   // refs keep load() stable, so the refresh timer is never reset
-
-  useEffect(() => {   // this tab is dark: tint the whole admin app (header, tab bar, background) and the phone's status bar
-    const root = document.querySelector(".adm"), tint = (c) => { const m = document.querySelector('meta[name="theme-color"]'); m && m.setAttribute("content", c); };
-    root && root.classList.add("adm--dark"); tint("#08080a"); const t = setTimeout(() => tint("#08080a"), 400);   // the PWA adds its theme-color tag just after first paint
-    return () => { clearTimeout(t); root && root.classList.remove("adm--dark"); tint("#ffffff"); };
-  }, []);
 
   const load = useCallback(async (r, quiet) => {
     if (!quiet) setBusy(true);
@@ -143,35 +161,60 @@ export default function Insights({ api, out }) {
   useEffect(() => { setSel(null); if (cache.current[range]) { setData(cache.current[range]); setErr(""); } else setData(null); load(range, !!cache.current[range]); try { sessionStorage.setItem("in-r", range); } catch { /* ignore */ } }, [range]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { try { sessionStorage.setItem("in-v", view); } catch { /* ignore */ } setTsel(null); }, [view]);
   useEffect(() => { const t = setInterval(() => document.visibilityState === "visible" && load(cur.current, true), 45000); return () => clearInterval(t); }, [load]);
-  const toggleMine = (on) => { setMine(on); try { localStorage.setItem("saad_owner", on ? "0" : "1"); } catch { /* ignore */ } };
+  const toggleMine = (on) => { setMine(on); try { localStorage.setItem("saad_skip", on ? "0" : "1"); } catch { /* ignore */ } };
 
-  const head = (<>
+  /* ---- live: poll every 4 s (only while the app is open and visible) ---- */
+  const [lv, setLv] = useState(null), [toast, setToast] = useState(null), [, setClock] = useState(0);
+  const [sound, setSound] = useState(() => { try { return localStorage.getItem("saad_livesound") === "1"; } catch { return false; } });
+  const cursor = useRef(null), liveBusy = useRef(false), toastT = useRef(0), reloadT = useRef(0), soundRef = useRef(sound), actx = useRef(null); soundRef.current = sound;
+  const beep = () => { try { const A = window.AudioContext || window.webkitAudioContext, c = (actx.current = actx.current || new A()), o = c.createOscillator(), g = c.createGain(), t = c.currentTime;
+    o.type = "sine"; o.frequency.setValueAtTime(880, t); o.frequency.setValueAtTime(1175, t + 0.11); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.25, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.32); } catch { /* sound not supported */ } };
+  const toggleSound = () => { const on = !soundRef.current; setSound(on); try { localStorage.setItem("saad_livesound", on ? "1" : "0"); } catch { /* ignore */ } if (on) beep(); };
+  const pollLive = useCallback(async () => {
+    if (liveBusy.current || document.visibilityState !== "visible") return; liveBusy.current = true;
+    try {
+      const first = cursor.current === null, d = await fns.current.api("live", { since: first ? 0 : cursor.current }); cursor.current = d.cursor;
+      setLv((p) => ({ online: d.online, people: d.people, events: first ? d.events : [...d.events, ...((p && p.events) || [])].slice(0, 20) }));
+      if (!first && d.events.length) {   // somebody just did something on the website: banner, optional sound, and refresh the numbers
+        const hit = d.events.find((e) => e.type === "pv") || d.events[0], [h, s] = evText(hit);
+        setToast({ id: hit.id, h, s: [where(hit), s].filter(Boolean).join(" · ") }); clearTimeout(toastT.current); toastT.current = setTimeout(() => setToast(null), 8000);
+        if (soundRef.current) beep();
+        clearTimeout(reloadT.current); reloadT.current = setTimeout(() => load(cur.current, true), 2000);
+      }
+    } catch (e) { if (e.status === 401) fns.current.out(); } finally { liveBusy.current = false; }
+  }, [load]);
+  useEffect(() => {
+    pollLive(); const t = setInterval(pollLive, 4000), c = setInterval(() => setClock((x) => x + 1), 15000), v = () => document.visibilityState === "visible" && pollLive();
+    document.addEventListener("visibilitychange", v);
+    return () => { clearInterval(t); clearInterval(c); document.removeEventListener("visibilitychange", v); clearTimeout(toastT.current); clearTimeout(reloadT.current); };
+  }, [pollLive]);
+
+  const hdr = (
     <div className="in-head"><div><span className="in-eyebrow in-eyebrow--gold">SAAD CAR RENTAL</span><h1>Dashboard</h1><p>Website ki performance, ek nazar mein</p></div>
       <div className="in-head__btns">{data && <button type="button" className="in-refresh" onClick={() => exportCsv(data)} aria-label="Excel / CSV download karein" title="CSV download"><svg viewBox="0 0 24 24" className="ad-i" aria-hidden="true"><path d="M12 4v11M7.5 11 12 15.5 16.5 11M5 19.5h14" /></svg></button>}
-        <button type="button" className={`in-refresh${busy ? " is-busy" : ""}`} onClick={() => load(range)} aria-label="Refresh"><svg viewBox="0 0 24 24" className="ad-i" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5" /></svg></button></div></div>
-    <div className="in-seg" role="group" aria-label="Muddat">{RANGES.map(([k, t]) => <button key={k} type="button" aria-pressed={range === k} className={range === k ? "on" : ""} onClick={() => setRange(k)}>{t}</button>)}</div>
-  </>);
-  if (err === "no_db") return <div className="in-root">{head}<Setup /></div>;
-  if (!data) return (<div className="in-root">{head}{err ? <div className="ad-load in-fail"><p>Data load nahi hua. Internet check karein.</p><button type="button" className="ad-btn" onClick={() => load(range)}>Dobara try karein</button></div> : <div className="in-skel" aria-busy="true"><span /><span /><span /></div>}</div>);
+        <button type="button" className={`in-refresh${busy ? " is-busy" : ""}`} onClick={() => load(range)} aria-label="Refresh"><svg viewBox="0 0 24 24" className="ad-i" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5" /></svg></button></div></div>);
+  const seg = (<div className="in-seg" role="group" aria-label="Muddat">{RANGES.map(([k, t]) => <button key={k} type="button" aria-pressed={range === k} className={range === k ? "on" : ""} onClick={() => setRange(k)}>{t}</button>)}</div>);
+  const livePanel = <LivePanel lv={lv} toast={toast} sound={sound} onSound={toggleSound} />;
+  if (err === "no_db") return <div className="in-root">{hdr}<Setup /></div>;
+  if (!data) return (<div className="in-root">{hdr}{livePanel}{seg}{err ? <div className="ad-load in-fail"><p>Data load nahi hua. Internet check karein.</p><button type="button" className="ad-btn" onClick={() => load(range)}>Dobara try karein</button></div> : <div className="in-skel" aria-busy="true"><span /><span /><span /></div>}</div>);
 
   const { cur: c, prev: p, series: s, periods: P, trend: T } = data, sx = s[sel ?? s.length - 1], ret = Math.max(0, c.vis - c.nw), pret = Math.max(0, p.vis - p.nw);
   const inq = c.calls + c.wa + c.qd, pinq = p.calls + p.wa + p.qd, rate = share(inq, c.vis), ppv = c.ses ? c.pv / c.ses : 0, bounce = share(c.bounce, c.ses), vpv = c.vis ? c.ses / c.vis : 0;
   const peak = data.hours.reduce((a, v, i) => (v > data.hours[a] ? i : a), 0), hmax = Math.max(1, ...data.hours), wmax = Math.max(1, ...T.weekdays.map((w) => w.avg));
   const dev = data.devices, devT = dev.reduce((a, d) => a + d.n, 0), empty = !c.pv && !data.since;
-  const feed = data.feed.filter((f, i, a) => !(f.type === "pv" && a.some((g) => /_view$/.test(g.type) && g.path === f.path && Math.abs(g.ts - f.ts) < 5000))).slice(0, 8);
   const funnel = [["Visitors", c.vis], ["Book Now dabaya", c.bc], ["Form shuru kiya", c.qs], ["Booking / inquiry bheji", c.qd]], fmax = Math.max(1, ...funnel.map((f) => f[1]));
   const rows = T[view], ti = tsel ?? rows.length - 1, tx = rows[ti], tp = rows[ti - 1], tg = tp ? pct(tx.vis, tp.vis) : null, tsub = (TRENDS.find((t) => t[0] === view) || [])[2];
   const tsum = rows.reduce((a, x) => ({ vis: a.vis + x.vis, nw: a.nw + x.nw, pv: a.pv + x.pv }), { vis: 0, nw: 0, pv: 0 });
   const bk = data.orders, tips = highlights(data, c, p, ret);
   const kpis = [["Page views", c.pv, p.pv, s.map((x) => x.pv)], ["Visits (sessions)", c.ses, p.ses], ["Naye visitors", c.nw, p.nw, s.map((x) => x.nw)], ["Purane visitors", ret, pret, s.map((x) => Math.max(0, x.vis - x.nw))], ["Inquiries", inq, pinq], ["Bookings", bk ? bk.cur : 0, bk ? bk.prev : 0]];
 
-  return (<div className="in-root">{head}
-    <div className={`in-live${data.live ? " is-on" : ""}`}><i /><span>{data.live ? <><b>{data.live}</b> {data.live === 1 ? "visitor" : "log"} abhi website par</> : "Abhi website par koi nahi"}</span><small>{dlabel(data.from)}{data.from !== data.to ? ` – ${dlabel(data.to)}` : ""}</small></div>
+  return (<div className="in-root">{hdr}{livePanel}{seg}
 
-    {empty && <section className="ad-card in-tip"><b>Tracking on hai ✅</b><p className="ad-note">Abhi tak koi visit record nahi hui. Website kisi aur phone / computer se kholein, ya neeche &ldquo;Apni visits ginein&rdquo; on karke apne phone se kholein. Data kuch second mein yahan aa jata hai.</p></section>}
+    {empty && <section className="ad-card in-tip"><b>Tracking on hai ✅</b><p className="ad-note">Abhi tak koi visit record nahi hui. Website kisi bhi phone / computer se kholein (aap ka apna bhi ginta hai), data kuch second mein upar LIVE mein aur yahan aa jata hai.</p></section>}
 
     <section className="in-hero"><div className="in-hero__top"><div><span className="in-eyebrow">Total visitors</span><div className="in-big"><Num v={c.vis} /></div></div><Delta cur={c.vis} prev={p.vis} /></div>
-      <p className="in-hero__vs">{VS[data.range]}</p>
+      <p className="in-hero__vs">{VS[data.range]} · {dlabel(data.from)}{data.from !== data.to ? ` – ${dlabel(data.to)}` : ""}</p>
       <div className="in-tip2"><b>{tip(sx, data.range)}</b><span><Num v={sx.vis} /> visitors</span><span><Num v={sx.pv} /> views</span><span className="g"><Num v={sx.nw} /> naye</span></div>
       <Chart s={s} tick={heroTick(data.range, s)} sel={sel} setSel={setSel} uid="h" />
       <div className="in-legend"><span><i className="a" />Naye visitors</span><span><i className="b" />Purane (wapas aaye)</span></div></section>
@@ -214,10 +257,9 @@ export default function Insights({ api, out }) {
     <Card title="Busy waqt" sub="Pakistan time"><div className="in-hours">{data.hours.map((v, i) => <i key={i} title={`${h12(i)}: ${v}`} style={{ "--a": v ? 0.16 + (v / hmax) * 0.84 : 0.06 }} />)}</div><div className="in-hours__l"><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span></div>
       {data.hours[peak] > 0 && <p className="in-peak">Sab se busy: <b>{h12(peak)} – {h12(peak + 1)}</b></p>}</Card>
 
-    <Card title="Live activity">{feed.length ? <ul className="in-feed">{feed.map((f, i) => { const [e, t] = EV[f.type] || ["•", f.type]; return <li key={`${f.ts}-${i}`}><span>{e}</span><div><b>{t}{f.item ? `: ${title(f.item)}` : f.type === "pv" ? `: ${pretty(f.path)}` : ""}</b><small>{[f.city, (DEV[f.dev] || [f.dev])[0], f.src && f.src !== "direct" ? title(f.src) : ""].filter(Boolean).join(" · ")}</small></div><time>{ago(f.ts)}</time></li>; })}</ul> : <p className="in-empty">Abhi koi activity nahi</p>}</Card>
 
-    <section className="ad-card in-own"><div><b>Apni visits ginein</b><span>Off rakhein to aap ka apna phone / computer count nahi hota.</span></div>
-      <label className="ad-switch" aria-label="Apni visits ginein"><input type="checkbox" checked={mine} onChange={(e) => toggleMine(e.target.checked)} /><span /><em>{mine ? "On" : "Off"}</em></label></section>
-    <p className="ad-ver">Data anonymous hai: koi naam, phone ya IP save nahi hota.<br />Har 45 second mein khud refresh hota hai.</p>
+    <section className="ad-card in-own"><div><b>Meri apni visits ginein</b><span>Off karein to is phone / computer ki visits count nahi hongi.</span></div>
+      <label className="ad-switch" aria-label="Meri apni visits ginein"><input type="checkbox" checked={mine} onChange={(e) => toggleMine(e.target.checked)} /><span /><em>{mine ? "On" : "Off"}</em></label></section>
+    <p className="ad-ver">Data anonymous hai: koi naam, phone ya IP save nahi hota.<br />Live part har 4 second, baqi numbers har 45 second mein khud refresh hote hain.</p>
   </div>);
 }

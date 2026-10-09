@@ -1,6 +1,6 @@
-# Dashboard (Insights) — premium dark dashboard, Admin app ka pehla tab
+# Dashboard (Insights) — premium white / black dashboard, Admin app ka pehla tab
 
-Admin app ka pehla tab **Dashboard** hai: black + gold premium design. Website ki visits, naye / purane customers,
+Admin app ka pehla tab **Dashboard** hai: white / black premium design (gold = naye visitors). Website ki visits, naye / purane customers,
 **Daily · Weekly · Monthly** trends, traffic sources, popular gaariyan, customer actions aur bookings sab ek jagah.
 
 ## Setup (sirf ek baar, pehle se kiya hua ho to dobara nahi)
@@ -10,6 +10,13 @@ Admin app ka pehla tab **Dashboard** hai: black + gold premium design. Website k
 
 Tables khud ban jati hain. **Naya update karne par kuch aur nahi karna**: naya `vfirst` table khud ban jata hai aur
 purane visitors ka data khud us mein bhar jata hai (ek baar).
+
+## LIVE (sab se upar)
+- **Abhi website par kitne log hain** (bara number) aur kaun: shehr, phone / computer, kahan se aaya (Google search, Facebook, WhatsApp, seedha link) aur kaun sa page dekh raha hai.
+- Jaise hi koi website kholta hai, **8 second ke liye kala banner** aata hai: *"Naya visitor aya — Peshawar · Mobile · Google search se"* (ya *Purana visitor wapas aya*, *WhatsApp dabaya*, *Gaari dekhi* waghera).
+- **Awaz on** button: har nayi visit par chhoti beep. Dashboard khula aur screen on honi chahiye.
+- Dashboard har **4 second** mein khud check karta hai aur baqi numbers bhi naye visit par 2 second mein update ho jate hain.
+- "Online" = pichle ~100 second mein dikhne wala visitor. Website har 30 second mein chhota "ping" bhejti hai jab tak page khula aur screen par ho.
 
 ## Dashboard mein kya hai
 - **Aaj / 7 Din / 30 Din / 90 Din**: upar ke buttons. Har number pichle muddat se compare hota hai (▲ ▼ %).
@@ -35,8 +42,9 @@ purane visitors ka data khud us mein bhar jata hai (ek baar).
 
 ## Zaroori baatein
 - Data **deploy ke baad se** jama hota hai; purani visits nahi aati.
-- **Aap ka apna phone / computer count nahi hota** (Admin kholte hi). Test ke liye Dashboard ke neeche **"Apni visits ginein"** On karein, ya kisi doosre phone se website kholein.
-- Browser data saaf karne ya nayi device par wohi banda dobara "naya" ginta hai. Ad-blocker / "Do Not Track" wale kuch log count nahi hote: ye andaza hai, 100% exact nahi.
+- **Ab har visit count hoti hai, aap ki apni bhi** (pehle Admin kholne wala device khud ba khud count hona band ho jata tha, wo galti thi). Apna phone / computer exclude karna ho to Dashboard ke neeche **"Meri apni visits ginein"** Off karein.
+- **Connection check:** browser mein `https://aap-ki-site/api/collect` kholein. `{"ok":true,"db":true}` aaye to database sahi jura hua hai. `db:false` aaye to D1 binding (`DB`) nahi lagi.
+- Browser data saaf karne ya nayi device par wohi banda dobara "naya" ginta hai. Ad-blocker wale kuch log count nahi hote: ye andaza hai, 100% exact nahi.
 - Bots (Google bot, WhatsApp preview waghera) ginti mein nahi aate.
 - **Privacy**: koi naam, phone number ya IP save nahi hota. Sirf random id, page, source, device aur shehr.
 - Cloudflare D1 free plan mein roz ~1 lakh visits tak aaram se chalta hai. Visit ka detail 13 mahine rakha jata hai.
@@ -45,5 +53,8 @@ purane visitors ka data khud us mein bhar jata hai (ek baar).
 ## Kin files mein badlaav hua (is update mein)
 - `functions/_lib/stats.js`: naya `vfirst` table (naye visitors tez aur sahi), daily / weekly / monthly trend, hafte ke din, 90 second cache.
   Pehle har refresh par poori table scan hoti thi, ab nahi hoti (D1 free limit bachti hai).
-- `functions/api/admin.js`: `stats` ke saath bookings (orders) ki ginti.
-- `src/components/Insights.jsx`, `src/styles/insights.css`: naya premium dark design aur naye sections.
+- `functions/api/admin.js`: `stats` ke saath bookings ki ginti, aur naya `live` action.
+- `functions/api/collect.js`: connection check (GET).
+- `src/analytics.js`: ping (online dikhane ke liye), "Do Not Track" aur owner-skip wali galti theek.
+- `src/pages/Admin.jsx`: Admin kholne par device ko khud ba khud "owner" banane wali line hata di.
+- `src/components/Insights.jsx`, `src/styles/insights.css`: white / black premium design, LIVE panel aur naye sections.
