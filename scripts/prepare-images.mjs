@@ -4,7 +4,7 @@
 // src/assets/services/ (the Services page picks them up by name) and moves the originals to incoming-images/done/.
 import { readdirSync, mkdirSync, renameSync, existsSync, statSync } from "node:fs";
 import { join, extname, basename } from "node:path";
-let sharp; try { sharp = (await import("sharp")).default; } catch { console.error("sharp is not installed. Run:  npm install   (sharp is in devDependencies)"); process.exit(1); }
+let sharp; try { sharp = (await import("sharp")).default; } catch { console.error("sharp is not installed. Run once:  npm install --no-save sharp   (it is not part of the website build, so it is not in package.json)"); process.exit(1); }
 const SLUGS = ["premium-car-rental", "chauffeur-service", "airport-transfers", "business-travel", "corporate-transportation", "family-travel", "wedding-event-transportation", "long-distance-travel", "private-tours", "vip-executive-transportation", "hotel-transfers", "islamabad-rawalpindi-transportation", "customized-travel"];
 const IN = "incoming-images", OUT = "src/assets/services", DONE = join(IN, "done");
 mkdirSync(IN, { recursive: true }); mkdirSync(OUT, { recursive: true });
