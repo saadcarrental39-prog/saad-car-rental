@@ -1,0 +1,85 @@
+// Landing pages for people who do NOT live in Islamabad: foreign tourists and overseas Pakistanis.
+// Rules (same as every other page): no prices, no invented claims, no visa/legal advice, no guarantees. We only say what the business really does:
+// a car with a professional driver from Islamabad / Rawalpindi, airport pickup, trips to the north and other cities, quoted per trip.
+const f = (q, a) => ({ q, a });
+
+export const AUDIENCES = [
+  {
+    slug: "visit-pakistan", path: "/visit-pakistan", status: "live",
+    title: "Tourist Car Rental With Driver in Pakistan",
+    h1: "Luxury Car With Driver for Tourists Visiting Pakistan",
+    description: "Visiting Pakistan? Book a premium SUV with a professional driver from Islamabad airport to Hunza, Skardu, Swat, Naran and Lahore. Plan ahead and book in advance.",
+    eyebrow: "For visitors from abroad",
+    lead: "Landing in Islamabad for the mountains, the valleys or the cities? Book a Land Cruiser, Prado or Range Rover with an experienced professional driver in advance, so a driver is waiting when you arrive and your whole trip is planned before you travel.",
+    answerQ: "Can a foreign tourist hire a car with a driver from you?",
+    answer: "Yes. SAAD CAR RENTAL SERVICES is based in Islamabad (G-11 Markaz) and provides every vehicle with a professional driver, so you never have to drive on unfamiliar roads yourself. Send us your arrival date, flight details, number of travellers, luggage and the places you want to see, and we reply with a quote for the whole trip.",
+    whyTitle: "Why visitors book a car with a driver",
+    why: [
+      "No need to drive in an unfamiliar country: your driver knows the roads, the checkpoints and the daily routine of mountain travel.",
+      "One driver and one vehicle for the whole trip, so your luggage, plans and schedule stay in one place.",
+      "Airport pickup in Islamabad when you land, and a drop at the terminal when you leave.",
+      "Comfortable SUVs and 4x4s for mountain roads, and a Coaster when you travel as a larger group.",
+      "A plan that follows your days: you decide the stops, we confirm what is possible on the road and in the season.",
+    ],
+    arrivalTitle: "Arriving at Islamabad International Airport",
+    arrival: "Share your flight number and landing time when you book. Tell us how many people are travelling and how much luggage you carry so we can suggest a sedan, an SUV or a Coaster. If your flight is delayed, message us on WhatsApp so the driver can adjust.",
+    tripsTitle: "Popular trips for visitors",
+    trips: ["hunza", "skardu", "fairy-meadows", "swat", "naran", "murree", "lahore", "attabad-lake"],
+    vehicles: ["land-cruiser-v8", "land-cruiser-tz", "prado", "range-rover", "revo", "coaster"],
+    adviceTitle: "Plan ahead and book in advance",
+    advice: [
+      "Mountain roads and weather change with the season, so tell us your dates early and we confirm the right vehicle and a realistic plan.",
+      "Hotels, flights and any permits or paperwork are arranged by you or your tour operator. Check the latest entry and travel requirements with official Pakistani sources before you fly.",
+      "Tell us in the booking form what you need on the road (a stop for photos, a rest day, a different route) and we confirm what we can do.",
+    ],
+    faqs: [
+      f("Do I need to drive myself in Pakistan?", "No. Every vehicle comes with a professional driver, so you can enjoy the journey and the views while the driver handles the road."),
+      f("Can you pick me up at Islamabad airport?", "Yes. Send your flight number, arrival time, number of passengers and luggage, and we confirm the vehicle and driver for your pickup."),
+      f("Which car is best for Hunza, Skardu or the northern areas?", "An SUV or 4x4 such as the Land Cruiser, Prado or Revo is the sensible choice for mountain roads. A Coaster suits larger groups on the main routes."),
+      f("Can I book before I arrive in Pakistan?", "Yes, and we recommend it. Use the booking form or WhatsApp with your dates and plan, and we confirm your vehicle and quote before you travel."),
+      f("How do I pay and what does the trip cost?", "Every trip is quoted individually because it depends on the route, the days, the vehicle and the season. Send your plan and we reply with a quote and explain how payment works for your booking."),
+      f("Can you arrange hotels or tour guides?", "We provide the car and the professional driver. If you need something more, tell us when you enquire and we tell you honestly what we can and cannot arrange."),
+    ],
+    service: { type: "Tourist car rental with driver", areas: ["Pakistan", "Islamabad", "Hunza", "Skardu", "Swat"] },
+    ogB: "Airport pickup · Northern Pakistan · Book in advance",
+  },
+  {
+    slug: "overseas-pakistanis", path: "/overseas-pakistanis", status: "live",
+    title: "Car With Driver for Overseas Pakistanis",
+    h1: "Luxury Car With Driver for Overseas Pakistanis Visiting Home",
+    description: "Coming home from abroad? Book a premium car with a professional driver in advance: airport pickup in Islamabad, family trips, weddings and journeys across Pakistan.",
+    eyebrow: "For Pakistanis living abroad",
+    lead: "Coming home to see family, attend a wedding or show your children the north? Book a premium car with a trusted professional driver before you land, so your family is comfortable from the airport onwards and nobody has to arrange transport in a hurry.",
+    answerQ: "Can I book a car from abroad before I arrive?",
+    answer: "Yes. Message us on WhatsApp or use the booking form from anywhere in the world with your arrival date, flight details, number of family members and luggage. We confirm the vehicle and driver for your dates and send you a quote, so everything is settled before you travel.",
+    whyTitle: "Why overseas families book with us",
+    why: [
+      "Airport pickup in Islamabad: your driver is ready when your family lands, however long the journey was.",
+      "A comfortable vehicle that suits the size of your family and the amount of luggage, from a sedan to a Prado, Land Cruiser or Coaster.",
+      "One reliable driver for visits, weddings, shopping, hospital or family appointments, and day trips during your stay.",
+      "Trips from Islamabad or Rawalpindi to Lahore, Peshawar, Murree and the northern valleys, one-way or round trip.",
+      "A booking you make from your phone abroad, with your plan confirmed by our team on WhatsApp.",
+    ],
+    arrivalTitle: "From the airport to your family's door",
+    arrival: "Send your flight number, landing time, the address you are going to and the number of passengers and bags. Our team confirms the vehicle and driver. If your flight changes, message us on WhatsApp and we adjust the pickup.",
+    tripsTitle: "Trips overseas families often plan",
+    trips: ["murree", "naran", "swat", "hunza", "lahore", "peshawar", "nathia-gali", "kalam"],
+    vehicles: ["prado", "land-cruiser-v8", "toyota-grande", "honda-civic", "coaster", "range-rover"],
+    adviceTitle: "Book early, especially in holiday and wedding season",
+    advice: [
+      "Eid, school holidays and wedding season are busy, so send your dates as early as you can and we confirm the vehicle you want.",
+      "For weddings, tell us the dates, venues and timing of each function and how many vehicles you need.",
+      "Add any special need in the booking form (child seats, elderly passengers, extra luggage) and we confirm what we can arrange.",
+    ],
+    faqs: [
+      f("Can I book a car with a driver from abroad?", "Yes. Use the booking form or WhatsApp with your arrival date, flight details and plan. We confirm availability and send you a quote before you travel."),
+      f("Do you provide pickup at Islamabad airport for families?", "Yes. Tell us how many people are travelling and how much luggage you have so we can suggest a sedan, an SUV or a Coaster."),
+      f("Can I hire a car for my wedding or family function?", "Yes. Send the dates, venues and timing and we confirm vehicles and a quote. Please book early for popular wedding dates."),
+      f("Can the same driver stay with us for the whole visit?", "Tell us your dates and plan when you book and we confirm how we can arrange the driver and vehicle for your stay."),
+      f("Do you travel outside Islamabad?", "Yes. We provide chauffeur-driven trips from Islamabad or Rawalpindi to cities such as Lahore and Peshawar and to Murree, Swat, Naran and the northern areas."),
+    ],
+    service: { type: "Car rental with driver for overseas Pakistanis", areas: ["Pakistan", "Islamabad", "Rawalpindi", "Lahore"] },
+    ogB: "Airport pickup · Family trips · Book from abroad",
+  },
+];
+export const audience = (slug) => AUDIENCES.find((a) => a.slug === slug);

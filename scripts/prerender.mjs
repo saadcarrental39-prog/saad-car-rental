@@ -55,7 +55,7 @@ const urlset = (items, ns = "") => `<?xml version="1.0" encoding="UTF-8"?>\n<url
 const urlTag = (p, extra = "") => `<url><loc>${x(site + (p.path === "/" ? "/" : p.path))}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority.toFixed(1)}</priority>${extra}</url>`;
 const idx = PAGES.filter((p) => p.indexable);
 const groups = {
-  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport"].includes(p.kind)),
+  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "audience"].includes(p.kind)),
   "sitemap-vehicles.xml": idx.filter((p) => p.kind === "vehicle"),
   "sitemap-services.xml": idx.filter((p) => p.kind === "service"),
   "sitemap-locations.xml": idx.filter((p) => p.kind === "location" || p.kind === "province"),
