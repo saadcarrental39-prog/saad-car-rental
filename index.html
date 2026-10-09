@@ -18,11 +18,21 @@
   var K = "saad_recover", errs = [];
   // Remove the ?_r=... marker again so URLs stay clean.
   try { var q = new URL(location.href); if (q.searchParams.has("_r")) { q.searchParams.delete("_r"); history.replaceState(null, "", q.pathname + q.search + q.hash); } } catch (e) {}
-  // Self-heal: wipe this browser's cached copies of the site, then reload through a fresh URL (a new cache key, so old cached HTML cannot come back).
+  // Self-heal. A browser can hold a BAD copy of a site file (e.g. a "not found" page saved under the CSS file name). Reload alone keeps
+  // using that bad copy, so we re-download each site file with cache:"reload" (this overwrites the bad copy in the browser cache,
+  // on every browser incl. iPhone Safari), clear the Cache API too, and then reload through a fresh URL. Runs once per tab session.
   function recover() {
     try { if (sessionStorage.getItem(K)) return; sessionStorage.setItem(K, "1"); } catch (e) {}
-    var go = function () { try { var u = new URL(location.href); u.searchParams.set("_r", Date.now()); location.replace(u.toString()); } catch (e) { location.reload(); } };
-    try { if (window.caches) caches.keys().then(function (ks) { return Promise.all(ks.filter(function (k) { return !/^saad-admin/.test(k); }).map(function (k) { return caches.delete(k); })); }).then(go, go); else go(); } catch (e) { go(); }
+    var done = false, go = function () { if (done) return; done = true; try { var u = new URL(location.href); u.searchParams.set("_r", Date.now()); location.replace(u.toString()); } catch (e) { location.reload(); } };
+    setTimeout(go, 5000);
+    try {
+      var jobs = [];
+      [].forEach.call(document.querySelectorAll('link[rel="stylesheet"][href*="/bundle/"],script[src*="/bundle/"]'), function (n) {
+        jobs.push(fetch(n.href || n.src, { cache: "reload", credentials: "same-origin" }).catch(function () {}));
+      });
+      if (window.caches) jobs.push(caches.keys().then(function (ks) { return Promise.all(ks.filter(function (k) { return !/^saad-admin/.test(k); }).map(function (k) { return caches.delete(k); })); }).catch(function () {}));
+      Promise.all(jobs).then(go, go);
+    } catch (e) { go(); }
   }
   function empty() { var r = document.getElementById("root"); return !r || !r.firstChild; }
   function blank() { if (document.querySelector("[data-ok]")) return false; return !document.body || document.body.innerText.replace(/\s+/g, " ").trim().length < 80; }
