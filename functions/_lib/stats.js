@@ -30,12 +30,12 @@ const BOT = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|preview|facebo
 const clip = (x, n) => String(x ?? "").replace(/[\u0000-\u001f<>]/g, " ").trim().slice(0, n);
 const TYPES = new Set(["pv", "ping", "phone_click", "whatsapp_click", "email_click", "booking_click", "quote_start", "quote_submit", "form_error", "vehicle_view", "service_view", "route_view", "location_view"]);
 
-export async function collect(db, request) {
-  if (BOT.test(request.headers.get("user-agent") || "")) return;
-  let b; try { b = JSON.parse(await request.text()); } catch { return; }
+export async function collect(db, request, raw) {   // returns "ok" or the reason why the hit was not stored
+  if (BOT.test(request.headers.get("user-agent") || "")) return "bot";
+  let b; try { b = JSON.parse(raw ?? (await request.text())); } catch { return "bad_body"; }
   const type = TYPES.has(b.t) ? b.t : "";
   const vid = clip(b.v, 40).replace(/[^A-Za-z0-9-]/g, ""), sid = clip(b.s, 40).replace(/[^A-Za-z0-9-]/g, "");
-  if (!type || vid.length < 8 || sid.length < 8) return;
+  if (!type || vid.length < 8 || sid.length < 8) return "bad_fields";
   const path = clip(b.p, 120).split(/[?#]/)[0] || "/", ts = Date.now(), cf = request.cf || {}, day = dayOf(ts), hr = hourOf(ts);
   const dev = ["mobile", "tablet", "desktop"].includes(b.d) ? b.d : "desktop";
   await ensure(db);
@@ -44,6 +44,7 @@ export async function collect(db, request) {
   if (type === "pv") jobs.push(db.prepare(`INSERT OR IGNORE INTO vfirst (vid, ts, day, hr) VALUES (?,?,?,?)`).bind(vid, ts, day, hr));
   await db.batch(jobs);
   if (Math.random() < 0.01) await db.prepare(`DELETE FROM hits WHERE ts < ?`).bind(ts - 400 * DAY).run();   // keep ~13 months of detail
+  return "ok";
 }
 
 /* ---------- stats for the Admin dashboard ---------- */
@@ -135,7 +136,8 @@ export async function liveFeed(db, since) {
     q(`SELECT path, src, dev, city, MAX(ts) ts FROM hits WHERE ts > ? AND type<>'form_error' GROUP BY vid ORDER BY ts DESC LIMIT 10`, cut),
     after ? q(`${EV} AND h.id > ? ORDER BY h.id DESC LIMIT 25`, since) : q(`${EV} ORDER BY h.id DESC LIMIT 15`),
     q(`SELECT MAX(id) m FROM hits`),
+    q(`SELECT ts FROM hits WHERE type<>'ping' ORDER BY ts DESC LIMIT 1`),
   ]);
   const rows = (i) => out[i].results || [], ev = rows(2).map((r) => ({ ...r, nw: !!r.nw }));
-  return { ok: true, now, online: num(rows(0)[0]?.n), people: rows(1), events: ev, cursor: num(rows(3)[0]?.m) };
+  return { ok: true, now, online: num(rows(0)[0]?.n), people: rows(1), events: ev, cursor: num(rows(3)[0]?.m), last: num(rows(4)[0]?.ts) || null };
 }

@@ -42,7 +42,7 @@ function beacon(type, item) {
   try {
     if (skip()) return;
     const body = JSON.stringify({ t: type === "pageview" ? "pv" : type, v: stored(localStorage, VID_KEY), s: stored(sessionStorage, SID_KEY), p: location.pathname, i: item || "", r: source(), d: device() });
-    if (!(navigator.sendBeacon && navigator.sendBeacon("/api/collect", new Blob([body], { type: "text/plain" })))) fetch("/api/collect", { method: "POST", body, keepalive: true, headers: { "content-type": "text/plain" } }).catch(() => {});
+    if (!(navigator.sendBeacon && navigator.sendBeacon("/api/visit", new Blob([body], { type: "text/plain" })))) fetch("/api/visit", { method: "POST", body, keepalive: true, headers: { "content-type": "text/plain" } }).catch(() => {});
   } catch { /* analytics must never break the site */ }
 }
 let lastPv = "";

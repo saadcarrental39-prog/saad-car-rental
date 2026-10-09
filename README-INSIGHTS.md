@@ -18,6 +18,12 @@ purane visitors ka data khud us mein bhar jata hai (ek baar).
 - Dashboard har **4 second** mein khud check karta hai aur baqi numbers bhi naye visit par 2 second mein update ho jate hain.
 - "Online" = pichle ~100 second mein dikhne wala visitor. Website har 30 second mein chhota "ping" bhejti hai jab tak page khula aur screen par ho.
 
+## Indicator aur Tracking test
+- **Hara radar (slow smooth blink) + "LIVE"** = tracking system chal raha hai aur database se jura hai (visitors 0 hon tab bhi). Jab koi online ho to blink thora tez aur number hara ho jata hai.
+- **Grey "OFFLINE"** = dashboard server / database se baat nahi kar pa raha.
+- **"Tracking test karein"** button (LIVE card ke neeche): ek test visit server ko bhejta hai aur batata hai ke kaam hua ya kahan masla hai (database jura nahi, server nahi mila, waghera). Kamyab ho to LIVE mein 1 visitor dikhta hai.
+- Website ki visits ab `/api/visit` par jati hain (ad-blockers `collect` naam block kar dete hain). Purana `/api/collect` bhi chalta hai.
+
 ## Dashboard mein kya hai
 - **Aaj / 7 Din / 30 Din / 90 Din**: upar ke buttons. Har number pichle muddat se compare hota hai (▲ ▼ %).
 - **Total visitors** (bara number + chart). Gold hissa = naye visitors, safed = purane. Bar par tap karein to us din / ghante ka hisaab.
@@ -43,7 +49,7 @@ purane visitors ka data khud us mein bhar jata hai (ek baar).
 ## Zaroori baatein
 - Data **deploy ke baad se** jama hota hai; purani visits nahi aati.
 - **Ab har visit count hoti hai, aap ki apni bhi** (pehle Admin kholne wala device khud ba khud count hona band ho jata tha, wo galti thi). Apna phone / computer exclude karna ho to Dashboard ke neeche **"Meri apni visits ginein"** Off karein.
-- **Connection check:** browser mein `https://aap-ki-site/api/collect` kholein. `{"ok":true,"db":true}` aaye to database sahi jura hua hai. `db:false` aaye to D1 binding (`DB`) nahi lagi.
+- **Connection check:** browser mein `https://aap-ki-site/api/visit` kholein. `{"ok":true,"db":true}` aaye to database sahi jura hua hai. `db:false` aaye to D1 binding (`DB`) nahi lagi.
 - Browser data saaf karne ya nayi device par wohi banda dobara "naya" ginta hai. Ad-blocker wale kuch log count nahi hote: ye andaza hai, 100% exact nahi.
 - Bots (Google bot, WhatsApp preview waghera) ginti mein nahi aate.
 - **Privacy**: koi naam, phone number ya IP save nahi hota. Sirf random id, page, source, device aur shehr.
