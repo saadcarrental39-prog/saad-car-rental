@@ -175,3 +175,26 @@ body{display:block;padding:0;background:#fff;color:#16181b;font-family:Manrope,s
 @media(max-width:900px){.logo__img{height:32px}}
 
 :root{--saad-rev:20261010}
+
+/* ---------- Home booking box (under the hero pictures): black + white, orange buttons ---------- */
+.hb{padding:8px clamp(16px,4vw,48px) 36px}
+.hb__box{max-width:1200px;margin:0 auto;background:#0b0b0c;color:#fff;border-radius:20px;padding:22px clamp(16px,2.4vw,28px) 20px}
+.hb__box--r{background:#fff;color:#16181b;border:1px solid #16181b}
+.hb__h{margin:0 0 14px;font-size:clamp(1.05rem,2.2vw,1.35rem);font-weight:700;letter-spacing:-.01em;color:#fff}
+.hb__row{display:grid;gap:8px;grid-template-columns:2fr 1.25fr .9fr 1.25fr .9fr auto;align-items:stretch}
+.hb__row--2{grid-template-columns:1.7fr 1.3fr 1.3fr .7fr auto}
+.hb__f{display:grid;align-content:center;gap:2px;background:#fff;color:#111;border-radius:12px;padding:8px 14px;min-height:60px;min-width:0}
+.hb__f span{font-size:.72rem;font-weight:600;color:#555}
+.hb__f input,.hb__f select{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#111;font:inherit;font-size:.95rem;font-weight:600;padding:2px 0;min-height:28px}
+.hb__f:focus-within{outline:2px solid #cc4a0a;outline-offset:1px}
+.hb__f--drop{margin-top:8px;max-width:520px}
+.hb__btn{display:inline-flex;align-items:center;justify-content:center;min-height:60px;padding:0 30px;border:0;border-radius:12px;background:#cc4a0a;color:#fff;font:inherit;font-weight:700;font-size:1rem;cursor:pointer;transition:background .2s}
+.hb__btn:hover{background:#b84209}.hb__btn:disabled{opacity:.7;cursor:wait}
+.hb__btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.hb__chk{margin-top:12px;font-size:.88rem}.hb__chk label{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.hb__chk input{width:20px;height:20px;accent-color:#cc4a0a}
+.hb__err{margin:10px 0 0;color:#ffb4a0;font-size:.9rem;font-weight:600}
+.hb__fine{margin:12px 0 0;color:#b4b4bb;font-size:.78rem}
+.hb__sum{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:0 0 12px;font-size:.92rem}.hb__sum span{color:#c9c9cf}
+.hb__link{background:none;border:0;color:#fff;text-decoration:underline;font:inherit;font-weight:600;cursor:pointer;padding:4px}
+@media(max-width:900px){.hb__row,.hb__row--2{grid-template-columns:1fr 1fr}.hb__f--loc,.hb__btn,.hb__row--2>label:first-child{grid-column:1/-1}.hb__btn{min-height:54px}}

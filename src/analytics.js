@@ -71,7 +71,9 @@ export function initAnalytics() {
     if (cfBeacon) { const s = document.createElement("script"); s.defer = true; s.src = "https://static.cloudflareinsights.com/beacon.min.js"; s.setAttribute("data-cf-beacon", JSON.stringify({ token: cfBeacon })); document.head.appendChild(s); }
   };
   (window.requestIdleCallback || ((f) => setTimeout(f, 1500)))(load); // never delays the first paint
-  watchRoutes(); heartbeat();
+  // Visit counting for the dashboard starts only AFTER the page has fully loaded and the browser is idle (never competes with the first paint / PageSpeed).
+  const go = () => (window.requestIdleCallback ? requestIdleCallback(() => { watchRoutes(); heartbeat(); }, { timeout: 3000 }) : setTimeout(() => { watchRoutes(); heartbeat(); }, 2000));
+  if (document.readyState === "complete") go(); else addEventListener("load", () => setTimeout(go, 200), { once: true });
   // One delegated listener: every tel: / WhatsApp / mailto / booking link on every page is tracked automatically.
   document.addEventListener("click", (e) => {
     const a = e.target.closest && e.target.closest("a[href]"); if (!a) return; const h = a.getAttribute("href") || "";

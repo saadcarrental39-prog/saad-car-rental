@@ -4,7 +4,7 @@ import { ensure } from "./stats.js";
 import { pushAll } from "./push.js";
 const BOT = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|preview|facebookexternalhit|whatsapp|telegram|curl|wget|python|axios|monitor|uptime/i;
 const clip = (x, n) => String(x ?? "").replace(/[\u0000-\u001f<>]/g, " ").replace(/\s{2,}/g, " ").trim().slice(0, n);
-const FORMS = new Set(["book", "modal", "contact"]);
+const FORMS = new Set(["book", "modal", "contact", "home"]);
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const DAY = 864e5;
 const COLS = ["name", "phone", "email", "whatsapp", "car", "pickup", "dropoff", "day", "tm", "pax", "extra", "city", "dev"];
