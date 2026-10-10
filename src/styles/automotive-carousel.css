@@ -39,9 +39,10 @@ body.__old{font-family:"Manrope","Inter",system-ui,sans-serif;background:#e7e6e4
 .lc__car img{display:block;width:100%;height:auto;pointer-events:none;filter:drop-shadow(0 30px 30px rgba(0,0,0,.18))}
 .lc__float{position:relative}
 .lc__shine{position:absolute;inset:0;pointer-events:none;opacity:0;
-  -webkit-mask-image:var(--img);mask-image:var(--img);-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
   background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.55) 48%,rgba(255,255,255,.85) 50%,rgba(255,255,255,.55) 52%,transparent 62%);
   background-size:260% 100%;background-position:170% 0;background-repeat:no-repeat}
+.lc--near .lc__shine{-webkit-mask-image:var(--img);mask-image:var(--img)}
 .lc__shadow{position:absolute;left:14%;width:74%;height:8%;bottom:-2%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.38),transparent);filter:blur(12px);z-index:-1}
 
 /* ---------- text side (short + clean) ---------- */

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { SITE, telHref, waHref } from "../config";
 import { photoOf } from "./links";
 import { VEHICLE_PITCH, VEHICLE_FIT, USE } from "./data/vehicles";
+import { imgSet } from "../imgset";
 
 export const Crumbs = ({ items }) => items.length < 2 ? null : (
   <nav className="sx-crumbs" aria-label="Breadcrumb"><ol>{items.map((c, i) => <li key={c.path}>{i < items.length - 1 ? <Link to={c.path}>{c.name}</Link> : <span aria-current="page">{c.name}</span>}</li>)}</ol></nav>
@@ -61,7 +62,7 @@ export const VehicleStrip = ({ cats, ctxTo }) => (
     const ph = photoOf(c); const fit = (VEHICLE_FIT[c.slug] || []).slice(0, 3).map((u) => USE[u]).join(" · ");
     return (
       <li key={c.slug}><Link to={`/cars/${c.slug}`}>
-        {ph ? <img src={ph.image} alt={`${ph.color} ${ph.name} ${ph.trim} with professional driver`.replace(/\s+/g, " ")} width="805" height="510" loading="lazy" decoding="async" /> : <span className="sx-veh__ph">Photo coming soon<br />Available on request</span>}
+        {ph ? <img src={ph.image} {...imgSet(ph.image, "(max-width: 700px) 90vw, 360px")} alt={`${ph.color} ${ph.name} ${ph.trim} with professional driver`.replace(/\s+/g, " ")} width="805" height="510" loading="lazy" decoding="async" /> : <span className="sx-veh__ph">Photo coming soon<br />Available on request</span>}
         <b>{c.title}</b><span>{VEHICLE_PITCH[c.slug] ? VEHICLE_PITCH[c.slug].replace(/^a /, "A ").replace(/^an /, "An ") : ""}</span><em>{fit}</em>
       </Link></li>
     );

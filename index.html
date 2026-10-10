@@ -8,6 +8,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/saad-192.png" />
 <link rel="apple-touch-icon" href="/icons/saad-apple-180.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <!-- Fonts load in the background (never block the page: if Google Fonts is slow or blocked the site still shows, with system fonts) -->
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
 <noscript><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" /></noscript>
@@ -16,31 +17,14 @@
    empty from the back button, reload once automatically. Runs at most once per browser tab session. */
 (function () {
   var K = "saad_recover", errs = [];
-  // Remove the ?_r=... marker again so URLs stay clean.
-  try { var q = new URL(location.href); if (q.searchParams.has("_r")) { q.searchParams.delete("_r"); history.replaceState(null, "", q.pathname + q.search + q.hash); } } catch (e) {}
-  // Self-heal. A browser can hold a BAD copy of a site file (e.g. a "not found" page saved under the CSS file name). Reload alone keeps
-  // using that bad copy, so we re-download each site file with cache:"reload" (this overwrites the bad copy in the browser cache,
-  // on every browser incl. iPhone Safari), clear the Cache API too, and then reload through a fresh URL. Runs once per tab session.
-  function recover() {
-    try { if (sessionStorage.getItem(K)) return; sessionStorage.setItem(K, "1"); } catch (e) {}
-    var done = false, go = function () { if (done) return; done = true; try { var u = new URL(location.href); u.searchParams.set("_r", Date.now()); location.replace(u.toString()); } catch (e) { location.reload(); } };
-    setTimeout(go, 5000);
-    try {
-      var jobs = [];
-      [].forEach.call(document.querySelectorAll('link[rel="stylesheet"][href*="/bundle/"],script[src*="/bundle/"]'), function (n) {
-        jobs.push(fetch(n.href || n.src, { cache: "reload", credentials: "same-origin" }).catch(function () {}));
-      });
-      if (window.caches) jobs.push(caches.keys().then(function (ks) { return Promise.all(ks.filter(function (k) { return !/^saad-admin/.test(k); }).map(function (k) { return caches.delete(k); })); }).catch(function () {}));
-      Promise.all(jobs).then(go, go);
-    } catch (e) { go(); }
-  }
+  function recover() { try { if (sessionStorage.getItem(K)) return; sessionStorage.setItem(K, "1"); } catch (e) {} location.reload(); }
   function empty() { var r = document.getElementById("root"); return !r || !r.firstChild; }
   function blank() { if (document.querySelector("[data-ok]")) return false; return !document.body || document.body.innerText.replace(/\s+/g, " ").trim().length < 80; }
   addEventListener("error", function (e) {
     var t = e.target;
     if (t && t !== window && (t.src || t.href)) { if (!/fonts\.(googleapis|gstatic)\.com/.test(t.src || t.href)) errs.push("file failed: " + (t.src || t.href)); }
     else errs.push(String(e.message || "error") + (e.filename ? " @ " + e.filename.split("/").pop() + ":" + e.lineno : ""));
-    if (t && (t.tagName === "SCRIPT" || (t.tagName === "LINK" && /\/bundle\//.test(t.href || "")))) recover();
+    if (t && t.tagName === "SCRIPT") recover();
   }, true);
   addEventListener("unhandledrejection", function (e) { errs.push("promise: " + String((e.reason && e.reason.message) || e.reason)); if (empty()) recover(); });
   addEventListener("pageshow", function (e) { if (e.persisted && (empty() || blank())) location.reload(); });
@@ -60,10 +44,7 @@
   }
   setTimeout(function () { panel(); setInterval(panel, 700); }, 4000);
   setTimeout(function () { if (empty()) recover(); }, 6000);
-  addEventListener("load", function () {
-    var ls = document.querySelectorAll('link[rel="stylesheet"][href*="/bundle/"]');
-    for (var i = 0; i < ls.length; i++) if (!ls[i].sheet) { recover(); return; }
-    setTimeout(function () { if (!empty() && !blank()) { try { sessionStorage.removeItem(K); } catch (e) {} } }, 3000); });
+  addEventListener("load", function () { setTimeout(function () { if (!empty() && !blank()) { try { sessionStorage.removeItem(K); } catch (e) {} } }, 3000); });
 })();
 </script></head>
 <body><div id="root"></div><script type="module" src="/src/main.jsx"></script></body></html>

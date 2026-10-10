@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { SITE, telHref, waHref } from "../config";
 import { fleet } from "../data/fleet";
 import { useSeo } from "../seo";
+import { imgSet } from "../imgset";
 
 // Which filter tab each category belongs to (add a new category slug here when you add a car in fleet.js).
 const TYPE = { "land-cruiser-v8": "SUV", "land-cruiser-tz": "SUV", prado: "SUV", "range-rover": "SUV", revo: "Pickup", "honda-civic": "Sedan", "toyota-grande": "Sedan", coaster: "Van / Coaster" };
@@ -22,7 +23,7 @@ function CarCard({ c }) {
     <article className="cp-card">
       <Link to={`/cars/${c.slug}`} className="cp-card__media" aria-label={`${c.title} details`}>
         <span className="cp-chip">{TYPE[c.slug] || "Car"}</span>
-        {v ? <img key={v.id} src={v.image} alt={`${label(v)} with professional driver`} width="1200" height="760" loading="lazy" decoding="async" />
+        {v ? <img key={v.id} src={v.image} {...imgSet(v.image, "(max-width: 900px) 92vw, 50vw")} alt={`${label(v)} with professional driver`} width="1200" height="760" loading="lazy" decoding="async" />
            : <span className="cp-soon"><b>{c.title}</b>Photo coming soon<br />Available on request</span>}
       </Link>
       <div className="cp-card__body">

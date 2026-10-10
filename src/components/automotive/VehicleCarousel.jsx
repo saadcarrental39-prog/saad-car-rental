@@ -28,8 +28,14 @@ export default function VehicleCarousel({ vehicles, label = "Fleet" }) {
   // browsers need a user gesture before audio may play – unlock it on the very first tap / key
   useEffect(() => armOnFirstGesture(), []);
 
-  // warm the cache so later cars never pop in
-  useEffect(() => { vehicles.forEach((x) => { const i = new Image(); i.src = x.image; }); }, []);
+  // The car pictures are lazy (they download when this carousel is about to be seen, not while the page first opens).
+  // "lc--near" also switches on the shine effect, whose small picture is only fetched at that moment.
+  useEffect(() => {
+    const el = root.current;
+    if (!("IntersectionObserver" in window)) { el.classList.add("lc--near"); return; }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.classList.add("lc--near"); io.disconnect(); } }, { rootMargin: "500px 0px" });
+    io.observe(el); return () => io.disconnect();
+  }, []);
 
   // keyboard, swipe / drag, and a tiny pointer parallax (desktop only)
   useEffect(() => {

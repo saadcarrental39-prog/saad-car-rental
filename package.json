@@ -9,8 +9,7 @@
     "build:fast": "vite build",
     "seo:audit": "node scripts/seo-audit.mjs",
     "seo:og": "node scripts/export-pages.mjs && python3 scripts/make-og.py",
-    "preview": "vite preview",
-    "images": "node scripts/prepare-images.mjs"
+    "preview": "vite preview"
   },
   "dependencies": {
     "gsap": "^3.12.5",

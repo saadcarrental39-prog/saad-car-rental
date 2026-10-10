@@ -1,5 +1,6 @@
 // All cars live in the DOM at once; the carousel hook moves them along a wheel arc.
 // Visibility of each car is managed imperatively by the hook (React never touches it after mount).
+import { imgSet, tinySrc, CAROUSEL_SIZES } from "../../imgset";
 export default function VehicleVisual({ vehicles, index }) {
   const active = vehicles[index];
   return (
@@ -10,10 +11,10 @@ export default function VehicleVisual({ vehicles, index }) {
           <div className="lc__car" data-car key={v.id}>
             <div className="lc__counter" data-counter>
               <div className="lc__float">
-                <img src={v.image} alt={`${v.color} ${v.name} ${v.trim}`.trim()} width="805" height="510"
-                     decoding="async" draggable="false" />
+                <img src={v.image} {...imgSet(v.image, CAROUSEL_SIZES)} alt={`${v.color} ${v.name} ${v.trim}`.trim()} width="805" height="510"
+                     loading="lazy" decoding="async" draggable="false" />
                 {/* glossy light sweep, masked to the car's silhouette so it only touches the paint */}
-                <i className="lc__shine" aria-hidden="true" style={{ "--img": `url(${v.image})` }} />
+                <i className="lc__shine" aria-hidden="true" style={{ "--img": `url(${tinySrc(v.image)})` }} />
               </div>
               <i className="lc__shadow" aria-hidden="true" />
             </div>

@@ -77,6 +77,43 @@ const SECRET = /(WA_TOKEN\s*[=:]|EAA[A-Za-z0-9]{40,}|AKIA[0-9A-Z]{16}|-----BEGIN
 all.filter((f) => /\.(js|html|json|txt|xml|css)$/.test(f)).forEach((f) => { if (SECRET.test(readFileSync(f, "utf8"))) fail(`possible secret in ${f.replace(dist, "")}`); });
 const hdr = readFileSync(join(root, "public/_headers"), "utf8"); ["X-Content-Type-Options", "Strict-Transport-Security", "Referrer-Policy", "Permissions-Policy", "X-Frame-Options"].forEach((k) => { if (!hdr.includes(k)) fail(`_headers missing ${k}`); });
 
+// 3b) AI-agent catalog (PageSpeed "Agentic browsing"): must be real JSON in the ARD shape, not the website's HTML page
+{
+  const cf = join(dist, ".well-known", "ai-catalog.json");
+  if (!existsSync(cf)) fail(".well-known/ai-catalog.json missing in dist");
+  else {
+    let c; try { c = JSON.parse(readFileSync(cf, "utf8")); } catch (e) { fail(`ai-catalog.json is not valid JSON: ${e.message}`); }
+    if (c) {
+      if (c.specVersion !== "1.0") fail("ai-catalog.json: specVersion must be \"1.0\"");
+      if (!c.host?.displayName) fail("ai-catalog.json: host.displayName missing");
+      if (!Array.isArray(c.entries) || !c.entries.length) fail("ai-catalog.json: entries missing");
+      const ids = new Set();
+      (c.entries || []).forEach((e, i) => {
+        if (!/^urn:air:[a-zA-Z0-9.-]+(:[a-zA-Z0-9._-]+)+$/.test(e.identifier || "")) fail(`ai-catalog.json entry ${i}: bad identifier`);
+        if (ids.has(e.identifier)) fail(`ai-catalog.json entry ${i}: duplicate identifier`); ids.add(e.identifier);
+        if (!e.displayName) fail(`ai-catalog.json entry ${i}: displayName missing`);
+        if (!/^[a-z]+\/[a-z0-9.+-]+$/i.test(e.type || "")) fail(`ai-catalog.json entry ${i}: type must be a media type`);
+        if (!!e.url === !!e.data) fail(`ai-catalog.json entry ${i}: needs exactly one of url or data`);
+        if (e.url && !String(e.url).startsWith(BUSINESS.website)) fail(`ai-catalog.json entry ${i}: url not on ${BUSINESS.website}`);
+        if (e.representativeQueries && (e.representativeQueries.length < 2 || e.representativeQueries.length > 5)) fail(`ai-catalog.json entry ${i}: representativeQueries must have 2 to 5 items`);
+        if (FORBIDDEN.some((rx) => rx.test(JSON.stringify(e)))) fail(`ai-catalog.json entry ${i}: forbidden wording`);
+      });
+    }
+  }
+  if (!/\/\.well-known\/\*/.test(hdr)) fail("_headers: no rule for /.well-known/*");
+}
+// 3c) speed: long cache for pictures, small picture sizes exist, the hero picture is preloaded
+{
+  if (/\/assets\/\*\s*\n\s*Cache-Control:\s*no-cache/i.test(hdr)) fail("_headers: /assets/* must be cached long (images), not no-cache");
+  const home = readFileSync(join(dist, "index.html"), "utf8");
+  if (!/<link rel="preload" as="image"[^>]*fetchpriority="high"/.test(home)) fail("home page: hero image preload missing");
+  if (!/<img[^>]*fetchpriority="high"/i.test(home)) fail("home page: hero img has no fetchpriority=high");
+  if (!/hero__slide hero__slide--first/.test(home)) fail("home page: first hero slide is not visible at once (needs hero__slide--first)");
+  baseFleet.flatMap((c) => c.vehicles).filter((v) => !v.placeholder).forEach((v) => {
+    const m = /^\/assets\/vehicles\/([\w-]+)\.webp$/.exec(v.image); if (!m) return;
+    if (!existsSync(join(dist, `assets/vehicles/${m[1]}-480.webp`))) warn(`no small (480px) copy for ${v.image}: run python3 scripts/make-image-sizes.py`);
+  });
+}
 // 4) totals (never inflated: counted from the real registry)
 const live = PLACES.filter((p) => p.status === "live"), draft = PLACES.filter((p) => p.status === "draft");
 const idxPages = PAGES.filter((p) => p.indexable), noidx = PAGES.filter((p) => !p.indexable);

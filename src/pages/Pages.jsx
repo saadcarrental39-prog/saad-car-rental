@@ -4,7 +4,6 @@ import { fleet, findCategory } from "../data/fleet";
 import { serviceCards } from "../data/services";
 import { useSeo } from "../seo";
 import Reviews from "../components/Reviews";
-import { RvRating, RvCount } from "../components/reviews/Live";
 import { VehicleExtras } from "../seo/pages";
 import VehicleCarousel from "../components/automotive/VehicleCarousel";
 export function CarPage() {
@@ -22,10 +21,10 @@ export function Services() {
     <div className="svc__body"><h2>{s.name}</h2><Link to={`/services/${s.slug}`}>Details &amp; booking <span aria-hidden="true">→</span></Link></div></article>)}</div><p className="lead"><Link to="/services/group-transportation">Group transportation with a Coaster →</Link></p></div>;
 }
 export function About() {
-  useSeo({ title: "About Us – 22 Years of Chauffeur Car Rental in Islamabad", description: `SAAD CAR RENTAL SERVICES has provided premium car rental with professional drivers in Islamabad for 22 years. Rated ${SITE.rating} on Google from ${SITE.reviewCount} reviews.` });
+  useSeo({ title: "About Us – 22 Years of Chauffeur Car Rental in Islamabad", description: "SAAD CAR RENTAL SERVICES has provided premium car rental with professional drivers in Islamabad for 22 years. Rated 5.0 on Google from 211 reviews." });
   const v = [["Professional Drivers", "Experienced, courteous drivers who know Islamabad and Rawalpindi, so you can relax from pickup to drop-off."], ["Premium Fleet", "Land Cruiser, Prado, Revo, Honda Civic, Toyota Grande, Range Rover and Coaster for every journey."], ["Reliable Booking", "No account and no waiting. Send your request on WhatsApp or call us directly."], ["Customer First", "Clear communication and punctual service, for business, family and events."]];
   return (<><section className="hero" style={{ minHeight: "auto", gridTemplateColumns: "1fr" }}><div className="hero__txt"><p className="eyebrow">About us</p><h1>{SITE.years} years of driving Islamabad forward.</h1><p>{SITE.name} provides premium car rental with professional drivers for airport transfers, business travel, weddings and private journeys.</p></div></section>
-    <div className="pad"><div className="stats"><div><b>{SITE.years}+</b><span>Years of service</span></div><div><b><RvRating /></b><span>Google rating</span></div><div><b><RvCount /></b><span>Google reviews</span></div><div><b>8</b><span>Vehicle categories</span></div></div>
+    <div className="pad"><div className="stats"><div><b>{SITE.years}+</b><span>Years of service</span></div><div><b>{SITE.rating}</b><span>Google rating</span></div><div><b>{SITE.reviewCount}</b><span>Google reviews</span></div><div><b>8</b><span>Vehicle categories</span></div></div>
       <h2 className="h2">Why customers choose us</h2><div className="abt">{v.map(([t, d]) => <div key={t}><h3>{t}</h3><p>{d}</p></div>)}</div></div>
     <section className="dark"><p className="eyebrow">Our promise</p><h2 className="h2">Premium cars. Professional drivers. Seamless journeys.</h2><p>For more than two decades we have helped families, executives and visitors travel comfortably across Islamabad and beyond. Every vehicle is offered with a professional driver, so your time is spent on what matters.</p>
       <p className="row"><Link className="btn" to="/book">Book Now</Link><Link className="btn" to="/cars">Explore Cars</Link></p></section><Reviews /></>);

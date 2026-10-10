@@ -41,7 +41,7 @@ export const BUSINESS = {
   businessHours: null,                                 // [BUSINESS CONFIRMATION REQUIRED] e.g. [{ days: ["Mo","Tu"], opens: "09:00", closes: "21:00" }]
 
   // ---- trust facts supplied by the owner (shown on the site; NOT used for AggregateRating schema on purpose) ----
-  years: 22, rating: "5.0", reviewCount: 218,
+  years: 22, rating: "5.0", reviewCount: 211,
 
   // ---- social profiles (add real URLs; they are automatically added to schema `sameAs` and the footer) ----
   socialProfiles: { facebook: null, instagram: null, tiktok: null, youtube: null },

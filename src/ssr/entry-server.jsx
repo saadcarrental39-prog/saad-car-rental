@@ -2,14 +2,14 @@
 // public page, so the HTML that Google, WhatsApp, Facebook, Telegram etc. download already contains the right title, description,
 // canonical, Open Graph image, structured data AND the real page content (headings, text, links).
 import { renderToString } from "react-dom/server";
-import { StaticRouter } from "react-router-dom/server.js";
+import { MemoryRouter } from "react-router-dom";
 import App from "../App";
 import { PAGES, pageByPath, headFor } from "../seo/registry";
 import { headHtml } from "../seo/head";
 
 export function render(path) {
   const page = pageByPath(path);
-  const html = renderToString(<StaticRouter location={path}><App /></StaticRouter>);
+  const html = renderToString(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>);
   return { html, head: headHtml(headFor(page)), page };
 }
 export { PAGES, pageByPath, headFor } from "../seo/registry";
@@ -22,3 +22,4 @@ export { VEHICLE_FIT, TERRAIN } from "../seo/data/vehicles";
 export { MIN_SCORE, FORBIDDEN, score, uniqueText } from "../seo/quality";
 export { baseFleet } from "../data/fleet";
 export { ADMIN_PATH } from "../config";
+export { imgSet, HERO_SIZES } from "../imgset";

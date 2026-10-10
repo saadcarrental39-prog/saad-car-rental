@@ -3,7 +3,6 @@
 // Events: phone_click, whatsapp_click, email_click, booking_click, quote_start, quote_submit, form_error,
 //         vehicle_view, service_view, route_view, location_view (page views of those page types)
 import { BUSINESS } from "./business.config";
-import { ADMIN_PATH } from "./config";
 const SRC_KEY = "saad_attr";
 
 export function track(name, params = {}) {
@@ -11,7 +10,6 @@ export function track(name, params = {}) {
     const p = { page_path: location.pathname, ...attribution(), device: matchMedia("(max-width:900px)").matches ? "mobile" : "desktop", ...params };
     (window.dataLayer = window.dataLayer || []).push({ event: name, ...p });
     if (typeof window.gtag === "function") window.gtag("event", name, p);
-    beacon(name, params.item);
   } catch { /* analytics must never break the site */ }
 }
 function attribution() {
@@ -20,42 +18,6 @@ function attribution() {
     if (!a) { a = { landing_page: location.pathname, source: q.get("utm_source") || (document.referrer ? new URL(document.referrer).hostname : "direct"), medium: q.get("utm_medium") || (document.referrer ? "referral" : "none") }; sessionStorage.setItem(SRC_KEY, JSON.stringify(a)); }
     return a;
   } catch { return {}; }
-}
-
-/* ---------- First-party counter for the owner's Insights dashboard (stored in Cloudflare D1 via /api/collect) ----------
-   Anonymous: a random id per browser (new vs returning visitor) and per tab session. No name, phone or IP is sent or stored.
-   Every visit is counted, including the owner's. To exclude your own phone/PC, switch off "Apni visits ginein" at the bottom of the Dashboard. */
-const VID_KEY = "saad_vid", SID_KEY = "saad_sid";
-const uid = () => (crypto.randomUUID ? crypto.randomUUID() : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}${Math.random().toString(36).slice(2)}`);
-const stored = (store, key) => { try { let v = store.getItem(key); if (!v) { v = uid(); store.setItem(key, v); } return v; } catch { return uid(); } };
-const skip = () => { try { return localStorage.getItem("saad_skip") === "1" || location.pathname.startsWith(ADMIN_PATH); } catch { return false; } };
-const SRC = [[/google\./, "google"], [/bing\.com/, "bing"], [/duckduckgo|yahoo\./, "search"], [/facebook\.com|fb\.com|fb\.me|l\.facebook/, "facebook"], [/instagram\.com/, "instagram"], [/(^|\.)wa\.me|whatsapp/, "whatsapp"], [/youtube\.com|youtu\.be/, "youtube"], [/tiktok\.com/, "tiktok"], [/(^|\.)t\.co$|twitter\.com|x\.com/, "x"]];
-function source() {
-  const a = attribution() || {}, s = String(a.source || "direct").toLowerCase();
-  if (s === "direct") return "direct";
-  const hit = SRC.find(([re]) => re.test(s)); if (hit) return hit[1];
-  try { if (s === location.hostname || s.replace(/^www\./, "") === location.hostname.replace(/^www\./, "")) return "direct"; } catch { /* ignore */ }
-  return s.replace(/^www\./, "").slice(0, 30);
-}
-const device = () => { const w = innerWidth; return w <= 700 ? "mobile" : w <= 1100 ? "tablet" : "desktop"; };
-function beacon(type, item) {
-  try {
-    if (skip()) return;
-    const body = JSON.stringify({ t: type === "pageview" ? "pv" : type, v: stored(localStorage, VID_KEY), s: stored(sessionStorage, SID_KEY), p: location.pathname, i: item || "", r: source(), d: device() });
-    if (!(navigator.sendBeacon && navigator.sendBeacon("/api/visit", new Blob([body], { type: "text/plain" })))) fetch("/api/visit", { method: "POST", body, keepalive: true, headers: { "content-type": "text/plain" } }).catch(() => {});
-  } catch { /* analytics must never break the site */ }
-}
-let lastPv = "";
-let pings = 0;
-function pageview() { const p = location.pathname; if (p === lastPv) return; lastPv = p; pings = 0; beacon("pageview"); }
-function heartbeat() {   // tells the dashboard "this visitor is still here" (every 30 s, only while the page is visible, about 8 minutes at most per page)
-  setInterval(() => { if (document.visibilityState === "visible" && pings < 16) { pings++; beacon("ping"); } }, 30000);
-  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && pings < 16) { pings++; beacon("ping"); } });
-}
-function watchRoutes() {   // single-page site: count every route change, not just the first load
-  for (const m of ["pushState", "replaceState"]) { const o = history[m]; history[m] = function () { const r = o.apply(this, arguments); setTimeout(pageview, 0); return r; }; }
-  addEventListener("popstate", () => setTimeout(pageview, 0));
-  pageview();
 }
 const VIEW = { vehicle: "vehicle_view", service: "service_view", route: "route_view", location: "location_view", destination: "location_view" };
 export const trackPageType = (kind, slug) => VIEW[kind] && track(VIEW[kind], { item: slug });
@@ -71,7 +33,6 @@ export function initAnalytics() {
     if (cfBeacon) { const s = document.createElement("script"); s.defer = true; s.src = "https://static.cloudflareinsights.com/beacon.min.js"; s.setAttribute("data-cf-beacon", JSON.stringify({ token: cfBeacon })); document.head.appendChild(s); }
   };
   (window.requestIdleCallback || ((f) => setTimeout(f, 1500)))(load); // never delays the first paint
-  watchRoutes(); heartbeat();
   // One delegated listener: every tel: / WhatsApp / mailto / booking link on every page is tracked automatically.
   document.addEventListener("click", (e) => {
     const a = e.target.closest && e.target.closest("a[href]"); if (!a) return; const h = a.getAttribute("href") || "";

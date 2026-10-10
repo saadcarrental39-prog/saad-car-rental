@@ -7,6 +7,6 @@ export async function initFleet() {
   let cur = get(); if (cur) { try { applyOverrides(JSON.parse(cur)); } catch { cur = null; } }
   const fresh = fetch("/api/fleet", { cache: "no-store" }).then((r) => (r.ok && (r.headers.get("content-type") || "").includes("json") ? r.json() : null)).catch(() => null);
   const apply = (d, live) => { const s = JSON.stringify(d); if (s === cur) return; cur = s; applyOverrides(d); saveLocal(d); if (live) window.dispatchEvent(new Event("fleet-updated")); };
-  if (!cur) { const d = await Promise.race([fresh, new Promise((r) => setTimeout(() => r(null), 1200))]); if (d) apply(d, false); }
+  if (!cur) { const d = await Promise.race([fresh, new Promise((r) => setTimeout(() => r(null), 350))]); if (d) apply(d, false); }
   fresh.then((d) => d && apply(d, true));
 }

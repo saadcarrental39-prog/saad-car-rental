@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { SITE } from "../config";
 import { allVehicles } from "../data/fleet";
 import { CUSTOMERS } from "../data/customers";
-import { useReviewSummary } from "./reviews/store";
 // Small bottom-right popup: "<Name> booked a car with a professional driver" + our Google rating.
 // Timing (milliseconds): popup stays SHOW_MS, then waits GAP_MS, then the next name appears.
 const SHOW_MS = 3500, GAP_MS = 2000, FIRST_MS = 3000;
 const PHOTOS = allVehicles.filter((v) => v.image && !v.image.includes("placeholder"));
 const stored = () => { try { return sessionStorage.getItem("rb-off") === "1"; } catch { return false; } };
 export default function RecentBookings() {
-  const { pathname } = useLocation(), blocked = pathname.startsWith("/book"), rv = useReviewSummary();
+  const { pathname } = useLocation(), blocked = pathname.startsWith("/book");
   const [cur, setCur] = useState(null), [off, setOff] = useState(stored);
   const paused = useRef(false), at = useRef(Math.floor(Math.random() * CUSTOMERS.length)), ph = useRef(Math.floor(Math.random() * Math.max(PHOTOS.length, 1)));
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function RecentBookings() {
   return (<aside className={`rb${cur.out ? " rb--out" : ""}`} key={cur.key} aria-label="Recent customer" onMouseEnter={hold(true)} onMouseLeave={hold(false)} onFocus={hold(true)} onBlur={hold(false)}>
     <img src={cur.img} alt="" width="56" height="56" decoding="async" />
     <div className="rb__t"><b>{cur.name}</b><span>booked a car with a professional driver</span>
-      <span className="rb__r"><i aria-hidden="true">★★★★★</i> {rv.rating} · {rv.count} Google reviews</span></div>
+      <span className="rb__r"><i aria-hidden="true">★★★★★</i> {SITE.rating} · {SITE.reviewCount} Google reviews</span></div>
     <button type="button" className="rb__x" aria-label="Close these notifications" onClick={() => { try { sessionStorage.setItem("rb-off", "1"); } catch { /* ignore */ } setOff(true); }}>×</button>
   </aside>);
 }

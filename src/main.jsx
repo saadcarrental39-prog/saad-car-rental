@@ -20,11 +20,7 @@ if (import.meta.env.PROD) {
   const check = async () => {
     try {
       const r = await fetch(`/version.json?t=${Date.now()}`, { cache: "no-store" }); const { id } = await r.json();
-      if (id && id !== __BUILD_ID__ && sessionStorage.getItem("v") !== id) {
-        sessionStorage.setItem("v", id);
-        try { for (const k of await caches.keys()) if (!k.startsWith("saad-admin")) await caches.delete(k); } catch { /* no Cache API */ }
-        const u = new URL(location.href); u.searchParams.set("_r", id); location.replace(u.toString()); // fresh URL = fresh HTML (the ?_r marker is removed again by index.html)
-      }
+      if (id && id !== __BUILD_ID__ && sessionStorage.getItem("v") !== id) { sessionStorage.setItem("v", id); location.reload(); }
     } catch { /* offline: ignore */ }
   };
   check(); document.addEventListener("visibilitychange", () => document.visibilityState === "visible" && check());

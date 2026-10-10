@@ -1,7 +1,7 @@
 # SAAD CAR RENTAL SERVICES – website
 React + Vite + GSAP + React Router. Built from the supplied land-cruiser-carousel project.
 ## Updates and cache
-Every build gets a new ID. Hashed files in /bundle are cached forever, every HTML page and /assets are always revalidated (see public/_headers), and the site checks /version.json on load and when the tab is reopened, then reloads itself once if a newer build exists. The footer shows the build number so you can confirm which version is running.
+Every build gets a new ID. Hashed files in /bundle are cached forever, every HTML page is always revalidated, and /assets (car photos, logos) are cached for 1 year (see public/_headers). If you replace a photo, give the new file a NEW name, and the site checks /version.json on load and when the tab is reopened, then reloads itself once if a newer build exists. The footer shows the build number so you can confirm which version is running.
 ## Hero
 The hero on the Home page loops fleet pictures (src/components/HeroShowcase.jsx). IMAGE_MS = time per picture, FADE_MS = fade length. Videos were removed: they are full dark scenes and cannot be made transparent.
 ## Run

@@ -16,22 +16,18 @@ let buildId = "ssr"; try { buildId = JSON.parse(readFileSync(join(dist, "version
 // ---- bundle the server entry. import.meta.glob (poster images) has no meaning here, so it becomes {}
 await build({
   entryPoints: [join(root, "src/ssr/entry-server.jsx")], outfile: join(work, "entry.mjs"), bundle: true, platform: "node", format: "esm",
-  packages: "external", jsx: "automatic", logLevel: "error", sourcemap: false,
-  define: { "import.meta.env": JSON.stringify({ ...env, PROD: true }), __BUILD_ID__: JSON.stringify(buildId) },
+  // react / react-dom stay external (one React copy); router + gsap are bundled so Node never has to guess their module format
+  external: ["react", "react-dom", "react-dom/server", "react/jsx-runtime"], mainFields: ["module", "main"], jsx: "automatic", logLevel: "error", sourcemap: false,
+  banner: { js: 'import { createRequire as __cr } from "node:module"; const require = __cr(import.meta.url);' },
+  define: { "process.env.NODE_ENV": '"production"', "import.meta.env": JSON.stringify({ ...env, PROD: true }), __BUILD_ID__: JSON.stringify(buildId) },
   loader: { ".webp": "empty", ".png": "empty", ".jpg": "empty", ".svg": "empty", ".css": "empty", ".mp3": "empty", ".mp4": "empty" },
-  plugins: [
-    // gsap only animates in the browser. On the server it is replaced by an empty stub (also avoids Node subpath-import problems).
-    { name: "gsap-stub", setup(b) {
-      b.onResolve({ filter: /^gsap(\/.*)?$/ }, (a) => ({ path: a.path, namespace: "gsap-stub" }));
-      b.onLoad({ filter: /.*/, namespace: "gsap-stub" }, () => ({ loader: "js", contents: "const g={registerPlugin(){},context(f){return{revert(){}}},fromTo(){},to(){},from(){},set(){},timeline(){return g}};export default g;export const gsap=g;export const ScrollTrigger={getAll:()=>[],create(){},refresh(){}};" }));
-    } },
-    { name: "no-glob", setup(b) { b.onLoad({ filter: /src[\\/]data[\\/]services\.js$/ }, (a) => ({ contents: readFileSync(a.path, "utf8").replace(/import\.meta\.glob\([^)]*\)/g, "{}"), loader: "js" })); } }],
+  plugins: [{ name: "no-glob", setup(b) { b.onLoad({ filter: /src[\\/]data[\\/]services\.js$/ }, (a) => ({ contents: readFileSync(a.path, "utf8").replace(/import\.meta\.glob\([^)]*\)/g, "{}"), loader: "js" })); } }],
 });
 const mod = await import(pathToFileURL(join(work, "entry.mjs")).href);
-const { PAGES, render, BUSINESS, ADMIN_PATH, baseFleet } = mod;
+const { PAGES, render, BUSINESS, ADMIN_PATH, baseFleet, imgSet, HERO_SIZES } = mod;
 
 // ---- quiet the harmless React "useLayoutEffect does nothing on the server" warning
-const err = console.error; console.error = (...a) => { if (!String(a[0]).includes("useLayoutEffect")) err(...a); };
+const err = console.error; console.error = (...a) => { if (!/useLayoutEffect|fetchpriority/.test(String(a[0]))) err(...a); };
 
 // ---- write every page
 const template = readFileSync(join(dist, "index.html"), "utf8");
@@ -40,7 +36,13 @@ let written = 0;
 for (const page of PAGES) {
   const { html, head } = render(page.path);
   if (!html || html.length < 500) throw new Error(`Empty render for ${page.path}`);
-  let out = strip(template).replace("</head>", `${head}\n</head>`);
+  // Home page: tell the browser to start downloading the big hero picture straight away (it is the "Largest Contentful Paint" element).
+  let preload = "";
+  if (page.path === "/") {
+    const hero = baseFleet.flatMap((c) => c.vehicles).find((v) => !v.placeholder), s = hero && imgSet(hero.image, HERO_SIZES);
+    if (hero) preload = `\n<link rel="preload" as="image" href="${hero.image}"${s.srcSet ? ` imagesrcset="${s.srcSet}" imagesizes="${s.sizes}"` : ""} fetchpriority="high">`;
+  }
+  let out = strip(template).replace("</head>", `${head}${preload}\n</head>`);
   if (!out.includes('<div id="root"></div>')) throw new Error('index.html is missing <div id="root"></div>');
   out = out.replace('<div id="root"></div>', `<div id="root">${html}</div>`);
   const file = page.path === "/" ? join(dist, "index.html") : join(dist, page.path, "index.html");
@@ -55,7 +57,7 @@ const urlset = (items, ns = "") => `<?xml version="1.0" encoding="UTF-8"?>\n<url
 const urlTag = (p, extra = "") => `<url><loc>${x(site + (p.path === "/" ? "/" : p.path))}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority.toFixed(1)}</priority>${extra}</url>`;
 const idx = PAGES.filter((p) => p.indexable);
 const groups = {
-  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "audience"].includes(p.kind)),
+  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport"].includes(p.kind)),
   "sitemap-vehicles.xml": idx.filter((p) => p.kind === "vehicle"),
   "sitemap-services.xml": idx.filter((p) => p.kind === "service"),
   "sitemap-locations.xml": idx.filter((p) => p.kind === "location" || p.kind === "province"),
@@ -75,6 +77,28 @@ const imgItems = idx.map((p) => {
 });
 writeFileSync(join(dist, "sitemap-images.xml"), urlset(imgItems, IMG)); files.push("sitemap-images.xml");
 writeFileSync(join(dist, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${files.map((f) => `<sitemap><loc>${site}/${f}</loc><lastmod>${today}</lastmod></sitemap>`).join("\n")}\n</sitemapindex>\n`);
+
+// ---- /.well-known/ai-catalog.json : the list of public resources that AI agents may discover (Agentic Resource Discovery, ARD).
+// Only real, public things that exist on this website are listed. No invented tools, APIs or agents.
+const host = new URL(site).hostname, urn = (n) => `urn:air:${host}:${n}`;
+const catalog = {
+  specVersion: "1.0",
+  host: { displayName: BUSINESS.businessName, documentationUrl: site + "/", logoUrl: site + "/icons/saad-512.png" },
+  entries: [
+    { identifier: urn("site:website"), displayName: `${BUSINESS.businessName} website`, type: "text/html", url: site + "/",
+      description: "Car rental with a professional driver in Islamabad: vehicles, services, airport transfers and routes across Pakistan.",
+      tags: ["car-rental", "chauffeur", "islamabad", "pakistan"],
+      representativeQueries: ["car rental with driver in Islamabad", "Land Cruiser rental with driver for airport transfer in Islamabad", "Islamabad to Hunza car rental with driver"] },
+    { identifier: urn("site:booking"), displayName: "Booking and quote request page", type: "text/html", url: site + "/book",
+      description: "Page to send a booking or quote request for a car with a professional driver. The business replies to confirm details.",
+      tags: ["booking", "quote"] },
+    { identifier: urn("site:sitemap"), displayName: "Sitemap index", type: "application/xml", url: site + "/sitemap.xml",
+      description: "Index of every public page on the website (vehicles, services, locations, destinations, routes).", tags: ["sitemap"] },
+  ],
+};
+mkdirSync(join(dist, ".well-known"), { recursive: true });
+writeFileSync(join(dist, ".well-known", "ai-catalog.json"), JSON.stringify(catalog, null, 2) + "\n");
+console.log("prerender: .well-known/ai-catalog.json written");
 
 // ---- robots.txt: crawlers may read everything public (CSS, JS, images, favicon). Private areas are ALSO protected by auth / noindex headers.
 writeFileSync(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /r/\nDisallow: ${ADMIN_PATH}\n\nSitemap: ${site}/sitemap.xml\n`);
