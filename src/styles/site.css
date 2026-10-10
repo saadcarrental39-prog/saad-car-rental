@@ -173,3 +173,5 @@ body{display:block;padding:0;background:#fff;color:#16181b;font-family:Manrope,s
 .ftr__brand{display:inline-flex;align-items:center;gap:.7em;flex-wrap:wrap}.ftr__brand img{display:block;height:46px;width:auto}
 .ftr__brand span{font-size:.78rem;font-weight:500;letter-spacing:.2em}
 @media(max-width:900px){.logo__img{height:32px}}
+
+:root{--saad-rev:20261010}
