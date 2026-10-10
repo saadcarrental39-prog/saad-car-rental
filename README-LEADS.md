@@ -4,8 +4,8 @@ Admin app ke **Clients** tab mein har wo shakhs nazar aata hai jis ne website ke
 Pehle sirf wahi order milta tha jis ne "Book via WhatsApp" dabaya. Ab adhoori booking ka data bhi milta hai.
 
 ## Kaise kaam karta hai
-1. Visitor **Book page**, **gaari ke Booking popup** ya **Contact form** mein likhna shuru karta hai.
-2. Jaise hi **poora phone number** (kam az kam 10 digit) ya **sahi email** likha jaye aur wo 2.5 second rukay (ya page chhor de), website ye data `/api/lead` ko bhej deti hai.
+1. Visitor **Book page**, **Home page ka booking box**, **gaari ke Booking popup** ya **Contact form** mein likhna shuru karta hai.
+2. Jaise hi **naam** (2 akshar), **phone number** (adhoora bhi, kam az kam 5 digit) ya **sahi email** likha jaye aur wo 2.5 second rukay (ya page chhor de), website ye data `/api/lead` ko bhej deti hai.
 3. Data D1 database (wahi `DB` jo Dashboard ke liye hai) mein save hota hai. Ek banda = ek record, jo likhte rehne par update hota rehta hai.
 4. Pehli baar contact milte hi aap ke phone par **notification** aati hai (📝 Adhoora booking / 💬 New enquiry), aur Clients tab par **laal badge**.
 5. Agar visitor baad mein form Send kar de to wohi record **SEND KIYA** ho jata hai.

@@ -16,8 +16,8 @@ export async function saveLead({ db, kv, request, raw, waitUntil }) {
   const vid = clip(b.v, 40).replace(/[^A-Za-z0-9-]/g, ""), src = FORMS.has(b.f) ? b.f : "";
   if (vid.length < 8 || !src) return "bad_fields";
   const phone = clip(b.phone, 25), email = clip(b.email, 80).toLowerCase(), digits = phone.replace(/\D/g, "");
-  const okP = /^[\d+\s()-]{9,25}$/.test(phone) && digits.length >= 9, okE = EMAIL.test(email);
-  if (!okP && !okE) return "no_contact";
+  const okP = /^[\d+\s()-]{5,25}$/.test(phone) && digits.length >= 5, okE = EMAIL.test(email);
+  if (!okP && !okE && clip(b.name, 60).length < 2) return "no_contact";   // a name alone is enough to save the person
   const row = { name: clip(b.name, 60), phone: okP ? phone : "", email: okE ? email : "", whatsapp: clip(b.whatsapp, 25), car: clip(b.car, 70), pickup: clip(b.pickup, 80), dropoff: clip(b.drop, 80),
     day: clip(b.date, 14), tm: clip(b.time, 8), pax: clip(b.pax, 4), extra: clip(b.extra, 300), city: clip((request.cf || {}).city, 40), dev: ["mobile", "tablet", "desktop"].includes(b.dev) ? b.dev : "" };
   const status = b.done ? "sent" : "partial", now = Date.now();
@@ -36,11 +36,11 @@ export async function saveLead({ db, kv, request, raw, waitUntil }) {
   if (Math.random() < 0.01) await db.prepare(`DELETE FROM leads WHERE updated < ?`).bind(now - 730 * DAY).run();   // keep 2 years
 
   // phone notification the first time this visitor leaves any contact detail (a finished booking already pushes through Orders)
-  const first = !prev || (!prev.phone && !prev.email);
+  const first = !prev || (!prev.phone && !prev.email && !!(row.phone || row.email));   // push once when the person first appears, and again when a phone / email shows up
   if (kv && first && !(b.done && src !== "contact")) {
     const burst = await db.prepare(`SELECT COUNT(*) n FROM leads WHERE created > ?`).bind(now - 60e3).first();
     if ((burst?.n || 0) <= 15) {
-      const unseen = (await db.prepare(`SELECT COUNT(*) n FROM leads WHERE seen=0`).first())?.n || 0, who = row.name || "Naam nahi likha", how = row.phone || row.email;
+      const unseen = (await db.prepare(`SELECT COUNT(*) n FROM leads WHERE seen=0`).first())?.n || 0, who = row.name || "Naam nahi likha", how = row.phone || row.email || "phone / email abhi nahi likha";
       const job = pushAll(kv, { title: src === "contact" ? "💬 New enquiry" : "📝 Adhoora booking (send nahi kiya)", body: `${who} · ${how}${row.car ? `\n🚗 ${row.car}` : ""}`, count: unseen, id: `${vid}-${src}`, tab: "leads" }, new URL(request.url).origin);
       if (waitUntil) waitUntil(job); else await job;
     }
