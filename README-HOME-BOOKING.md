@@ -19,3 +19,10 @@ The red line under the badge now says the real reason (database not connected, o
 # WhatsApp field
 Every booking form (Home box, /book, booking popup, contact) has a WhatsApp number field. It is NOT required (no star). If filled, it shows in the order message, the Orders tab card and the Clients tab.
 The line "We save the details you type..." was removed from all forms. The Privacy Policy page still explains it, which is where the law expects it.
+
+# Booking form fields (Local / Out of Station) - src/components/TripForm.jsx
+One shared form for the Book page, the car popup and the Home box. Sections: 1 Your Details (name, WhatsApp, country, optional email), 2 Ride Information / Tour Details, 3 Driver Arrangement, 4 Additional Services, 5 Extra Notes.
+- No self-drive: "Car with driver" is the default service.
+- Local: customer chooses (a) provide driver stay + meals, or (b) not provide: car returns to the office and is sent again at the next pickup time, customer pays the driver 2500 PKR for food.
+- Out of Station: providing the driver's stay + meals is compulsory (box must be ticked).
+- Change the food amount in one place: `DRIVER_FOOD_PKR` in TripForm.jsx.

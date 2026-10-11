@@ -59,15 +59,15 @@ export async function makeReceipt(d, v, ref = refNo()) {
   const logo = await loadImg("/assets/brand/saadcar-logo-light-1200.png");
 
   const rows = [
-    ["CUSTOMER", [["Name", g("name")], ["Phone", g("phone")], ...(clean(d.email) ? [["Email", g("email")]] : [])]],
+    ["CUSTOMER", [["Name", g("name")], ["Phone", g("phone")], ...(clean(d.email) ? [["Email", g("email")]] : []), ...(clean(d.country) ? [["Country", g("country")]] : [])]],
     ["JOURNEY", [
       ["Pickup", g("pickup")], ["Drop-off", g("drop")],
-      ["Date", fmtDate(d.date)], ["Pickup Time", g("time")],
+      ["Date", fmtDate(d.date)], ...(clean(d.time) ? [["Pickup Time", g("time")]] : []),
       ...(clean(d.rdate) ? [["Return", `${fmtDate(d.rdate)}${clean(d.rtime) ? " · " + clean(d.rtime) : ""}`]] : []),
       ...(clean(d.trip) ? [["Trip Type", g("trip")]] : []),
       ["Passengers", g("pax")],
     ]],
-    ["VEHICLE", [["Model", `${v.name} ${v.trim || ""}`.trim()], ["Colour", v.color || "-"], ["Service", d.svc === "out" ? "Out of Station · With Driver" : d.svc === "local" ? "Local (Islamabad) · With Driver" : "With Professional Driver"]]],
+    ["VEHICLE", [["Model", `${v.name} ${v.trim || ""}`.trim()], ["Colour", v.color || "-"], ["Service", d.svc === "out" ? "Out of Station · With Driver" : d.svc === "local" ? "Local (Islamabad) · With Driver" : "With Professional Driver"], ...(d.driver ? [["Driver Stay & Meals", d.driver === "own" ? "By driver (food paid by customer)" : "Provided by customer"]] : [])]],
     ...(clean(d.extra) ? [["NOTES", [["Requirements", g("extra")]]]] : []),
   ];
 

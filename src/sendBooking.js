@@ -9,9 +9,15 @@ export function buildMessage(d, v, ref) {
   const car = `${v.name} ${v.trim || ""} ${v.color || ""}`.replace(/\s+/g, " ").trim();
   const L = ["🚘 *SAAD CAR RENTAL SERVICES*", "✨ _Premium Car Rental With Professional Driver_", "━━━━━━━━━━━━━━━", `🧾 *New Booking Request*  #${ref}`, "",
     `🚗 *Vehicle:* ${car}`, `👤 *Name:* ${d.name || ""}`, `📞 *Phone:* ${d.phone || ""}`, ...(d.whatsapp && String(d.whatsapp).trim() ? [`💬 *WhatsApp:* ${String(d.whatsapp).trim()}`] : []), `📍 *Pickup:* ${d.pickup || ""}`, `🏁 *Drop-off:* ${d.drop || ""}`, ...(svcFull(d.svc) ? [`🧭 *Service:* ${svcFull(d.svc)}`] : []),
-    `📅 *Date:* ${prettyDate(d.date)}`, `⏰ *Time:* ${prettyTime(d.time)}`];
+    `📅 *Date:* ${prettyDate(d.date)}`, ...(d.time ? [`⏰ *Time:* ${prettyTime(d.time)}`] : [])];
+  if (d.rdate) L.push(`🔁 *Return date:* ${prettyDate(d.rdate)}`);
   if (d.pax) L.push(`👥 *Passengers:* ${d.pax}`);
-  if (d.extra && String(d.extra).trim()) L.push(`📝 *Notes:* ${String(d.extra).trim()}`);
+  if (d.country) L.push(`🌍 *Travelling from:* ${d.country}`);
+  if (d.service) L.push(`🛎️ *Service required:* ${d.service}`);
+  if (d.addlText) L.push(`➕ *Additional services:* ${d.addlText}`);
+  if (d.driverText) L.push(`🧑‍✈️ *Driver:* ${d.driverText}`);
+  const note = d.service !== undefined ? d.notes : d.extra;
+  if (note && String(note).trim()) L.push(`📝 *Notes:* ${String(note).trim()}`);
   L.push("━━━━━━━━━━━━━━━", "✅ Please confirm my booking. Thank you! 🙏");
   return L.join("\n");
 }
