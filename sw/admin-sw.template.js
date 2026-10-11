@@ -7,7 +7,7 @@ const ADMIN = "/saad-owner-7k3x9/";
 
 self.addEventListener("install", (e) => {
   self.skipWaiting();
-  e.waitUntil(caches.open(STATIC).then((c) => c.addAll(["/icons/saad-logo.png", "/icons/saad-splash.mp4", "/sounds/order-tone.mp3"]).catch(() => {})));
+  e.waitUntil(caches.open(STATIC).then((c) => c.addAll(["/icons/saad-logo.png", "/icons/admin-sun.png", "/icons/admin-night.png", "/assets/brand/saadcar-logo-light-1200.png", "/icons/saad-splash.mp4", "/sounds/order-tone.mp3"]).catch(() => {})));
 });
 self.addEventListener("activate", (e) => e.waitUntil((async () => {
   for (const k of await caches.keys()) if (k.startsWith("saad-admin-shell-") && k !== SHELL) await caches.delete(k);

@@ -130,6 +130,16 @@ export async function stats(db, rangeKey) {
 
 /* ---------- LIVE: who is on the website right now + newest activity (polled every few seconds by the dashboard) ----------
    "online" = visitors seen in the last 100 s. The website sends a tiny "ping" every 30 s while a page is open and visible. */
+// Full activity history for the dashboard's "Taza activity" sheet: newest first, loaded in pages while the owner scrolls (before = id of the last row already shown).
+export async function activityFeed(db, before) {
+  await ensure(db);
+  const lim = 40, b = Math.max(0, Number(before) || 0);
+  const EV = `SELECT h.id, h.ts, h.type, h.path, h.item, h.city, h.dev, h.src, (v.ts = h.ts) nw FROM hits h LEFT JOIN vfirst v ON v.vid = h.vid WHERE h.type NOT IN ('ping','form_error')`;
+  const r = b > 0 ? await db.prepare(`${EV} AND h.id < ? ORDER BY h.id DESC LIMIT ?`).bind(b, lim + 1).all() : await db.prepare(`${EV} ORDER BY h.id DESC LIMIT ?`).bind(lim + 1).all();
+  const rows = r.results || [], more = rows.length > lim, ev = rows.slice(0, lim).map((x) => ({ ...x, nw: !!x.nw }));
+  return { ok: true, events: ev, more, next: ev.length ? ev[ev.length - 1].id : 0, dayStart: undefined };
+}
+
 export async function liveFeed(db, since) {
   await ensure(db);
   const now = Date.now(), q = (s, ...a) => db.prepare(s).bind(...a), cut = now - 100e3, after = since > 0;

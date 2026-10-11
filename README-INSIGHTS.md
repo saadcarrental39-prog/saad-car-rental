@@ -63,3 +63,8 @@ purane visitors ka data khud us mein bhar jata hai (ek baar).
 - `src/analytics.js`: ping (online dikhane ke liye), "Do Not Track" aur owner-skip wali galti theek.
 - `src/pages/Admin.jsx`: Admin kholne par device ko khud ba khud "owner" banane wali line hata di.
 - `src/components/Insights.jsx`, `src/styles/insights.css`: white / black premium design, LIVE panel aur naye sections.
+
+# Neumorphism look + day/night (Oct 2026)
+- `src/styles/admin-neu.css` restyles the whole Admin app (soft raised / pressed surfaces, floating bottom dock) in the same black, white and gold colours. It only restyles: layout and data are unchanged.
+- Day/night toggle (sun / moon icon, top right, also on the login screen). Remembered on the phone; the first time it follows the phone's own setting. Icons: `public/icons/admin-sun.png`, `admin-night.png`.
+- "Taza activity" is now a bottom-sheet card: newest first, grouped by date (Aaj / Kal / date), scrolls inside the card with a hidden scrollbar, loads older pages while you scroll back to the very first visit (`activity` action in `functions/api/admin.js`, `activityFeed` in `functions/_lib/stats.js`). The expand button makes the sheet taller.

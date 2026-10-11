@@ -3,7 +3,7 @@
 //   ADMIN_USER, ADMIN_PASS (secret)   optional: ADMIN_SECRET (extra signing secret)
 // Storage: KV binding SITEDATA (or the existing RECEIPTS binding).
 import { getVapid, subId } from "../_lib/push.js";
-import { stats, liveFeed, dayOf, addDays, RANGE_DAYS } from "../_lib/stats.js";
+import { stats, liveFeed, activityFeed, dayOf, addDays, RANGE_DAYS } from "../_lib/stats.js";
 import { leadsAdmin } from "../_lib/leads.js";
 const enc = new TextEncoder();
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
@@ -86,6 +86,10 @@ export async function onRequestPost({ request, env }) {
       data.orders = await orderCounts(kv, data.range);          // bookings received through the website (Orders tab), same period + previous period
       return json(data);
     } catch (e) { return json({ error: "stats_failed", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
+  }
+  if (b.action === "activity") {                                    // older activity, page by page (the "Taza activity" sheet scrolls back to the very first visit)
+    if (!env.DB) return json({ error: "no_db" }, 503);
+    try { return json(await activityFeed(env.DB, b.before)); } catch (e) { return json({ error: "activity_failed", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
   }
   if (b.action === "live") {                                        // who is on the website right now (polled every ~4 s by the dashboard)
     if (!env.DB) return json({ error: "no_db" }, 503);

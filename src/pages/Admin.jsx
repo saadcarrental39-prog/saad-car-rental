@@ -1,12 +1,30 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { baseFleet, applyOverrides } from "../data/fleet";
 import { saveLocal } from "../fleetSync";
 import { ADMIN_PATH } from "../config";
 import "../styles/admin.css";
+import "../styles/admin-neu.css";
 import Insights from "../components/Insights";
 
 const TK = "adm-t";
-const LOGO = "/icons/saad-logo.png";
+const LOGO = "/icons/saad-logo.png", LOGO_DARK = "/assets/brand/saadcar-logo-light-1200.png";
+// Day / night: remembered on this phone; first time it follows the phone's own setting. Icons: /icons/admin-sun.png and /icons/admin-night.png
+const THEME_KEY = "adm-theme";
+const ThemeCtx = createContext({ theme: "light", toggle: () => {} });
+function useThemeState() {
+  const [theme, setTheme] = useState(() => { try { const t = localStorage.getItem(THEME_KEY); if (t === "dark" || t === "light") return t; return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"; } catch { return "light"; } });
+  useEffect(() => {
+    try { localStorage.setItem(THEME_KEY, theme); } catch { /* ignore */ }
+    let m = document.querySelector('meta[name="theme-color"]'); if (!m) { m = document.createElement("meta"); m.name = "theme-color"; document.head.appendChild(m); }
+    m.content = theme === "dark" ? "#17181b" : "#e9ebef";
+  }, [theme]);
+  return [theme, () => setTheme((t) => (t === "dark" ? "light" : "dark"))];
+}
+function ThemeToggle({ floating }) {
+  const { theme, toggle } = useContext(ThemeCtx), dark = theme === "dark";
+  return (<button type="button" className={`ad-theme${floating ? " ad-theme--float" : ""}`} onClick={toggle} aria-pressed={dark} aria-label={dark ? "Day mode on karein" : "Night mode on karein"}>
+    <img src={dark ? "/icons/admin-night.png" : "/icons/admin-sun.png"} width="26" height="26" alt="" /></button>);
+}
 const MSG = { invalid: "Username ya password ghalat hai.", too_many: "Bohat zyada koshish. 15 minute baad dobara try karein.", admin_not_configured: "Admin abhi setup nahi hua. Cloudflare mein ADMIN_USER aur ADMIN_PASS set karein (README-ADMIN.md).", no_storage: "Storage (KV) bind nahi hua. README-ADMIN.md dekhein.", bad_image: "Photo save nahi hui. Chhoti ya doosri photo try karein.", too_big: "Photo bohat bari hai." };
 const SW = [["white", "#f2f2f0"], ["black", "#17171a"], ["grey", "#8b94a0"], ["gray", "#8b94a0"], ["silver", "#c3c7cd"], ["red", "#b3262b"], ["blue", "#1f56b8"], ["plum", "#6b2d5c"]];
 const swatch = (n = "") => (SW.find(([k]) => String(n).toLowerCase().includes(k)) || [0, "#b4b8be"])[1];
@@ -86,10 +104,12 @@ function InstallCard({ pwa }) {
 
 /* ---------- login ---------- */
 function Login({ onOk }) {
+  const { theme } = useContext(ThemeCtx), logo = theme === "dark" ? LOGO_DARK : LOGO;
   const [u, setU] = useState(""), [p, setP] = useState(""), [show, setShow] = useState(false), [err, setErr] = useState(""), [busy, setBusy] = useState(false);
   const go = async (e) => { e.preventDefault(); setBusy(true); setErr(""); try { onOk((await api("login", { user: u, pass: p })).token); } catch (x) { setErr(MSG[x.message] || "Login nahi hua. Internet check karein."); } finally { setBusy(false); } };
   return (<div className="ad-login">
-    <div className="ad-login__top"><img src={LOGO} alt="SAAD CAR" width="900" height="284" /><span>RENTAL SERVICES</span></div>
+    <ThemeToggle floating />
+    <div className="ad-login__top"><img src={logo} alt="SAAD CAR" width="900" height="284" /><span>RENTAL SERVICES</span></div>
     <form className="ad-login__form" onSubmit={go}>
       <h1>Owner login</h1><p className="ad-sub">Apni gaariyon aur prices ko manage karein.</p>
       <label className="ad-field"><span>Username</span><input value={u} onChange={(e) => setU(e.target.value)} autoCapitalize="none" autoCorrect="off" autoComplete="username" placeholder="Username" required /></label>
@@ -324,6 +344,7 @@ function ReviewsCard({ tok }) {
 }
 
 function Panel({ tok, out, pwa }) {
+  const { theme } = useContext(ThemeCtx), logo = theme === "dark" ? LOGO_DARK : LOGO;
   const [ov, setOv] = useState(null), [dirty, setDirty] = useState(false), [msg, setMsg] = useState(""), [loadErr, setLoadErr] = useState(""), [busy, setBusy] = useState(false), [tab, setTab] = useState(() => { const t = new URLSearchParams(location.search).get("tab"); return t === "fleet" || t === "orders" || t === "leads" ? t : "home"; }), [q, setQ] = useState(""), [formKey, setFormKey] = useState(0); const [leadN, setLeadN] = useState(0);
   const norm = (d) => ({ vehicles: {}, added: [], cats: [], ...(d || {}) });
   const load = () => { setLoadErr(""); api("load", {}, tok).then((r) => setOv(norm(r.data))).catch((e) => (e.status === 401 ? out() : setLoadErr(MSG[e.message] || "Data load nahi hua. Internet check karein."))); };
@@ -355,7 +376,7 @@ function Panel({ tok, out, pwa }) {
   const match = (c, v) => !q.trim() || `${v.name} ${v.trim || ""} ${v.color || ""} ${c.title}`.toLowerCase().includes(q.trim().toLowerCase());
   const tabs = [["home", "Dashboard", IChart], ["orders", "Orders", IBell], ["leads", "Clients", IPeople], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["me", "Account", IUser]];
   return (<>
-    <header className="ad-top"><img src={LOGO} alt="SAAD CAR" width="900" height="284" /><span className="ad-pill">Admin</span></header>
+    <header className="ad-top"><img src={logo} alt="SAAD CAR" width="900" height="284" /><div className="ad-top__r"><ThemeToggle /><span className="ad-pill">Admin</span></div></header>
     <main className="ad-main">
       {st.banner && tab !== "orders" && <button type="button" className="ad-alert" onClick={() => { st.setBanner(""); setTab("orders"); }}>{st.banner} <b>Dekhein</b></button>}
       {tab === "home" && <Insights api={insApi} out={out} />}
@@ -371,7 +392,7 @@ function Panel({ tok, out, pwa }) {
       </>}
       {tab === "add" && <AddCar key={formKey} tok={tok} cats={cats} onAdd={(item, nc) => { edit((n) => { if (nc) n.cats.push(nc); n.added.push(item); }); setFormKey((k) => k + 1); setTab("fleet"); setMsg("Gaari add ho gayi. Neeche Save dabana na bhoolein."); }} />}
       {tab === "me" && <>
-        <section className="ad-card ad-me"><img src={LOGO} alt="SAAD CAR" width="900" height="284" /><b>SAAD CAR RENTAL SERVICES</b><span>Owner admin</span></section>
+        <section className="ad-card ad-me"><img src={logo} alt="SAAD CAR" width="900" height="284" /><b>SAAD CAR RENTAL SERVICES</b><span>Owner admin</span></section>
         <InstallCard pwa={pwa} />
         <ReviewsCard tok={tok} />
         <a className="ad-btn ad-btn--ghost ad-btn--lg" href="/" target="_blank" rel="noopener noreferrer"><IGlobe />Website kholein</a>
@@ -390,5 +411,6 @@ export default function Admin() {
   const [splash, setSplash] = useState(() => { try { return !sessionStorage.getItem("adm-sp") && !matchMedia("(prefers-reduced-motion: reduce)").matches; } catch { return false; } });
   const set = (t) => { try { t ? localStorage.setItem(TK, t) : localStorage.removeItem(TK); } catch { /* ignore */ } setTok(t); };
   const endSplash = () => { try { sessionStorage.setItem("adm-sp", "1"); } catch { /* ignore */ } setSplash(false); };
-  return <div className="adm" data-ok="1">{tok ? <Panel tok={tok} out={() => set("")} pwa={pwa} /> : <Login onOk={set} />}{splash && <Splash done={endSplash} />}</div>;
+  const [theme, toggle] = useThemeState();
+  return <ThemeCtx.Provider value={{ theme, toggle }}><div className="adm" data-ok="1" data-theme={theme}>{tok ? <Panel tok={tok} out={() => set("")} pwa={pwa} /> : <Login onOk={set} />}{splash && <Splash done={endSplash} />}</div></ThemeCtx.Provider>;
 }
