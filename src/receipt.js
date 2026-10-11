@@ -67,7 +67,7 @@ export async function makeReceipt(d, v, ref = refNo()) {
       ...(clean(d.trip) ? [["Trip Type", g("trip")]] : []),
       ["Passengers", g("pax")],
     ]],
-    ["VEHICLE", [["Model", `${v.name} ${v.trim || ""}`.trim()], ["Colour", v.color || "-"], ["Service", "With Professional Driver"]]],
+    ["VEHICLE", [["Model", `${v.name} ${v.trim || ""}`.trim()], ["Colour", v.color || "-"], ["Service", d.svc === "out" ? "Out of Station · With Driver" : d.svc === "local" ? "Local (Islamabad) · With Driver" : "With Professional Driver"]]],
     ...(clean(d.extra) ? [["NOTES", [["Requirements", g("extra")]]]] : []),
   ];
 

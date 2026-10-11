@@ -13,6 +13,8 @@ import { FAQS } from "./data/faq";
 import { AUDIENCES } from "./data/audiences";
 import { LEGAL } from "./data/legal";
 import { GUIDE } from "./data/guide";
+import { SPOTS } from "./data/islamabad";
+import { LOCAL_PILLAR, OUT_PILLAR, PLACES_HUB } from "./data/pillars";
 import { VEHICLE_FIT, USE, TERRAIN } from "./data/vehicles";
 import { categories, category, photoOf, vehiclesForPlace, northernPlaces, placesIn, livePlacesList } from "./links";
 import { graphFor, abs } from "./schema";
@@ -142,6 +144,23 @@ add({ path: GUIDE.path, kind: "guide", title: GUIDE.title, h1: GUIDE.h1, descrip
 LEGAL.forEach((l) => {
   add({ path: l.path, kind: "legal", slug: l.slug, title: l.title, h1: l.h1, description: l.description, priority: 0.4, changefreq: "yearly", faqs: l.faqs,
     breadcrumbs: [home, { name: l.short, path: l.path }], og: { a: l.ogA, b: l.ogB, vehicle: "prado" } });
+});
+
+
+// ---------------------------------------------------------------- the two services (Local / Out of Station) and the Islamabad places
+[[LOCAL_PILLAR, 0.9, "Daily local car with driver", ["Islamabad", "Rawalpindi"]], [OUT_PILLAR, 0.9, "Out of station car with driver", ["Islamabad", "Pakistan"]], [PLACES_HUB, 0.8, "", null]].forEach(([D, pr, svc, areas]) => {
+  add({ path: D.path, kind: "pillar", slug: D.slug, title: D.title, h1: D.h1, description: D.description, priority: pr, changefreq: "weekly", faqs: D.faqs,
+    breadcrumbs: [home, { name: D.slug === "places" ? "Islamabad Places" : D.slug === "local" ? "Local Service" : "Out of Station", path: D.path }],
+    og: { a: D.slug === "local" ? "LOCAL CAR WITH DRIVER" : D.slug === "out" ? "OUT OF STATION" : "ISLAMABAD PLACES", b: D.slug === "local" ? "Islamabad · Daily use" : D.slug === "out" ? "Cities · Hills · Valleys · North" : "Markets · Hotels · Picnic spots", vehicle: D.slug === "out" ? "land-cruiser-v8" : "prado" },
+    ...(svc ? { service: { type: svc, areas } } : {}) });
+});
+SPOTS.forEach((x) => {
+  add({ path: `/islamabad/${x.slug}`, kind: "spot", slug: x.slug, title: `Car With Driver to ${x.name}`, h1: `Local Car Rental With Driver for ${x.name}`,
+    description: `Local car with a professional driver to ${x.name}, ${x.area}. Pickup anywhere in Islamabad, the driver waits or returns at your time. Book Local service.`.slice(0, 160),
+    priority: 0.6, changefreq: "monthly", faqs: x.faqs,
+    breadcrumbs: [home, { name: "Islamabad Places", path: "/islamabad-places" }, { name: x.name, path: `/islamabad/${x.slug}` }],
+    og: { a: x.name.toUpperCase(), b: "Local car with driver · Islamabad", vehicle: "prado" },
+    service: { type: "Local car with driver", areas: ["Islamabad", "Rawalpindi"] } });
 });
 
 // ---------------------------------------------------------------- province / region hubs and national hubs

@@ -57,7 +57,8 @@ const urlset = (items, ns = "") => `<?xml version="1.0" encoding="UTF-8"?>\n<url
 const urlTag = (p, extra = "") => `<url><loc>${x(site + (p.path === "/" ? "/" : p.path))}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority.toFixed(1)}</priority>${extra}</url>`;
 const idx = PAGES.filter((p) => p.indexable);
 const groups = {
-  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "guide", "legal", "audience"].includes(p.kind)),
+  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "guide", "legal", "audience", "pillar"].includes(p.kind)),
+  "sitemap-islamabad.xml": idx.filter((p) => p.kind === "spot"),
   "sitemap-vehicles.xml": idx.filter((p) => p.kind === "vehicle"),
   "sitemap-services.xml": idx.filter((p) => p.kind === "service"),
   "sitemap-locations.xml": idx.filter((p) => p.kind === "location" || p.kind === "province"),
@@ -92,6 +93,18 @@ const catalog = {
     { identifier: urn("site:booking"), displayName: "Booking and quote request page", type: "text/html", url: site + "/book",
       description: "Page to send a booking or quote request for a car with a professional driver. The business replies to confirm details.",
       tags: ["booking", "quote"] },
+    { identifier: urn("site:out-of-station"), displayName: "Out of station car with driver from Islamabad", type: "text/html", url: site + "/out-of-station-car-rental",
+      description: "Trips that leave Islamabad with a professional driver: Lahore, Peshawar, Murree, Swat, Kumrat, Naran, Hunza, Skardu and more. Priced separately from local travel.",
+      tags: ["out-of-station", "intercity", "northern-pakistan", "tours"],
+      representativeQueries: ["out of station car rental Islamabad", "Islamabad to Skardu car with driver", "Islamabad to Kumrat car rental"] },
+    { identifier: urn("site:local-service"), displayName: "Local car with driver in Islamabad", type: "text/html", url: site + "/local-car-rental-islamabad",
+      description: "Daily local car with a professional driver inside Islamabad: shopping, markets, premium hotels, meetings and picnic spots. Priced separately from out of station trips.",
+      tags: ["local", "islamabad", "shopping", "hotels", "picnic"],
+      representativeQueries: ["local car with driver in Islamabad", "car with driver for shopping in Islamabad", "Daman-e-Koh car with driver"] },
+    { identifier: urn("site:islamabad-places"), displayName: "Islamabad places we cover with a driver", type: "text/html", url: site + "/islamabad-places",
+      description: "Markets, premium hotels, picnic spots and landmarks in Islamabad with a local car and professional driver.",
+      tags: ["islamabad", "markets", "hotels", "landmarks"],
+      representativeQueries: ["Centaurus Mall car with driver", "Faisal Mosque tour with driver"] },
     { identifier: urn("site:guide"), displayName: "Car rental with driver in Pakistan: search guide", type: "text/html", url: site + "/car-rental-guide",
       description: "Guide that matches common searches (Islamabad, other cities, northern areas, airport pickup, weddings, booking from abroad) to the right page, with answers to common questions.",
       tags: ["guide", "faq", "car-rental", "pakistan"],

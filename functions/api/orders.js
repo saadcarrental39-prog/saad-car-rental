@@ -15,7 +15,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (!file || typeof file === "string" || file.size < 1000 || file.size > MAX_PNG) return json({ ok: false, error: "bad_file" }, 400);
   const png = new Uint8Array(await file.arrayBuffer()); if (!isPng(png)) return json({ ok: false, error: "bad_file" }, 400);
   const o = { ref: clean(form.get("ref"), 30).replace(/[^A-Za-z0-9-]/g, ""), name: clean(form.get("name"), 60), phone: clean(form.get("phone"), 25), car: clean(form.get("car"), 70),
-    pickup: clean(form.get("pickup"), 80), drop: clean(form.get("drop"), 80), date: clean(form.get("date"), 14), time: clean(form.get("time"), 8), pax: clean(form.get("pax"), 4), extra: clean(form.get("extra"), 160), whatsapp: /^[\d+\s()-]{7,25}$/.test(clean(form.get("whatsapp"), 25)) ? clean(form.get("whatsapp"), 25) : "", email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(clean(form.get("email"), 60)) ? clean(form.get("email"), 60) : "" };
+    pickup: clean(form.get("pickup"), 80), drop: clean(form.get("drop"), 80), date: clean(form.get("date"), 14), time: clean(form.get("time"), 8), pax: clean(form.get("pax"), 4), extra: clean(form.get("extra"), 160), svc: ["out", "local"].includes(clean(form.get("svc"), 8)) ? clean(form.get("svc"), 8) : "", whatsapp: /^[\d+\s()-]{7,25}$/.test(clean(form.get("whatsapp"), 25)) ? clean(form.get("whatsapp"), 25) : "", email: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(clean(form.get("email"), 60)) ? clean(form.get("email"), 60) : "" };
   if (!o.ref || !o.name || o.phone.replace(/\D/g, "").length < 7) return json({ ok: false, error: "bad_fields" }, 400);
 
   const ip = request.headers.get("CF-Connecting-IP") || "x", rl = `rl:ord:${ip}`, tries = Number(await kv.get(rl)) || 0;

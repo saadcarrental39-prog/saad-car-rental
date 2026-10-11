@@ -15,7 +15,7 @@ function pack(form, d, x, done) {
   const okP = PHONE.test(phone) && phone.replace(/\D/g, "").length >= 5, okE = EMAIL.test(email);
   // Anything that lets the owner follow up is enough: a name, a (even half-typed) phone number, or an email.
   if (!v || (!okP && !okE && name.length < 2)) return null;
-  return { v, f: form, name: d.name, phone: okP ? phone : "", email: okE ? email : "", whatsapp: d.whatsapp, car: x.car || d.car, pickup: d.pickup, drop: d.drop, date: d.date, time: d.time, pax: d.pax, extra: x.extra ?? d.extra ?? d.message, dev: dev(), ...(done ? { done: true } : {}) };
+  return { v, f: form, name: d.name, phone: okP ? phone : "", email: okE ? email : "", whatsapp: d.whatsapp, car: x.car || d.car, pickup: d.pickup, drop: d.drop, date: d.date, time: d.time, pax: d.pax, extra: `${d.svc === "out" ? "[Out of Station] " : d.svc === "local" ? "[Local] " : ""}${x.extra ?? d.extra ?? d.message ?? ""}`.trim(), dev: dev(), ...(done ? { done: true } : {}) };
 }
 function send(p) {
   const body = JSON.stringify(p);

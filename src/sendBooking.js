@@ -1,5 +1,6 @@
 import { waHref } from "./config";
 import { makeReceipt, isMobile } from "./receipt";
+import { svcFull } from "./components/ServiceSwitch";
 
 const prettyDate = (s) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ""); if (!m) return s || ""; return `${+m[3]} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+m[2] - 1]} ${m[1]}`; };
 const prettyTime = (s) => { const m = /^(\d{1,2}):(\d{2})/.exec(s || ""); if (!m) return s || ""; const h = +m[1]; return `${h % 12 || 12}:${m[2]} ${h >= 12 ? "PM" : "AM"}`; };
@@ -7,7 +8,7 @@ const prettyTime = (s) => { const m = /^(\d{1,2}):(\d{2})/.exec(s || ""); if (!m
 export function buildMessage(d, v, ref) {
   const car = `${v.name} ${v.trim || ""} ${v.color || ""}`.replace(/\s+/g, " ").trim();
   const L = ["🚘 *SAAD CAR RENTAL SERVICES*", "✨ _Premium Car Rental With Professional Driver_", "━━━━━━━━━━━━━━━", `🧾 *New Booking Request*  #${ref}`, "",
-    `🚗 *Vehicle:* ${car}`, `👤 *Name:* ${d.name || ""}`, `📞 *Phone:* ${d.phone || ""}`, ...(d.whatsapp && String(d.whatsapp).trim() ? [`💬 *WhatsApp:* ${String(d.whatsapp).trim()}`] : []), `📍 *Pickup:* ${d.pickup || ""}`, `🏁 *Drop-off:* ${d.drop || ""}`,
+    `🚗 *Vehicle:* ${car}`, `👤 *Name:* ${d.name || ""}`, `📞 *Phone:* ${d.phone || ""}`, ...(d.whatsapp && String(d.whatsapp).trim() ? [`💬 *WhatsApp:* ${String(d.whatsapp).trim()}`] : []), `📍 *Pickup:* ${d.pickup || ""}`, `🏁 *Drop-off:* ${d.drop || ""}`, ...(svcFull(d.svc) ? [`🧭 *Service:* ${svcFull(d.svc)}`] : []),
     `📅 *Date:* ${prettyDate(d.date)}`, `⏰ *Time:* ${prettyTime(d.time)}`];
   if (d.pax) L.push(`👥 *Passengers:* ${d.pax}`);
   if (d.extra && String(d.extra).trim()) L.push(`📝 *Notes:* ${String(d.extra).trim()}`);
@@ -32,7 +33,7 @@ async function saveOrder(receipt, d, v) {
     f.append("file", receipt.blob, `${receipt.ref}.png`);
     f.append("ref", receipt.ref);
     f.append("car", `${v.name} ${v.trim || ""} ${v.color || ""}`.replace(/\s+/g, " ").trim());
-    for (const k of ["name", "phone", "whatsapp", "email", "pickup", "drop", "date", "time", "pax", "extra"]) f.append(k, d[k] || "");
+    for (const k of ["name", "phone", "whatsapp", "email", "svc", "pickup", "drop", "date", "time", "pax", "extra"]) f.append(k, d[k] || "");
     const r = await fetch("/api/orders", { method: "POST", body: f });
     return r.ok;
   } catch { return false; }

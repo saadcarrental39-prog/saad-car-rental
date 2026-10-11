@@ -237,7 +237,7 @@ function Orders({ tok, st, pwa }) {
     {orders.map((o) => (<article className={`ad-card ad-ord${fresh.has(o.id) ? " is-new" : ""}`} key={o.id}>
       <header><div><b>{o.car || "Booking"}</b><small>#{o.ref} · {ago(o.ts)}</small></div>{fresh.has(o.id) && <em>NEW</em>}</header>
       <button type="button" className="ad-rcpt" onClick={() => setView(o.id)} aria-label="Receipt bari karein"><img src={src(o.id)} alt={`Receipt ${o.ref}`} loading="lazy" /></button>
-      <dl>{[["👤 Naam", o.name], ["📞 Phone", o.phone], ["💬 WhatsApp", o.whatsapp], ["✉️ Email", o.email], ["📍 Pickup", o.pickup], ["🏁 Drop-off", o.drop], ["📅 Date", fmtDate(o.date)], ["⏰ Time", fmtTime(o.time)], ["👥 Passengers", o.pax], ["📝 Notes", o.extra]].filter(([, v]) => v).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+      <dl>{[["👤 Naam", o.name], ["📞 Phone", o.phone], ["🧭 Service", o.svc === "out" ? "Out of Station" : o.svc === "local" ? "Local (Islamabad)" : ""], ["💬 WhatsApp", o.whatsapp], ["✉️ Email", o.email], ["📍 Pickup", o.pickup], ["🏁 Drop-off", o.drop], ["📅 Date", fmtDate(o.date)], ["⏰ Time", fmtTime(o.time)], ["👥 Passengers", o.pax], ["📝 Notes", o.extra]].filter(([, v]) => v).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
       <div className="ad-acts">
         <a className="ad-btn ad-btn--ghost" href={`tel:${String(o.phone).replace(/[^\d+]/g, "")}`}><IPhone />Call</a>
         <a className="ad-btn ad-btn--ghost" href={`https://wa.me/${waNum(o.phone)}`} target="_blank" rel="noopener noreferrer"><IChat />WhatsApp</a>

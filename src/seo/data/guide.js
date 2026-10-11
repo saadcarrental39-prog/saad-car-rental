@@ -20,7 +20,13 @@ export const GUIDE = {
       id: "islamabad", title: "Car rental in Islamabad and Rawalpindi",
       intro: "Our office is in G-11 Markaz, Islamabad. Every vehicle is hired with an experienced professional driver, for a few hours, a full day or several days.",
       phrases: ["car rental Islamabad", "rent a car with driver in Islamabad", "car on rent Islamabad with driver", "chauffeur service Islamabad", "luxury car rental Islamabad", "Land Cruiser on rent in Islamabad", "Prado on rent in Islamabad", "rent a car Rawalpindi with driver", "hire a driver with car in Islamabad", "daily car rental with driver Islamabad"],
-      cards: [{ place: "islamabad" }, { place: "rawalpindi" }, { service: "chauffeur-service" }, { service: "premium-car-rental" }, { service: "islamabad-rawalpindi-transportation" }],
+      cards: [{ to: "/local-car-rental-islamabad", title: "Local service in Islamabad", text: "A car with driver for daily use inside the city: shopping, hotels, meetings and picnic spots." }, { place: "islamabad" }, { place: "rawalpindi" }, { service: "chauffeur-service" }, { service: "premium-car-rental" }, { service: "islamabad-rawalpindi-transportation" }],
+    },
+    {
+      id: "local-places", title: "Markets, hotels, picnic spots and landmarks in Islamabad",
+      intro: "Local searches usually name a place. Pick the market, hotel, picnic spot or landmark you want to visit and open its page.",
+      phrases: ["Centaurus Mall car with driver", "Jinnah Super Market pick and drop", "Islamabad shopping day car with driver", "Serena Hotel Islamabad airport pickup", "Marriott Hotel Islamabad car service", "Daman-e-Koh car rental with driver", "Pir Sohawa taxi with driver", "Margalla Hills picnic car", "Faisal Mosque tour with driver", "Islamabad city tour with car and driver", "Rawal Lake family picnic car", "Fatima Jinnah Park car with driver"],
+      cards: [{ to: "/islamabad-places", title: "All places in Islamabad", text: "Markets, premium hotels, picnic spots and landmarks, each with its own page." }, { to: "/islamabad/centaurus-mall", title: "Centaurus Mall", text: "Shopping trips with the car waiting between stops." }, { to: "/islamabad/daman-e-koh", title: "Daman-e-Koh", text: "A hill viewpoint over the city, popular for evening outings." }, { to: "/islamabad/faisal-mosque", title: "Faisal Mosque", text: "The landmark visitors ask for first." }, { to: "/islamabad/serena-hotel-islamabad", title: "Serena Hotel Islamabad", text: "Airport pickup and daily travel for hotel guests." }, { to: "/islamabad/rawal-lake-view-point", title: "Rawal Lake View Point", text: "Family picnics and evening walks by the lake." }],
     },
     {
       id: "cities", title: "Car with driver to other cities in Pakistan",
@@ -32,7 +38,7 @@ export const GUIDE = {
       id: "north", title: "Northern areas, hill stations and tourist trips",
       intro: "Mountain roads need the right vehicle and a driver who knows them. Tell us your dates and group size and we suggest a suitable SUV, 4x4 or Coaster.",
       phrases: ["Islamabad to Hunza car rental", "Islamabad to Skardu with driver", "Murree tour car with driver", "Naran Kaghan car rental", "Swat Kalam tour with driver", "Fairy Meadows trip car", "northern areas tour Pakistan with car and driver", "Gilgit Baltistan car rental with driver", "Chitral car with driver", "4x4 jeep rental for northern Pakistan"],
-      cards: [{ place: "murree" }, { place: "naran" }, { place: "swat" }, { place: "hunza" }, { place: "skardu" }, { place: "fairy-meadows" }, { place: "chitral" }, { place: "gilgit" }],
+      cards: [{ to: "/out-of-station-car-rental", title: "Out of Station trips from Islamabad", text: "Cities, hill stations, valleys and the north, with the same driver for the whole journey." }, { place: "murree" }, { place: "naran" }, { place: "swat" }, { place: "hunza" }, { place: "skardu" }, { place: "fairy-meadows" }, { place: "chitral" }, { place: "gilgit" }],
     },
     {
       id: "abroad", title: "Visitors from abroad and overseas Pakistanis",
@@ -69,6 +75,7 @@ export const GUIDE = {
     f("Can overseas Pakistanis and tourists book in advance?", "Yes, and we recommend it. Send your arrival date, flight and plan before you travel, and we confirm the vehicle and quote so a driver is ready when you land."),
     f("How much does a car with a driver cost?", "Every trip is quoted individually because it depends on the vehicle, the route, the number of days and your requirements. Call or WhatsApp us for a quote for your dates."),
     f("Can I hire a car for a wedding in Islamabad?", "Yes. Tell us the date, venues and timing and we confirm vehicles and a quote. Please book early for popular wedding dates."),
+    f("What is the difference between Local and Out of Station service?", "Local is for travel inside Islamabad, such as shopping, hotels, meetings and picnic spots. Out of Station is for any trip that leaves Islamabad. They are priced differently, so you choose one when you book."),
     f("Where is your office?", "Office No 12, 3rd Floor, Shah Nawaz Plaza, G-11 Markaz, Islamabad. Our team replies by phone and WhatsApp."),
   ],
 };

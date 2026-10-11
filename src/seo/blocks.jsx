@@ -20,9 +20,9 @@ export const Hero = ({ eyebrow, h1, lead, crumbs, children }) => (
 );
 
 // "Call now / WhatsApp now / Get a quote" (Call and WhatsApp use the number from business.config.js)
-export function Cta({ ctx, from, to, title = "Get today's availability and quote", text = "Tell us your pickup, destination, date and vehicle preference. We reply with a quote, never a fake instant price.", car }) {
+export function Cta({ ctx, from, to, title = "Get today's availability and quote", text = "Tell us your pickup, destination, date and vehicle preference. We reply with a quote, never a fake instant price.", car, svc }) {
   const msg = `Hello ${SITE.name}, I would like a quote for a car with driver${ctx ? ` (${ctx})` : ""}. Pickup: ${from || ""} Destination: ${to || ""} Date: Passengers:`;
-  const q = [from && `from=${encodeURIComponent(from)}`, to && `to=${encodeURIComponent(to)}`, car && `car=${encodeURIComponent(car)}`].filter(Boolean).join("&");
+  const q = [from && `from=${encodeURIComponent(from)}`, to && `to=${encodeURIComponent(to)}`, car && `car=${encodeURIComponent(car)}`, svc && `svc=${svc}`].filter(Boolean).join("&");
   const chat = waHref(msg);
   return (
     <section className="sx-cta" aria-label="Contact and booking"><div className="sx-in">

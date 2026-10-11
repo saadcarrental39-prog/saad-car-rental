@@ -10,6 +10,8 @@ import { FAQS } from "./data/faq";
 import { audience } from "./data/audiences";
 import { LEGAL, LEGAL_UPDATED, legalPage } from "./data/legal";
 import { GUIDE } from "./data/guide";
+import { SPOTS, LOCAL_GROUPS, AREAS, spot } from "./data/islamabad";
+import { LOCAL_PILLAR, OUT_PILLAR, PLACES_HUB } from "./data/pillars";
 import { TERRAIN, VEHICLE_FIT, USE } from "./data/vehicles";
 import { categories, category, vehiclesForPlace, servicesForPlace, servicesForVehicle, placesForVehicle, nearby, routeFor, routePath, tripPath, tripLabel, northernPlaces, placesIn, livePlacesList, photoOf } from "./links";
 import { Hero, Cta, Answer, Sec, Faq, Chips, Bullets, LinkCards, VehicleStrip, Steps, BOOKING_STEPS } from "./blocks";
@@ -316,6 +318,51 @@ export function GuidePage() {
   </>);
 }
 
+
+// ------------------------------------------------------------------ LOCAL service: a place inside Islamabad (/islamabad/<slug>)
+const firstSentence = (t) => t.split(". ")[0].replace(/\.$/, "") + ".";
+const spotCard = (x) => ({ to: `/islamabad/${x.slug}`, title: x.name, text: firstSentence(x.intro) });
+const carCards = (slugs) => slugs.map((sl) => category(sl)).filter(Boolean).map((v) => ({ to: `/cars/${v.slug}`, title: `${v.title} with driver`, text: (v.description || "").split(". ")[0].replace(/\.$/, "") + "." }));
+export function SpotPage({ slug }) {
+  const x = spot(slug); const p = pageByPath(`/islamabad/${slug}`); const g = LOCAL_GROUPS.find((y) => y.id === x.group);
+  const rel = SPOTS.filter((y) => y.group === x.group && y.slug !== x.slug).slice(0, 4); const other = SPOTS.filter((y) => y.group !== x.group).slice(0, 4);
+  return (<>
+    <Hero eyebrow={`Local service · ${x.area}`} h1={`Local Car Rental With Driver for ${x.name}`} lead={x.intro} crumbs={p.breadcrumbs} />
+    <Sec id="answer" title="Quick answer"><Answer q={`Can I hire a car with a driver to ${x.name}?`}>Yes. Choose the Local service when you book. SAAD CAR RENTAL SERVICES provides a car with an experienced professional driver inside Islamabad, with pickup from your home, office or hotel. The driver can wait or return at the time you agree, and we reply with a quote for your trip.</Answer></Sec>
+    <Sec id="about" title={`About ${x.name}`}><p>{x.name} is in {x.area}. {g.title.split(",")[0]} are among the places our Local service customers ask for most.</p><Bullets items={x.highlights} /><Chips items={x.goodFor} /></Sec>
+    <Sec id="good-to-know" title="Good to know before you go" tone="grey"><p>{x.tip}</p><p>The Local service is for travel inside Islamabad and is priced differently from an Out of Station trip. <Link to="/local-car-rental-islamabad">Read how the Local service works →</Link></p></Sec>
+    <Sec id="how" title="How to book"><Steps items={BOOKING_STEPS} /></Sec>
+    <Sec id="cars" title="Choose a car for this trip"><LinkCards items={carCards(["honda-civic", "toyota-grande", "prado", "land-cruiser-v8", "coaster"])} /></Sec>
+    <Sec id="more" title={`More ${g.title.toLowerCase()}`} tone="grey"><LinkCards items={rel.map(spotCard)} /><p><Link to="/islamabad-places">All places in Islamabad →</Link> · <Link to="/out-of-station-car-rental">Out of Station trips →</Link> · <Link to="/airport-transfer/islamabad">Airport transfer →</Link></p></Sec>
+    <Faq items={x.faqs} title={`Questions about ${x.name}`} />
+    <Sec id="also" title="Other places in Islamabad"><LinkCards items={other.map(spotCard)} /></Sec>
+    <Cta ctx={`Local service: ${x.name}`} from="" to={x.name} svc="local" title={`Book a local car to ${x.name}`} text="Tell us your pickup place, date and time. We confirm the vehicle and reply with a quote for your day." />
+  </>);
+}
+
+// ------------------------------------------------------------------ pillar pages: Local service, Out of Station service, Islamabad places
+export function PillarPage({ slug }) {
+  const D = slug === "local" ? LOCAL_PILLAR : slug === "out" ? OUT_PILLAR : PLACES_HUB; const p = pageByPath(D.path);
+  const placeCards = (ids) => ids.map((id) => place(id)).filter((x) => x && x.status === "live").map((x) => ({ to: tripPath(x), title: tripLabel(x), text: x.plan }));
+  return (<>
+    <Hero eyebrow={D.eyebrow} h1={D.h1} lead={D.lead} crumbs={p.breadcrumbs} />
+    {D.answer && <Sec id="answer" title="Quick answer"><Answer q={D.answerQ}>{D.answer}</Answer></Sec>}
+    {D.uses && <Sec id="uses" title={D.usesTitle} tone="grey"><Bullets items={D.uses} /></Sec>}
+    {slug === "local" && LOCAL_GROUPS.map((g) => (<Sec key={g.id} id={g.id} title={g.title}><p>{g.intro}</p><LinkCards items={SPOTS.filter((y) => y.group === g.id).map(spotCard)} /></Sec>))}
+    {slug === "out" && OUT_PILLAR.groups.map((g, i) => (<Sec key={g.id} id={g.id} title={g.title} tone={i % 2 ? "grey" : undefined}><p>{g.intro}</p><LinkCards items={placeCards(g.places)} /></Sec>))}
+    {slug === "places" && (<>
+      {LOCAL_GROUPS.map((g, i) => (<Sec key={g.id} id={g.id} title={g.title} tone={i % 2 ? "grey" : undefined}><p>{g.intro}</p><LinkCards items={SPOTS.filter((y) => y.group === g.id).map(spotCard)} /></Sec>))}
+      <Sec id="areas" title="Pickup areas in Islamabad"><p>We pick up from every sector of Islamabad. Some of the areas our customers book from:</p><ul className="sx-list">{AREAS.map(([a, t]) => <li key={a}><b>{a}.</b> {t}</li>)}</ul></Sec>
+    </>)}
+    {D.how && <Sec id="how" title={D.howTitle}><Steps items={D.how} /></Sec>}
+    {D.vs && <Sec id="compare" title={D.vsTitle} tone="grey"><p>{D.vs}</p><p>{slug === "out" ? <Link to="/local-car-rental-islamabad">Local service in Islamabad →</Link> : <Link to="/out-of-station-car-rental">Out of Station trips →</Link>}{" · "}<Link to="/car-rental-guide">Search guide →</Link>{" · "}<Link to="/cars">Our fleet →</Link></p></Sec>}
+    {slug === "out" && <Sec id="more" title="Explore more routes"><p><Link to="/routes">Routes from Islamabad →</Link> · <Link to="/destinations">Destinations →</Link> · <Link to="/northern-areas">Northern areas →</Link> · <Link to="/car-rental-pakistan">Across Pakistan →</Link> · <Link to="/airport-transfer/islamabad">Airport transfer →</Link></p></Sec>}
+    {slug === "places" && <Sec id="more" title="Related" tone="grey"><p><Link to="/local-car-rental-islamabad">How the Local service works →</Link> · <Link to="/out-of-station-car-rental">Out of Station trips →</Link> · <Link to="/services/hotel-transfers">Hotel transfers →</Link> · <Link to="/airport-transfer/islamabad">Airport transfer →</Link></p></Sec>}
+    <Faq items={D.faqs} title="Common questions" />
+    <Cta ctx={D.h1} svc={slug === "out" ? "out" : "local"} title={slug === "out" ? "Plan your out of station trip" : "Book your local car with driver"} text="Choose your service on the booking form, tell us your plan and we reply with a quote." />
+  </>);
+}
+
 // ------------------------------------------------------------------ router glue
 export function SeoPage({ page }) {
   const k = page.kind;
@@ -330,6 +377,8 @@ export function SeoPage({ page }) {
   if (k === "audience") return <AudiencePage slug={page.slug} />;
   if (k === "legal") return <LegalPage slug={page.slug} />;
   if (k === "guide") return <GuidePage />;
+  if (k === "spot") return <SpotPage slug={page.slug} />;
+  if (k === "pillar") return <PillarPage slug={page.slug} />;
   return null;
 }
 export const NotFoundPage = () => (
