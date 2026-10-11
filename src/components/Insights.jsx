@@ -106,7 +106,17 @@ function Bars({ rows, label, color, empty = "Abhi data nahi aaya" }) {
 }
 const Card = ({ title: t, sub, children, className = "" }) => (<section className={`ad-card in-card ${className}`}><h2>{t}{sub && <small>{sub}</small>}</h2>{children}</section>);
 
-function LivePanel({ lv, ok, last, toast, sound, onSound }) {
+// Tells the owner the REAL reason when the grey OFFLINE badge shows (so it can be fixed in one step).
+const whyOffline = (e) => {
+  const st = e && e.status, m = (e && e.message) || "";
+  if (m === "no_db" || st === 503) return "Database (Cloudflare D1, binding naam DB) is project se jura nahi. Cloudflare > Pages project > Settings > Bindings mein D1 \"DB\" dobara add karein, phir Retry deployment.";
+  if (st === 404 || st === 405) return "Server par /api/admin ka naya version nahi mila. update.bat poora chalayein aur Cloudflare Deployments mein dekhein ke build Success hai.";
+  if (st >= 500) return `Database / server error (${m}${e.detail ? `: ${e.detail}` : ""}). Ye line mujhe bhej dein.`;
+  if (st) return `Server ne jawab diya: ${st} ${m}.`;
+  return "Phone / computer se server tak request nahi pohanch rahi (internet, VPN ya ad-blocker check karein).";
+};
+
+function LivePanel({ lv, ok, why, last, toast, sound, onSound }) {
   const n = lv ? lv.online : 0, ppl = (lv && lv.people) || [], evs = dedupe((lv && lv.events) || []).slice(0, 8);
   return (<section className={`in-lv${ok ? " is-ok" : ""}${n ? " has-n" : ""}`} aria-live="polite">
     <div className="in-lv__top"><div className="in-lv__badge"><span className="in-radar" aria-hidden="true"><i /><i /><i /></span><b>{ok ? "LIVE" : ok === false ? "OFFLINE" : "CONNECTING"}</b></div>
@@ -116,7 +126,7 @@ function LivePanel({ lv, ok, last, toast, sound, onSound }) {
     {ppl.length > 0 && <ul className="in-lv__ppl">{ppl.map((x, i) => <li key={`${x.ts}-${i}`}><span>{DEVICON[x.dev] || "👤"}</span><div><b>{where(x) || "Location pata nahi"}</b><small>{srcName(x.src)} · {pretty(x.path)}</small></div><time>{ago(x.ts)}</time></li>)}</ul>}
     {evs.length > 0 && <><h3 className="in-lv__h">Taza activity</h3><ul className="in-feed">{evs.map((f) => { const [h, d] = evText(f); return <li key={f.id}><div><b>{h}</b><small>{[where(f), d].filter(Boolean).join(" · ")}</small></div><time>{ago(f.ts)}</time></li>; })}</ul></>}
     {ok && !n && !evs.length && <p className="in-empty">{last ? `Abhi koi visitor nahi. Aakhri visit: ${ago(last)}.` : "Tracking on hai, lekin abhi tak koi visit record nahi hui."}</p>}
-    {ok === false && <p className="in-empty in-empty--err">Live connection nahi ho raha (offline). Internet check karein.</p>}
+    {ok === false && <p className="in-empty in-empty--err">Live connection nahi ho raha (offline). {why || "Internet check karein."}</p>}
   </section>);
 }
 
@@ -165,7 +175,7 @@ export default function Insights({ api, out }) {
   const toggleMine = (on) => { setMine(on); try { localStorage.setItem("saad_skip", on ? "0" : "1"); } catch { /* ignore */ } };
 
   /* ---- live: poll every 4 s (only while the app is open and visible) ---- */
-  const [lv, setLv] = useState(null), [toast, setToast] = useState(null), [, setClock] = useState(0), [liveOk, setLiveOk] = useState(null), [last, setLast] = useState(null);
+  const [lv, setLv] = useState(null), [toast, setToast] = useState(null), [, setClock] = useState(0), [liveOk, setLiveOk] = useState(null), [liveWhy, setLiveWhy] = useState(""), [last, setLast] = useState(null);
   const [sound, setSound] = useState(() => { try { return localStorage.getItem("saad_livesound") === "1"; } catch { return false; } });
   const cursor = useRef(null), liveBusy = useRef(false), toastT = useRef(0), reloadT = useRef(0), soundRef = useRef(sound), actx = useRef(null); soundRef.current = sound;
   const beep = () => { try { const A = window.AudioContext || window.webkitAudioContext, c = (actx.current = actx.current || new A()), o = c.createOscillator(), g = c.createGain(), t = c.currentTime;
@@ -175,7 +185,7 @@ export default function Insights({ api, out }) {
   const pollLive = useCallback(async () => {
     if (liveBusy.current || document.visibilityState !== "visible") return; liveBusy.current = true;
     try {
-      const first = cursor.current === null, d = await fns.current.api("live", { since: first ? 0 : cursor.current }); cursor.current = d.cursor; setLiveOk(true); setLast(d.last);
+      const first = cursor.current === null, d = await fns.current.api("live", { since: first ? 0 : cursor.current }); cursor.current = d.cursor; setLiveOk(true); setLiveWhy(""); setLast(d.last);
       setLv((p) => ({ online: d.online, people: d.people, events: first ? d.events : [...d.events, ...((p && p.events) || [])].slice(0, 20) }));
       if (!first && d.events.length) {   // somebody just did something on the website: banner, optional sound, and refresh the numbers
         const hit = d.events.find((e) => e.type === "pv") || d.events[0], [h, s] = evText(hit);
@@ -183,7 +193,7 @@ export default function Insights({ api, out }) {
         if (soundRef.current) beep();
         clearTimeout(reloadT.current); reloadT.current = setTimeout(() => load(cur.current, true), 2000);
       }
-    } catch (e) { if (e.status === 401) fns.current.out(); else setLiveOk(false); } finally { liveBusy.current = false; }
+    } catch (e) { if (e.status === 401) fns.current.out(); else { setLiveOk(false); setLiveWhy(whyOffline(e)); } } finally { liveBusy.current = false; }
   }, [load]);
   useEffect(() => {
     pollLive(); const t = setInterval(pollLive, 4000), c = setInterval(() => setClock((x) => x + 1), 15000), v = () => document.visibilityState === "visible" && pollLive();
@@ -196,7 +206,7 @@ export default function Insights({ api, out }) {
       <div className="in-head__btns">{data && <button type="button" className="in-refresh" onClick={() => exportCsv(data)} aria-label="Excel / CSV download karein" title="CSV download"><svg viewBox="0 0 24 24" className="ad-i" aria-hidden="true"><path d="M12 4v11M7.5 11 12 15.5 16.5 11M5 19.5h14" /></svg></button>}
         <button type="button" className={`in-refresh${busy ? " is-busy" : ""}`} onClick={() => load(range)} aria-label="Refresh"><svg viewBox="0 0 24 24" className="ad-i" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5" /></svg></button></div></div>);
   const seg = (<div className="in-seg" role="group" aria-label="Muddat">{RANGES.map(([k, t]) => <button key={k} type="button" aria-pressed={range === k} className={range === k ? "on" : ""} onClick={() => setRange(k)}>{t}</button>)}</div>);
-  const livePanel = <LivePanel lv={lv} ok={liveOk} last={last} toast={toast} sound={sound} onSound={toggleSound} />;
+  const livePanel = <LivePanel lv={lv} ok={liveOk} why={liveWhy} last={last} toast={toast} sound={sound} onSound={toggleSound} />;
   if (err === "no_db") return <div className="in-root">{hdr}<Setup /></div>;
   if (!data) return (<div className="in-root">{hdr}{livePanel}{seg}{err ? <div className="ad-load in-fail"><p>Data load nahi hua. Internet check karein.</p><button type="button" className="ad-btn" onClick={() => load(range)}>Dobara try karein</button></div> : <div className="in-skel" aria-busy="true"><span /><span /><span /></div>}</div>);
 

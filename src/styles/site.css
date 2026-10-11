@@ -182,7 +182,7 @@ body{display:block;padding:0;background:#fff;color:#16181b;font-family:Manrope,s
 .hb__box--r{background:#fff;color:#16181b;border:1px solid #16181b}
 .hb__h{margin:0 0 14px;font-size:clamp(1.05rem,2.2vw,1.35rem);font-weight:700;letter-spacing:-.01em;color:#fff}
 .hb__row{display:grid;gap:8px;grid-template-columns:2fr 1.25fr .9fr 1.25fr .9fr auto;align-items:stretch}
-.hb__row--2{grid-template-columns:1.7fr 1.3fr 1.3fr .7fr auto}
+.hb__row--2{grid-template-columns:repeat(3,1fr)}.hb__row--2>.hb__btn{grid-column:1/-1}
 .hb__f{display:grid;align-content:center;gap:2px;background:#fff;color:#111;border-radius:12px;padding:8px 14px;min-height:60px;min-width:0}
 .hb__f span{font-size:.72rem;font-weight:600;color:#555}
 .hb__f input,.hb__f select{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#111;font:inherit;font-size:.95rem;font-weight:600;padding:2px 0;min-height:28px}

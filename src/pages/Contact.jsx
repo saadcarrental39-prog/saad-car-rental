@@ -24,6 +24,7 @@ function buildText(d) {
     `Hello ${SITE.name}, I have an enquiry.`,
     `Name: ${clean(d.name)}`,
     `Phone: ${clean(d.phone)}`,
+    ...(clean(d.whatsapp) ? [`WhatsApp: ${clean(d.whatsapp)}`] : []),
     `Topic: ${clean(d.topic)}`,
   ];
   if (clean(d.car)) lines.push(`Vehicle: ${clean(d.car)}`);
@@ -37,7 +38,7 @@ async function sendToServer(d) {
     const r = await fetch("/api/contact", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ name: clean(d.name), phone: clean(d.phone), topic: clean(d.topic), car: clean(d.car), date: clean(d.date), message: clean(d.message), website: d.website || "" }),
+      body: JSON.stringify({ name: clean(d.name), phone: clean(d.phone), topic: clean(d.topic), car: clean(d.car), date: clean(d.date), message: clean(d.message) + (clean(d.whatsapp) ? ` (WhatsApp: ${clean(d.whatsapp)})` : ""), website: d.website || "" }),
     });
     let j = null;
     try { j = await r.json(); } catch { /* not json */ }
@@ -139,9 +140,12 @@ export default function Contact() {
                 </div>
                 <div className="ct-row">
                   <label>Full name *<input type="text" name="name" autoComplete="name" value={d.name || ""} onChange={set("name")} maxLength={80} placeholder="Your name" /></label>
-                  <label>Phone / WhatsApp *<input type="tel" name="phone" autoComplete="tel" inputMode="tel" value={d.phone || ""} onChange={set("phone")} maxLength={25} placeholder="03XX XXXXXXX" /></label>
+                  <label>Phone *<input type="tel" name="phone" autoComplete="tel" inputMode="tel" value={d.phone || ""} onChange={set("phone")} maxLength={25} placeholder="03XX XXXXXXX" /></label>
                 </div>
-                <label>Email (optional)<input type="email" name="email" autoComplete="email" inputMode="email" value={d.email || ""} onChange={set("email")} maxLength={80} placeholder="you@example.com" /></label>
+                <div className="ct-row">
+                  <label>WhatsApp number<input type="tel" name="whatsapp" autoComplete="tel" inputMode="tel" value={d.whatsapp || ""} onChange={set("whatsapp")} maxLength={25} placeholder="03XX XXXXXXX" /></label>
+                  <label>Email<input type="email" name="email" autoComplete="email" inputMode="email" value={d.email || ""} onChange={set("email")} maxLength={80} placeholder="you@example.com" /></label>
+                </div>
                 <div className="ct-row">
                   <label>Enquiry type<select value={d.topic} onChange={set("topic")}>{TOPICS.map((t) => <option key={t}>{t}</option>)}</select></label>
                   <label>Preferred vehicle<select value={d.car} onChange={set("car")}><option value="">Not sure yet</option>{allVehicles.filter((v) => !v.placeholder).map((v) => { const n = `${v.name} ${v.trim || ""} – ${v.color}`.replace(/\s+/g, " "); return <option key={v.id} value={n}>{n}</option>; })}</select></label>
@@ -152,7 +156,6 @@ export default function Contact() {
                 <input className="ct-hp" type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={d.website} onChange={set("website")} />
                 {err && <p role="alert" className="ct-err">{err}</p>}
                 <button className="ct-btn ct-btn--dark ct-submit" type="submit" disabled={busy}>{busy ? "Sending…" : <><span>Send via WhatsApp</span>{Ico.arrow}</>}</button>
-                <p className="ct-fine">We save the details you type (name, phone, email) so we can reply to you, even if you do not press send.</p>
               </form>
             )}
           </div>

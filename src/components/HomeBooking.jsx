@@ -27,7 +27,7 @@ export default function HomeBooking() {
   }, []);
   const v = allVehicles.find((x) => x.id === vid) || allVehicles[0];
   const set = (k) => (e) => setD((x) => ({ ...x, [k]: e.target.value }));
-  const full = { ...d, drop: diff ? d.drop : d.pickup, whatsapp: d.phone };
+  const full = { ...d, drop: diff ? d.drop : d.pickup, whatsapp: d.whatsapp };
 
   useEffect(() => { if (step === 2) captureLead("home", full, { car: carName(v) }); }, [d, diff, vid, step]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -43,6 +43,7 @@ export default function HomeBooking() {
   const book = async (e) => {
     e.preventDefault();
     if (!clean(d.name)) return setErr("Please enter your name.");
+    if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) return setErr("Please check the email address, or leave it empty.");
     if (!/^[\d+\s()-]{7,20}$/.test(d.phone || "")) { track("form_error", { form: "home" }); return setErr("Please enter a valid phone number."); }
     setErr(""); setBusy(true); track("quote_submit", { form: "home" });
     completeLead("home", full, { car: carName(v) });
@@ -75,11 +76,12 @@ export default function HomeBooking() {
           <label className="hb__f"><span>Choose your car</span><select value={vid} onChange={(e) => setVid(e.target.value)}>{allVehicles.map((x) => <option key={x.id} value={x.id}>{x.name} {x.trim} – {x.color}</option>)}</select></label>
           <label className="hb__f"><span>Your name</span><input type="text" name="name" autoComplete="name" value={d.name || ""} maxLength={120} onChange={set("name")} /></label>
           <label className="hb__f"><span>Phone number</span><input type="tel" name="tel" autoComplete="tel" inputMode="tel" value={d.phone || ""} maxLength={25} onChange={set("phone")} /></label>
+          <label className="hb__f"><span>WhatsApp number</span><input type="tel" name="whatsapp" autoComplete="tel" inputMode="tel" value={d.whatsapp || ""} maxLength={25} onChange={set("whatsapp")} /></label>
+          <label className="hb__f"><span>Email</span><input type="email" name="email" autoComplete="email" inputMode="email" value={d.email || ""} maxLength={120} onChange={set("email")} /></label>
           <label className="hb__f"><span>Passengers</span><input type="number" name="pax" min="1" max="60" inputMode="numeric" value={d.pax || ""} onChange={set("pax")} /></label>
           <button type="submit" className="hb__btn" disabled={busy}>{busy ? "Sending…" : "Book now"}</button>
         </div>
         {err && <p role="alert" className="hb__err">{err}</p>}
-        <p className="hb__fine">We save the details you type (name, phone) so we can contact you about your booking, even if you do not press the button.</p>
       </form>
     )}
   </div></section>);

@@ -85,15 +85,15 @@ export async function onRequestPost({ request, env }) {
       const data = await stats(env.DB, String(b.range || "7d"));
       data.orders = await orderCounts(kv, data.range);          // bookings received through the website (Orders tab), same period + previous period
       return json(data);
-    } catch { return json({ error: "stats_failed" }, 500); }
+    } catch (e) { return json({ error: "stats_failed", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
   }
   if (b.action === "live") {                                        // who is on the website right now (polled every ~4 s by the dashboard)
     if (!env.DB) return json({ error: "no_db" }, 503);
-    try { return json(await liveFeed(env.DB, Math.max(0, Number(b.since) || 0))); } catch { return json({ error: "live_failed" }, 500); }
+    try { return json(await liveFeed(env.DB, Math.max(0, Number(b.since) || 0))); } catch (e) { return json({ error: "live_failed", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
   }
   if (typeof b.action === "string" && b.action.startsWith("lead")) {   // customers / leads typed into the website forms (Clients tab)
     if (!env.DB) return json({ error: "no_db" }, 503);
-    try { const r = await leadsAdmin(env.DB, b); return json(r, r.status || 200); } catch { return json({ error: "leads_failed" }, 500); }
+    try { const r = await leadsAdmin(env.DB, b); return json(r, r.status || 200); } catch (e) { return json({ error: "leads_failed", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
   }
   if (b.action === "reviews_get") {                                  // Google review numbers shown on the website (manual backup + live status)
     const get = async (k) => { try { return JSON.parse((await kv.get(k)) || "null"); } catch { return null; } }, g = await get("reviews:g");
