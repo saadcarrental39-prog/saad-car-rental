@@ -57,7 +57,7 @@ const urlset = (items, ns = "") => `<?xml version="1.0" encoding="UTF-8"?>\n<url
 const urlTag = (p, extra = "") => `<url><loc>${x(site + (p.path === "/" ? "/" : p.path))}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority.toFixed(1)}</priority>${extra}</url>`;
 const idx = PAGES.filter((p) => p.indexable);
 const groups = {
-  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport"].includes(p.kind)),
+  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "guide", "legal", "audience"].includes(p.kind)),
   "sitemap-vehicles.xml": idx.filter((p) => p.kind === "vehicle"),
   "sitemap-services.xml": idx.filter((p) => p.kind === "service"),
   "sitemap-locations.xml": idx.filter((p) => p.kind === "location" || p.kind === "province"),
@@ -92,6 +92,18 @@ const catalog = {
     { identifier: urn("site:booking"), displayName: "Booking and quote request page", type: "text/html", url: site + "/book",
       description: "Page to send a booking or quote request for a car with a professional driver. The business replies to confirm details.",
       tags: ["booking", "quote"] },
+    { identifier: urn("site:guide"), displayName: "Car rental with driver in Pakistan: search guide", type: "text/html", url: site + "/car-rental-guide",
+      description: "Guide that matches common searches (Islamabad, other cities, northern areas, airport pickup, weddings, booking from abroad) to the right page, with answers to common questions.",
+      tags: ["guide", "faq", "car-rental", "pakistan"],
+      representativeQueries: ["rent a car with driver in Islamabad", "which car is best for Hunza and Skardu", "car rental in Pakistan for tourists"] },
+    { identifier: urn("site:visit-pakistan"), displayName: "Tourist car with driver in Pakistan", type: "text/html", url: site + "/visit-pakistan",
+      description: "Airport pickup and a professional driver for visitors from abroad, to the northern areas and other cities. Book in advance.",
+      tags: ["tourists", "airport-pickup", "northern-pakistan"],
+      representativeQueries: ["tourist car with driver in Pakistan", "Islamabad airport pickup for tourists"] },
+    { identifier: urn("site:overseas-pakistanis"), displayName: "Car with driver for overseas Pakistanis", type: "text/html", url: site + "/overseas-pakistanis",
+      description: "Overseas Pakistanis can book a car with a professional driver in advance, for airport pickup, family trips and weddings.",
+      tags: ["overseas-pakistanis", "airport-pickup", "family-travel"],
+      representativeQueries: ["car with driver for overseas Pakistanis", "book a car in Islamabad from abroad"] },
     { identifier: urn("site:sitemap"), displayName: "Sitemap index", type: "application/xml", url: site + "/sitemap.xml",
       description: "Index of every public page on the website (vehicles, services, locations, destinations, routes).", tags: ["sitemap"] },
   ],

@@ -7,6 +7,9 @@ import { PLACES, PROVINCES, place, placePath, PUNJAB_DISTRICTS } from "./data/pl
 import { ROUTES } from "./data/routes";
 import { SERVICE_PAGES } from "./data/services";
 import { FAQS } from "./data/faq";
+import { audience } from "./data/audiences";
+import { LEGAL, LEGAL_UPDATED, legalPage } from "./data/legal";
+import { GUIDE } from "./data/guide";
 import { TERRAIN, VEHICLE_FIT, USE } from "./data/vehicles";
 import { categories, category, vehiclesForPlace, servicesForPlace, servicesForVehicle, placesForVehicle, nearby, routeFor, routePath, tripPath, tripLabel, northernPlaces, placesIn, livePlacesList, photoOf } from "./links";
 import { Hero, Cta, Answer, Sec, Faq, Chips, Bullets, LinkCards, VehicleStrip, Steps, BOOKING_STEPS } from "./blocks";
@@ -195,6 +198,7 @@ export function HubPage({ slug }) {
     <Sec id="city" title="Intercity routes" tone="grey"><LinkCards items={["lahore", "peshawar", "faisalabad", "multan"].map(place).map((x) => ({ to: tripPath(x), title: tripLabel(x), text: x.plan }))} /></Sec>
     <Sec id="hills" title="Hills and valleys"><LinkCards items={["murree", "abbottabad", "nathia-gali", "swat", "kalam", "naran", "muzaffarabad", "neelum-valley"].map(place).map((x) => ({ to: tripPath(x), title: tripLabel(x), text: x.plan }))} /></Sec>
     <Sec id="north" title="Mountain routes" tone="grey"><LinkCards items={["chitral", "gilgit", "hunza", "skardu", "fairy-meadows", "deosai-national-park", "astore-valley", "naltar-valley", "attabad-lake", "khunjerab-pass", "babusar-top", "shogran", "kumrat-valley", "malam-jabba", "shigar-valley", "khaplu"].map(place).map((x) => ({ to: tripPath(x), title: tripLabel(x), text: x.plan }))} /></Sec>
+    <Sec id="abroad" title="Travelling from abroad?"><p>Foreign visitors and overseas Pakistanis can book a car with a professional driver in advance and have it waiting at Islamabad airport. <Link to="/visit-pakistan">Visit Pakistan: tourist car with driver →</Link> · <Link to="/overseas-pakistanis">Overseas Pakistanis →</Link></p></Sec>
     <Sec id="note" title="Another route?"><p>If your trip is not listed, call or WhatsApp us with your pickup and destination. We list a route here only when we are sure we can serve it well.</p></Sec>
     <Cta ctx="Route enquiry" from="Islamabad" />
   </>);
@@ -244,10 +248,72 @@ export function HomeSeoSections() {
     <Sec id="svc" title="Our services" tone="grey"><LinkCards items={SERVICE_PAGES.slice(0, 6).map(svcCard)} /><p><Link to="/services">All services →</Link></p></Sec>
     <Sec id="routes" title="Popular routes from Islamabad"><LinkCards items={feat.map((x) => ({ to: tripPath(x), title: tripLabel(x), text: x.plan }))} /><p><Link to="/routes">All routes →</Link> · <Link to="/northern-areas">Northern areas →</Link> · <Link to="/car-rental-pakistan">Across Pakistan →</Link></p></Sec>
     <Sec id="air" title="Airport transfers" tone="grey"><p>Arrive at Islamabad International Airport and find a professional driver ready. <Link to="/airport-transfer/islamabad">See how airport pickup works →</Link></p></Sec>
+    <Sec id="abroad" title="Visiting Pakistan or coming home from abroad?"><LinkCards items={[{ to: "/visit-pakistan", title: "Tourists visiting Pakistan", text: "Airport pickup and a professional driver for Hunza, Skardu, Swat and more. Book in advance." }, { to: "/overseas-pakistanis", title: "Overseas Pakistanis", text: "Book a premium car with a driver before you land. Family trips, weddings and airport pickup." }]} /></Sec>
     <Sec id="how" title="How to book"><Steps items={BOOKING_STEPS} /></Sec>
     <Faq items={FAQS.slice(0, 8)} />
     <Cta ctx="Home" />
   </div>);
+}
+
+// ------------------------------------------------------------------ audience pages: visitors from abroad / overseas Pakistanis
+export function AudiencePage({ slug }) {
+  const a = audience(slug); const p = pageByPath(a.path);
+  const trips = a.trips.map(place).filter((x) => x && x.status === "live");
+  const other = slug === "visit-pakistan" ? { to: "/overseas-pakistanis", title: "Overseas Pakistanis: car with driver", text: "Coming home to family? Plan your airport pickup and trips in advance." } : { to: "/visit-pakistan", title: "Visiting Pakistan as a tourist", text: "Foreign guests: airport pickup and trips to the north with a professional driver." };
+  return (<>
+    <Hero eyebrow={a.eyebrow} h1={a.h1} lead={a.lead} crumbs={p.breadcrumbs} />
+    <Sec id="answer" title={a.answerQ}><Answer q="Short answer: yes.">{a.answer}</Answer></Sec>
+    <Sec id="why" title={a.whyTitle} tone="grey"><Bullets items={a.why} /></Sec>
+    <Sec id="arrival" title={a.arrivalTitle}><p>{a.arrival}</p><p><Link to="/airport-transfer/islamabad">How our Islamabad airport transfer works →</Link></p></Sec>
+    <Sec id="vehicles" title="Vehicles for your trip" tone="grey"><p>Every vehicle comes with an experienced professional driver. Tell us your group size and luggage and we suggest the right one.</p><VehicleStrip cats={a.vehicles.map(category).filter(Boolean)} /></Sec>
+    <Sec id="trips" title={a.tripsTitle}><LinkCards items={trips.map((x) => ({ to: tripPath(x), title: tripLabel(x), text: x.highlights[0] }))} /><p><Link to="/northern-areas">All northern areas →</Link> · <Link to="/routes">All routes →</Link> · <Link to="/car-rental-pakistan">Across Pakistan →</Link></p></Sec>
+    <Sec id="advance" title={a.adviceTitle} tone="grey"><Bullets items={a.advice} /></Sec>
+    <Sec id="how" title="How advance booking works"><Steps items={[["1. Send your plan", "Arrival date and time, flight number, pickup and drop-off places, number of travellers and luggage, by WhatsApp, phone or the booking form."], ["2. We confirm", "We confirm the vehicle and driver for your dates and send you a quote. Nothing is charged by the website."], ["3. Your driver is ready", "Your professional driver is at the agreed place and time, and stays with you for the booking."]]} /></Sec>
+    <Sec id="also" title="You may also need" tone="grey"><LinkCards items={[other, { to: "/services/private-tours", title: "Private tours with a driver", text: "Plan multi-day trips with your own vehicle and driver." }, { to: "/services/family-travel", title: "Family travel", text: "Comfortable vehicles for families with luggage." }, { to: "/faq", title: "Frequently asked questions", text: "Vehicles, airport pickup, quotes and more." }]} /></Sec>
+    <Faq items={a.faqs} />
+    <Cta ctx={a.h1} title="Book your car in advance" text="Send your dates, flight and plan. We reply with a quote, never a fake instant price." />
+  </>);
+}
+
+
+// ------------------------------------------------------------------ legal pages (privacy, terms, disclaimer, cancellation): premium black-and-white reading layout
+export function LegalPage({ slug }) {
+  const a = legalPage(slug); const p = pageByPath(a.path);
+  const others = LEGAL.filter((x) => x.slug !== slug).map((x) => ({ to: x.path, title: x.short, text: x.description.split(". ")[0].replace(/\.$/, "") + "." }));
+  return (<>
+    <Hero eyebrow={a.eyebrow} h1={a.h1} lead={a.lead} crumbs={p.breadcrumbs} />
+    <div className="lg"><div className="lg__in">
+      <p className="lg__date">Last updated: {LEGAL_UPDATED}</p>
+      <aside className="lg__sum" aria-label="Summary"><h2>In short</h2><ul>{a.summary.map((x) => <li key={x}>{x}</li>)}</ul></aside>
+      <div className="lg__grid">
+        <nav className="lg__toc" aria-label="On this page"><p>On this page</p><ol>{a.sections.map((s, i) => <li key={s.h}><a href={`#s${i + 1}`}>{s.h}</a></li>)}</ol></nav>
+        <article className="lg__body">{a.sections.map((s, i) => (<section key={s.h} id={`s${i + 1}`}><h2><span>{String(i + 1).padStart(2, "0")}</span>{s.h}</h2>{s.p.map((t) => <p key={t}>{t}</p>)}{s.list && <ul>{s.list.map((t) => <li key={t}>{t}</li>)}</ul>}</section>))}</article>
+      </div>
+    </div></div>
+    <Faq items={a.faqs} title="Quick answers" />
+    <Sec id="policies" title="Our other policies" tone="grey"><LinkCards items={others} /><p><Link to="/contact">Contact us →</Link> · <Link to="/faq">FAQ →</Link> · <Link to="/services">Our services →</Link> · <Link to="/cars">Our fleet →</Link></p></Sec>
+    <Cta ctx={a.h1} title="Questions? Talk to us" text="Call or WhatsApp our team. We reply with clear answers and a quote for your trip." />
+  </>);
+}
+
+// ------------------------------------------------------------------ search guide: what people search for -> the right page (all text is visible to visitors)
+export function GuidePage() {
+  const p = pageByPath(GUIDE.path);
+  const card = (c) => {
+    if (c.to) return { to: c.to, title: c.title, text: c.text };
+    if (c.place) { const x = place(c.place); if (!x || x.status !== "live") return null; return ["islamabad", "rawalpindi"].includes(x.slug) ? placeCard(x) : { to: tripPath(x), title: tripLabel(x), text: x.plan }; }
+    if (c.service) { const s = SERVICE_PAGES.find((y) => y.slug === c.service); return s ? svcCard(s) : null; }
+    if (c.vehicle) { const v = category(c.vehicle); return v ? { to: `/cars/${v.slug}`, title: `${v.title} with driver`, text: (v.description || "").split(". ")[0].replace(/\.$/, "") + "." } : null; }
+    return null;
+  };
+  return (<>
+    <Hero eyebrow={GUIDE.eyebrow} h1={GUIDE.h1} lead={GUIDE.lead} crumbs={p.breadcrumbs} />
+    <Sec id="answer" title="Quick answer"><Answer q="Can I hire a car with a professional driver in Pakistan?">Yes. SAAD CAR RENTAL SERVICES in Islamabad provides every vehicle with an experienced professional driver, for airport pickup, city travel, family and business trips, weddings, and journeys to other cities and the northern areas. Send your plan and we reply with a quote.</Answer></Sec>
+    {GUIDE.groups.map((g, i) => (<Sec key={g.id} id={g.id} title={g.title} tone={i % 2 ? "grey" : undefined}><p>{g.intro}</p><Chips items={g.phrases} /><LinkCards items={g.cards.map(card).filter(Boolean)} /></Sec>))}
+    <Sec id="more" title="Explore more" tone="grey"><p><Link to="/car-rental-pakistan">Car rental across Pakistan →</Link> · <Link to="/northern-areas">Northern areas →</Link> · <Link to="/routes">Routes from Islamabad →</Link> · <Link to="/destinations">Destinations →</Link> · <Link to="/services">Services →</Link> · <Link to="/cars">Fleet →</Link> · <Link to="/faq">FAQ →</Link></p></Sec>
+    <Faq items={GUIDE.faqs} title="Common questions" />
+    <Cta ctx="Search guide" title="Tell us your plan, get a quote" text="Call, WhatsApp or send the booking form with your pickup, destination and dates." />
+  </>);
 }
 
 // ------------------------------------------------------------------ router glue
@@ -261,6 +327,9 @@ export function SeoPage({ page }) {
   if (k === "province") return <ProvincePage slug={page.slug} />;
   if (k === "faq") return <FaqPage />;
   if (k === "hub") return <HubPage slug={page.slug} />;
+  if (k === "audience") return <AudiencePage slug={page.slug} />;
+  if (k === "legal") return <LegalPage slug={page.slug} />;
+  if (k === "guide") return <GuidePage />;
   return null;
 }
 export const NotFoundPage = () => (

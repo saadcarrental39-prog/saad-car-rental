@@ -34,3 +34,33 @@
 .sx-extra{margin:40px calc(-1*clamp(16px,4vw,64px)) calc(-1*clamp(32px,6vw,80px))}
 .hero__tag{font-weight:700;letter-spacing:.04em;color:#16181b!important;margin:0 0 6px}
 @media(max-width:900px){.sx-cta{padding-bottom:calc(clamp(30px,5vw,56px) + 8px)}}
+
+/* ---------- Legal pages: premium black & white reading layout ---------- */
+.lg{background:#fff;color:#16181b;padding:clamp(28px,5vw,56px) clamp(16px,4vw,48px) 12px}
+.lg__in{max-width:1100px;margin:0 auto}
+.lg__date{margin:0 0 18px;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#5a5d63}
+.lg__sum{background:#0b0b0c;color:#fff;border-radius:18px;padding:clamp(18px,3vw,30px);margin-bottom:clamp(24px,4vw,44px)}
+.lg__sum h2{margin:0 0 12px;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;font-weight:800;color:#d9d9de}
+.lg__sum ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.lg__sum li{position:relative;padding-left:26px;line-height:1.6;font-size:.98rem;color:#f1f1f3}
+.lg__sum li::before{content:"";position:absolute;left:2px;top:.62em;width:12px;height:2px;background:#fff}
+.lg__grid{display:grid;grid-template-columns:260px minmax(0,1fr);gap:clamp(24px,5vw,64px);align-items:start}
+.lg__toc{position:sticky;top:88px;border-top:3px solid #0b0b0c;padding-top:14px}
+.lg__toc p{margin:0 0 10px;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:800}
+.lg__toc ol{margin:0;padding:0;list-style:none;display:grid;gap:2px;counter-reset:t}
+.lg__toc li{counter-increment:t}
+.lg__toc a{display:block;padding:7px 0 7px 30px;position:relative;color:#3a3d43;text-decoration:none;font-size:.9rem;line-height:1.35;border-bottom:1px solid #e7e7ea}
+.lg__toc a::before{content:counter(t,decimal-leading-zero);position:absolute;left:0;font-size:.74rem;font-weight:800;color:#0b0b0c}
+.lg__toc a:hover,.lg__toc a:focus-visible{color:#0b0b0c;background:#f4f4f5}
+.lg__body section{padding:0 0 clamp(22px,3.5vw,34px);margin-bottom:clamp(22px,3.5vw,34px);border-bottom:1px solid #e1e1e5;scroll-margin-top:96px}
+.lg__body section:last-child{border-bottom:0}
+.lg__body h2{display:flex;align-items:baseline;gap:14px;margin:0 0 14px;font-size:clamp(1.2rem,2.4vw,1.55rem);letter-spacing:-.02em;line-height:1.2}
+.lg__body h2 span{font-size:.8rem;font-weight:800;letter-spacing:.1em;color:#fff;background:#0b0b0c;border-radius:6px;padding:4px 8px;flex:none;transform:translateY(-2px)}
+.lg__body p{margin:0 0 12px;line-height:1.8;font-size:1rem;color:#2b2e33;max-width:72ch}
+.lg__body ul{margin:6px 0 4px;padding:0;list-style:none;display:grid;gap:9px;max-width:72ch}
+.lg__body li{position:relative;padding-left:24px;line-height:1.7;color:#2b2e33}
+.lg__body li::before{content:"";position:absolute;left:2px;top:.72em;width:10px;height:10px;border:2px solid #0b0b0c;border-radius:50%}
+@media(max-width:860px){.lg__grid{grid-template-columns:1fr}.lg__toc{position:static}}
+@media print{.lg__toc{display:none}.lg__sum{background:#fff;color:#000;border:1px solid #000}.lg__sum li,.lg__sum h2{color:#000}}
+/* footer: legal + guide links */
+.ftr nav[aria-label="Legal"] a{font-size:.74rem}

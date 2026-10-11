@@ -10,6 +10,9 @@ import { PLACES, PROVINCES, placePath, place } from "./data/places";
 import { ROUTES } from "./data/routes";
 import { SERVICE_PAGES } from "./data/services";
 import { FAQS } from "./data/faq";
+import { AUDIENCES } from "./data/audiences";
+import { LEGAL } from "./data/legal";
+import { GUIDE } from "./data/guide";
 import { VEHICLE_FIT, USE, TERRAIN } from "./data/vehicles";
 import { categories, category, photoOf, vehiclesForPlace, northernPlaces, placesIn, livePlacesList } from "./links";
 import { graphFor, abs } from "./schema";
@@ -122,6 +125,23 @@ ROUTES.filter((r) => r.status === "live").forEach((r) => {
     breadcrumbs: [home, { name: "Routes", path: "/routes" }, { name: `Islamabad to ${p.name}`, path }],
     description: fit([`Book a car with professional driver from Islamabad or Rawalpindi to ${p.name}. ${TERRAIN[p.terrain].label[0].toUpperCase()}${TERRAIN[p.terrain].label.slice(1)} route.`, `${v.slice(0, 3).map((c) => VEH_SEO[c.slug] || c.title).join(", ")} available.`, CTA]),
     og: { a: `ISLAMABAD → ${nm(p).toUpperCase()}`, b: "Car with professional driver", vehicle: lead }, service: { type: "Intercity car rental with driver", areas: ["Islamabad", p.name] } });
+});
+
+// ---------------------------------------------------------------- audience pages (visitors from abroad, overseas Pakistanis)
+AUDIENCES.filter((a) => a.status === "live").forEach((a) => {
+  add({ path: a.path, kind: "audience", slug: a.slug, title: a.title, h1: a.h1, priority: 0.9, changefreq: "weekly", faqs: a.faqs, description: a.description,
+    breadcrumbs: [home, { name: a.slug === "visit-pakistan" ? "Visit Pakistan" : "Overseas Pakistanis", path: a.path }],
+    og: { a: a.slug === "visit-pakistan" ? "VISIT PAKISTAN" : "OVERSEAS PAKISTANIS", b: a.ogB, vehicle: a.slug === "visit-pakistan" ? "land-cruiser-v8" : "prado" }, service: a.service });
+});
+
+
+// ---------------------------------------------------------------- search guide + legal pages
+add({ path: GUIDE.path, kind: "guide", title: GUIDE.title, h1: GUIDE.h1, description: GUIDE.description, priority: 0.8, changefreq: "weekly", faqs: GUIDE.faqs,
+  breadcrumbs: [home, { name: "Guide", path: GUIDE.path }], og: { a: "CAR RENTAL GUIDE", b: "Islamabad · Pakistan · Airport · Northern areas", vehicle: "land-cruiser-v8" },
+  service: { type: "Car rental with driver", areas: ["Islamabad", "Rawalpindi", "Pakistan"] } });
+LEGAL.forEach((l) => {
+  add({ path: l.path, kind: "legal", slug: l.slug, title: l.title, h1: l.h1, description: l.description, priority: 0.4, changefreq: "yearly", faqs: l.faqs,
+    breadcrumbs: [home, { name: l.short, path: l.path }], og: { a: l.ogA, b: l.ogB, vehicle: "prado" } });
 });
 
 // ---------------------------------------------------------------- province / region hubs and national hubs
