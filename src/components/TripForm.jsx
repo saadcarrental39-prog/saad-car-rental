@@ -40,6 +40,7 @@ export function prepare(d, svc) {
   if (d.rdate < d.date) return { error: "Return date cannot be before the pickup date." };
   if (!d.pax) return { error: "Please choose the number of passengers." };
   if (!d.service) return { error: "Please choose the service required." };
+  if (!d.consent) return { error: "Please tick the box to agree to the Privacy Policy." };
   if (out && !d.driver) return { error: "For Out of Station trips you must provide the driver's accommodation and meals. Please tick the box to continue." };
   if (!out && !d.driver) return { error: "Please choose how the driver's accommodation and meals will be arranged." };
   const driver = out ? "agree" : d.driver;
@@ -106,6 +107,7 @@ export default function TripForm({ svc, vid, setVid, d, setD, err, busy, onSubmi
       <h3 className="tf-h"><span>5</span>Extra Notes</h3>
       <label className="tf-l"><span>Any special requests or details?</span><textarea rows="3" maxLength={300} placeholder={out ? "Tell us about your itinerary, hotel preferences, luggage, or budget..." : "Tell us about your plan, timing, or any other requirements..."} value={d.notes || ""} onChange={set("notes")} /></label>
 
+      <label className={`tf-agree tf-agree--s${d.consent ? " is-on" : ""}`}><input type="checkbox" name="consent" checked={!!d.consent} onChange={(e) => setD({ ...d, consent: e.target.checked })} /><span>I agree to the <a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a> *</span></label>
       {err && <p role="alert" className="tf-err">{err}</p>}
       <button className="tf-btn" type="submit" disabled={busy}>{busy ? "Sending…" : out ? "Submit Out of Station Booking Request" : "Submit Local Booking Request"}</button>
       <p className="tf-note tf-note--c">After you submit, WhatsApp opens with your booking message ready. Just tap Send.</p>

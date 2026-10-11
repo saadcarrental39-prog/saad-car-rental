@@ -61,6 +61,7 @@ export default function Contact() {
     if (d.website) return; // honeypot: real people never fill this
     if (!clean(d.name)) { track("form_error", { form: "contact" }); return setErr("Please enter your name."); }
     if (!PHONE_OK.test(clean(d.phone))) { track("form_error", { form: "contact" }); return setErr("Please enter a valid phone number."); }
+    if (!d.consent) { track("form_error", { form: "contact" }); return setErr("Please tick the box to agree to the Privacy Policy."); }
     if (!clean(d.message)) { track("form_error", { form: "contact" }); return setErr("Please tell us a little about your trip or question."); }
     setErr(""); setBusy(true); track("quote_submit", { form: "contact" }); completeLead("contact", d, lx);
     const ok = await sendToServer(d);
@@ -155,6 +156,7 @@ export default function Contact() {
                 {/* honeypot: hidden from people, bots fill it */}
                 <input className="ct-hp" type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={d.website} onChange={set("website")} />
                 {err && <p role="alert" className="ct-err">{err}</p>}
+                <label className="ct-consent"><input type="checkbox" name="consent" checked={!!d.consent} onChange={(e) => setD({ ...d, consent: e.target.checked })} /><span>I agree to the <a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a> *</span></label>
                 <button className="ct-btn ct-btn--dark ct-submit" type="submit" disabled={busy}>{busy ? "Sending…" : <><span>Send via WhatsApp</span>{Ico.arrow}</>}</button>
               </form>
             )}

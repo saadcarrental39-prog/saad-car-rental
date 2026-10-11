@@ -1,14 +1,15 @@
 // SEO page components. Every page is built from the data files in src/seo/data, so no page is hand-copied from another.
 // They contain no browser-only code: the build renders them to plain HTML for crawlers (see scripts/prerender.mjs).
 import { Link } from "react-router-dom";
-import { SITE } from "../config";
+import { SITE, telHref, waHref } from "../config";
+import { BUSINESS } from "../business.config";
 import { pageByPath } from "./registry";
 import { PLACES, PROVINCES, place, placePath, PUNJAB_DISTRICTS } from "./data/places";
 import { ROUTES } from "./data/routes";
 import { SERVICE_PAGES } from "./data/services";
 import { FAQS } from "./data/faq";
 import { audience } from "./data/audiences";
-import { LEGAL, LEGAL_UPDATED, legalPage } from "./data/legal";
+import { LEGAL, LEGAL_UPDATED, REFUND_STAGES, legalPage } from "./data/legal";
 import { GUIDE } from "./data/guide";
 import { SPOTS, LOCAL_GROUPS, AREAS, spot } from "./data/islamabad";
 import { LOCAL_PILLAR, OUT_PILLAR, PLACES_HUB } from "./data/pillars";
@@ -289,8 +290,10 @@ export function LegalPage({ slug }) {
       <aside className="lg__sum" aria-label="Summary"><h2>In short</h2><ul>{a.summary.map((x) => <li key={x}>{x}</li>)}</ul></aside>
       <div className="lg__grid">
         <nav className="lg__toc" aria-label="On this page"><p>On this page</p><ol>{a.sections.map((s, i) => <li key={s.h}><a href={`#s${i + 1}`}>{s.h}</a></li>)}</ol></nav>
-        <article className="lg__body">{a.sections.map((s, i) => (<section key={s.h} id={`s${i + 1}`}><h2><span>{String(i + 1).padStart(2, "0")}</span>{s.h}</h2>{s.p.map((t) => <p key={t}>{t}</p>)}{s.list && <ul>{s.list.map((t) => <li key={t}>{t}</li>)}</ul>}</section>))}</article>
+        <article className="lg__body">{a.sections.map((s, i) => (<section key={s.h} id={`s${i + 1}`}><h2><span>{String(i + 1).padStart(2, "0")}</span>{s.h}</h2>{s.p.map((t) => <p key={t}>{t}</p>)}{s.list && <ul>{s.list.map((t) => <li key={t}>{t}</li>)}</ul>}{s.stages && <ol className="lg__stages">{REFUND_STAGES.map((x) => <li key={x.when}><b>{x.when}</b><span>{x.share}</span></li>)}</ol>}</section>))}</article>
       </div>
+      <aside className="lg__contact" aria-label="Contact for this policy"><b>Questions about this page?</b>
+        <span>{telHref && <a href={telHref}>Call {SITE.phone}</a>}{waHref() && <a href={waHref()} target="_blank" rel="noopener noreferrer">WhatsApp</a>}<Link to="/contact">Contact page</Link>{BUSINESS.email && <a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a>}</span></aside>
     </div></div>
     <Faq items={a.faqs} title="Quick answers" />
     <Sec id="policies" title="Our other policies" tone="grey"><LinkCards items={others} /><p><Link to="/contact">Contact us →</Link> · <Link to="/faq">FAQ →</Link> · <Link to="/services">Our services →</Link> · <Link to="/cars">Our fleet →</Link></p></Sec>

@@ -64,3 +64,9 @@
 @media print{.lg__toc{display:none}.lg__sum{background:#fff;color:#000;border:1px solid #000}.lg__sum li,.lg__sum h2{color:#000}}
 /* footer: legal + guide links */
 .ftr nav[aria-label="Legal"] a{font-size:.74rem}
+.lg__stages{margin:12px 0 4px;padding:0;list-style:none;display:grid;gap:10px;max-width:72ch;counter-reset:st}
+.lg__stages li{counter-increment:st;position:relative;padding:14px 16px 14px 54px;border:1px solid #16181b;border-radius:14px;background:#fff;display:grid;gap:4px}
+.lg__stages li::before{content:counter(st);position:absolute;left:14px;top:14px;width:28px;height:28px;border-radius:8px;background:#0b0b0c;color:#fff;font-weight:800;font-size:.85rem;display:grid;place-items:center}
+.lg__stages b{font-size:.98rem}.lg__stages span{color:#3a3d43;line-height:1.6;font-size:.94rem}
+.lg__contact{display:grid;gap:8px;margin-top:clamp(20px,3vw,32px);padding:16px 18px;border-radius:16px;background:#0b0b0c;color:#fff}
+.lg__contact span{display:flex;flex-wrap:wrap;gap:8px 18px}.lg__contact a{color:#fff;font-weight:600;text-decoration:underline;text-underline-offset:3px}

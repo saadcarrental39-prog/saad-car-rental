@@ -245,3 +245,14 @@ body{display:block;padding:0;background:#fff;color:#16181b;font-family:Manrope,s
 .tf-btn:hover{background:#b84209}.tf-btn:disabled{opacity:.7;cursor:wait}
 .tf-btn:focus-visible{outline:2px solid #0b0b0c;outline-offset:2px}
 @media(max-width:520px){.tf-2{grid-template-columns:1fr}.tf-opts:not(.tf-opts--col){display:grid;grid-template-columns:1fr 1fr}}
+
+/* ---------- consent checkbox + cookie notice ---------- */
+.tf-agree--s{align-items:center;padding:10px 14px}.tf-agree--s a{color:#16181b;font-weight:700;text-decoration:underline}
+.ct-consent{display:flex;align-items:center;gap:10px;margin:2px 0 4px;font-size:.92rem;cursor:pointer}.ct-consent input{width:18px;height:18px;accent-color:#cc4a0a;flex:none}.ct-consent a{color:inherit;font-weight:700;text-decoration:underline}
+.ck{position:fixed;z-index:70;left:16px;bottom:16px;width:min(430px,calc(100vw - 32px));display:grid;gap:12px;padding:16px 18px;border-radius:18px;background:#0b0b0c;color:#fff;box-shadow:0 18px 40px -18px rgba(0,0,0,.55)}
+.ck p{margin:0;font-size:.88rem;line-height:1.55;color:#e6e6ea}.ck p b{display:block;margin-bottom:2px;font-size:.95rem;color:#fff}.ck a{color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.ck__b{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ck__b button{min-height:46px;border:2px solid #fff;border-radius:12px;background:transparent;color:#fff;font:inherit;font-weight:700;font-size:.95rem;cursor:pointer}
+.ck__b button:hover{background:#fff;color:#0b0b0c}.ck__b button:focus-visible{outline:3px solid #cc4a0a;outline-offset:2px}
+html[data-cookie="open"] .rb{display:none}
+@media(max-width:900px){.ck{left:12px;right:12px;width:auto;bottom:calc(70px + env(safe-area-inset-bottom,0px))}}

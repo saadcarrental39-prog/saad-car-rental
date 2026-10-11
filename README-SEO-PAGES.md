@@ -3,12 +3,19 @@
 | Page | URL | Data file |
 |---|---|---|
 | Privacy Policy | /privacy-policy | `src/seo/data/legal.js` |
-| Terms and Conditions | /terms-and-conditions | `src/seo/data/legal.js` |
-| Disclaimer | /disclaimer | `src/seo/data/legal.js` |
-| Cancellation and Changes Policy | /cancellation-policy | `src/seo/data/legal.js` |
+| Terms of Service | /terms-of-service | `legal.js` |
+| Refund and Cancellation Policy | /refund-policy | `legal.js` (stages: `REFUND_STAGES`) |
+| Cookie Policy | /cookie-policy | `legal.js` |
+| Accessibility Statement | /accessibility | `legal.js` |
+| Data Deletion Request | /data-deletion | `legal.js` |
+| Form Consent Notice | /contact-consent | `legal.js` |
+| Email Unsubscribe | /unsubscribe | `legal.js` |
+| Disclaimer | /disclaimer | `legal.js` |
 | Car rental search guide (keywords) | /car-rental-guide | `src/seo/data/guide.js` |
 | Tourists visiting Pakistan | /visit-pakistan | `src/seo/data/audiences.js` |
 | Overseas Pakistanis | /overseas-pakistanis | `src/seo/data/audiences.js` |
+
+Old addresses /terms-and-conditions and /cancellation-policy redirect (301) to the new ones (`public/_redirects`).
 
 All are in the footer, the mobile menu, sitemap.xml, the AI catalog (`/.well-known/ai-catalog.json`) and `public/llms.txt`.
 Each page has its own title, description, share image, JSON-LD (WebPage, Breadcrumb, FAQPage, Service) and FAQ for answer engines.
@@ -29,3 +36,9 @@ Share images for new pages: `npm run seo:og` (needs python3 + Pillow). Run `npm 
 - Add a place: copy a block in `islamabad.js`, change text, `update.bat`. Keep every FAQ answer different from the other places, and no prices, hours, fees or distances.
 - Out of Station pages use the existing places (`places.js`): add more cities / picnic spots there with `status: "live"`.
 - Share images for new pages: `npm run seo:og`.
+
+# Legal / compliance pack (Oct 2026)
+- Cookie notice (`src/components/CookieNotice.jsx`): Accept and Decline are equal. Google Analytics / Cloudflare Web Analytics start ONLY after Accept (`src/analytics.js`). The choice is saved as `saad_cookie` on the visitor's device.
+- Every booking and contact form has the checkbox "I agree to the Privacy Policy" (required) just above the send button.
+- Business email: set `email` in `src/business.config.js`. It then appears at the bottom of every legal page by itself. Until then the pages point to phone, WhatsApp and the contact page.
+- Refund share per stage: only words today. Put exact percentages into `REFUND_STAGES` in `legal.js` when you decide them.

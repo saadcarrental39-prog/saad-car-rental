@@ -3,6 +3,7 @@ import { Routes, Route, Link, NavLink, useLocation } from "react-router-dom";
 import { SITE, ADMIN_PATH, telHref, waHref } from "./config";
 import Home from "./pages/Home";
 import RecentBookings from "./components/RecentBookings";
+import CookieNotice from "./components/CookieNotice";
 import BookingModal from "./components/BookingModal";
 import { fleet } from "./data/fleet";
 import { CarPage, Services, About } from "./pages/Pages";
@@ -43,6 +44,7 @@ export default function App() {
       {open && <nav id="menu" className="menu" aria-label="Mobile">{[["/", "Home"], ["/cars", "All Cars"], ...fleet.map((c) => [`/cars/${c.slug}`, c.title]), ["/services", "Services"], ["/northern-areas", "Northern Areas"], ["/routes", "Routes"], ["/destinations", "Destinations"], ["/car-rental-pakistan", "Across Pakistan"], ["/airport-transfer/islamabad", "Airport Transfer"], ["/out-of-station-car-rental", "Out of Station"], ["/local-car-rental-islamabad", "Local · Islamabad"], ["/islamabad-places", "Islamabad Places"], ["/car-rental-guide", "Car Rental Guide"], ["/visit-pakistan", "Visit Pakistan"], ["/overseas-pakistanis", "Overseas Pakistanis"], ["/faq", "FAQ"], ["/about", "About"], ["/contact", "Contact"], ["/book", "Book Now"]].map(([to, t]) => <Link key={to} to={to}>{t}</Link>)}</nav>}
       <BookingModal />
       <RecentBookings />
+      <CookieNotice />
       <main id="main"><Guard key={pathname}>
         <Routes><Route path="/" element={<Home />} /><Route path="/cars" element={<Cars />} /><Route path="/cars/:slug" element={<CarPage />} />
           <Route path="/services" element={<Services />} /><Route path="/about" element={<About />} /><Route path="/contact" element={<Contact />} /><Route path="/book" element={<Book />} /><Route path="*" element={<CatchAll />} /></Routes>
@@ -51,7 +53,7 @@ export default function App() {
         <nav aria-label="Footer"><Link to="/">Home</Link>{["cars", "services", "about", "contact", "book"].map((p) => <Link key={p} to={`/${p}`}>{p[0].toUpperCase() + p.slice(1)}</Link>)}</nav>
         <nav aria-label="Pakistan"><Link to="/car-rental-pakistan">Pakistan</Link>{Object.values(PROVINCES).filter((v) => v.own && v.status === "live").map((v) => <Link key={v.slug} to={`/locations/${v.slug}`}>{v.name}</Link>)}<Link to="/northern-areas">Northern Areas</Link><Link to="/routes">Routes</Link><Link to="/destinations">Destinations</Link><Link to="/airport-transfer/islamabad">Airport Transfer</Link><Link to="/faq">FAQ</Link></nav>
         <nav aria-label="Services"><Link to="/out-of-station-car-rental">Out of Station</Link><Link to="/local-car-rental-islamabad">Local · Islamabad</Link><Link to="/islamabad-places">Islamabad Places</Link></nav>
-        <nav aria-label="Legal"><Link to="/car-rental-guide">Car Rental Guide</Link><Link to="/visit-pakistan">Visit Pakistan</Link><Link to="/overseas-pakistanis">Overseas Pakistanis</Link><Link to="/privacy-policy">Privacy Policy</Link><Link to="/terms-and-conditions">Terms &amp; Conditions</Link><Link to="/disclaimer">Disclaimer</Link><Link to="/cancellation-policy">Cancellation Policy</Link></nav>
+        <nav aria-label="Legal"><Link to="/car-rental-guide">Car Rental Guide</Link><Link to="/visit-pakistan">Visit Pakistan</Link><Link to="/overseas-pakistanis">Overseas Pakistanis</Link><Link to="/privacy-policy">Privacy Policy</Link><Link to="/terms-of-service">Terms of Service</Link><Link to="/refund-policy">Refund Policy</Link><Link to="/cookie-policy">Cookie Policy</Link><Link to="/accessibility">Accessibility</Link><Link to="/data-deletion">Data Deletion</Link><Link to="/contact-consent">Form Consent</Link><Link to="/unsubscribe">Unsubscribe</Link><Link to="/disclaimer">Disclaimer</Link></nav>
         <nav aria-label="Fleet">{fleet.map((c) => <Link key={c.slug} to={`/cars/${c.slug}`}>{c.title}</Link>)}</nav>
         <small>© {new Date().getFullYear()} {SITE.name} · build {typeof __BUILD_ID__ !== "undefined" ? __BUILD_ID__.slice(-6) : "dev"}</small></footer>
       <div className="mbar">{telHref && <a href={telHref}>Call</a>}{waHref() && <a href={waHref()} target="_blank" rel="noopener noreferrer">WhatsApp</a>}<Link to="/book">Book Now</Link></div>

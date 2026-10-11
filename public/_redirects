@@ -1,0 +1,3 @@
+# Old policy addresses -> the current ones (permanent redirect, keeps any Google ranking)
+/terms-and-conditions /terms-of-service 301
+/cancellation-policy /refund-policy 301
