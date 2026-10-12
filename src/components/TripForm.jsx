@@ -13,6 +13,21 @@ import { clean } from "../booking";
 export const DRIVER_FOOD_PKR = 2500;   // change here if the amount changes (written as "2500 PKR" so the site's price filter ignores it)
 
 export const COUNTRIES = ["Pakistan", "United Kingdom", "United States", "Canada", "United Arab Emirates", "Saudi Arabia", "Qatar", "Oman", "Kuwait", "Bahrain", "Australia", "New Zealand", "Germany", "France", "Italy", "Spain", "Netherlands", "Belgium", "Switzerland", "Norway", "Sweden", "Denmark", "Ireland", "Turkey", "Azerbaijan", "China", "Japan", "South Korea", "Malaysia", "Singapore", "Thailand", "India", "Bangladesh", "Sri Lanka", "Afghanistan", "Iran", "Egypt", "South Africa", "Other"];
+// Country codes: the number is saved WITH its country code (+92 for Pakistan, +44 for UK ...), so WhatsApp and calls work in one tap
+// and the owner can see which country the customer is from. The customer may type 03XX..., 3XX..., 0092..., 92... or +92...
+export const DIAL = { Pakistan: "92", "United Kingdom": "44", "United States": "1", Canada: "1", "United Arab Emirates": "971", "Saudi Arabia": "966", Qatar: "974", Oman: "968", Kuwait: "965", Bahrain: "973", Australia: "61", "New Zealand": "64", Germany: "49", France: "33", Italy: "39", Spain: "34", Netherlands: "31", Belgium: "32", Switzerland: "41", Norway: "47", Sweden: "46", Denmark: "45", Ireland: "353", Turkey: "90", Azerbaijan: "994", China: "86", Japan: "81", "South Korea": "82", Malaysia: "60", Singapore: "65", Thailand: "66", India: "91", Bangladesh: "880", "Sri Lanka": "94", Afghanistan: "93", Iran: "98", Egypt: "20", "South Africa": "27" };
+export function normPhone(raw, country) {
+  const r = String(raw || "").trim(), d = r.replace(/\D/g, ""), dial = DIAL[country];
+  if (!d) return "";
+  if (r.startsWith("+")) return `+${d}`;
+  if (d.startsWith("00")) return `+${d.slice(2)}`;
+  if (!dial) return "";                                           // unknown country: the customer must type +code
+  if (d.startsWith(dial) && d.length >= dial.length + 8) return `+${d}`;
+  return `+${dial}${d.replace(/^0+/, "")}`;
+}
+export const phoneOk = (p) => /^\+\d{8,15}$/.test(p);
+export const withPhone = (d) => { const wa = normPhone(d.whatsapp, d.country); return wa ? { ...d, phone: wa, whatsapp: wa } : { ...d, phone: "" }; };
+
 export const DESTS = ["Skardu", "Hunza", "Gilgit", "Naran Kaghan", "Swat", "Kalam", "Kumrat Valley", "Fairy Meadows", "Murree", "Nathia Gali", "Chitral", "Neelum Valley", "Lahore", "Peshawar"];
 const PAX = ["1–2", "3–4", "5–7", "8 or more"];
 const SERVICES = { local: ["Car with driver", "Airport transfer", "Full tour package"], out: ["Car with driver", "Complete tour package", "Airport transfer"] };
@@ -29,9 +44,10 @@ export function prepare(d, svc) {
   const out = svc === "out"; const today = toDay();
   if (!svc) return { error: "Please choose Out of Station or Local first." };
   if (!clean(d.name)) return { error: "Please enter your full name." };
-  if (!/^[\d+\s()-]{7,20}$/.test(d.whatsapp || "")) return { error: "Please enter a valid WhatsApp number with country code." };
-  if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) return { error: "Please check the email address, or leave it empty." };
   if (!d.country) return { error: "Please select the country you are travelling from." };
+  const wa = normPhone(d.whatsapp, d.country);
+  if (!phoneOk(wa)) return { error: d.country === "Other" ? "Please type your WhatsApp number with + and your country code." : "Please enter a valid WhatsApp number." };
+  if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) return { error: "Please check the email address, or leave it empty." };
   if (out && !clean(d.drop)) return { error: "Please choose or enter your tour destination." };
   if (!clean(d.pickup)) return { error: "Please enter the pickup location." };
   if (!d.date) return { error: "Please choose the pickup date." };
@@ -45,7 +61,7 @@ export function prepare(d, svc) {
   if (!out && !d.driver) return { error: "Please choose how the driver's accommodation and meals will be arranged." };
   const driver = out ? "agree" : d.driver;
   const addl = (d.addl || []).join(", ");
-  const dd = { ...d, phone: d.whatsapp, drop: out ? clean(d.drop) : clean(d.pickup), service: d.service, addlText: addl, driverText: DRIVER_TEXT[driver], driver };
+  const dd = { ...d, phone: wa, whatsapp: wa, drop: out ? clean(d.drop) : clean(d.pickup), service: d.service, addlText: addl, driverText: DRIVER_TEXT[driver], driver };
   dd.extra = [`Service: ${d.service}`, `From: ${d.country}`, addl && `Extra: ${addl}`, `Driver: ${driver === "provide" ? "customer provides stay + meals" : driver === "own" ? `no stay/meals, car returns to office, ${DRIVER_FOOD_PKR} PKR food` : "customer provides stay + meals (compulsory)"}`, `Return: ${d.rdate}`, clean(d.notes)].filter(Boolean).join(" | ").slice(0, 600);
   return { dd };
 }
@@ -70,8 +86,8 @@ export default function TripForm({ svc, vid, setVid, d, setD, err, busy, onSubmi
     <form className="tf" onSubmit={onSubmit} noValidate>
       <h3 className="tf-h"><span>1</span>Your Details</h3>
       <label className="tf-l"><span>Full Name *</span><input type="text" name="name" autoComplete="name" placeholder="Enter your full name" maxLength={120} value={d.name || ""} onChange={set("name")} /></label>
-      <label className="tf-l"><span>WhatsApp Number *</span><input type="tel" name="whatsapp" autoComplete="tel" inputMode="tel" placeholder="+92 3XX XXXXXXX" maxLength={25} value={d.whatsapp || ""} onChange={set("whatsapp")} /></label>
       <label className="tf-l"><span>Country *</span><select name="country" value={d.country || ""} onChange={set("country")}><option value="">Select your country</option>{COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}</select></label>
+      <label className="tf-l"><span>WhatsApp Number *</span><input type="tel" name="whatsapp" autoComplete="tel" inputMode="tel" placeholder={d.country && DIAL[d.country] ? `+${DIAL[d.country]} 3XX XXXXXXX` : "+92 3XX XXXXXXX"} maxLength={25} value={d.whatsapp || ""} onChange={set("whatsapp")} />{phoneOk(normPhone(d.whatsapp, d.country)) ? <small className="tf-hint">Saved as {normPhone(d.whatsapp, d.country)}</small> : <small className="tf-hint">{d.country && d.country !== "Other" ? `The country code +${DIAL[d.country]} is added automatically.` : "Choose your country first. For Other, type + and your country code."}</small>}</label>
       <label className="tf-l"><span>Email (optional)</span><input type="email" name="email" autoComplete="email" inputMode="email" placeholder="you@example.com" maxLength={120} value={d.email || ""} onChange={set("email")} /></label>
 
       <h3 className="tf-h"><span>2</span>{out ? "Tour Details" : "Ride Information"}</h3>

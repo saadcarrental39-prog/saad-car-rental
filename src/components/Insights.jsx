@@ -1,3 +1,5 @@
+import DigitalCounters from "./DigitalCounter";
+import { useHidden, keyOf } from "./swipe";
 import { useCallback, useEffect, useRef, useState } from "react";
 import "../styles/insights.css";
 
@@ -116,42 +118,16 @@ const whyOffline = (e) => {
   return "Phone / computer se server tak request nahi pohanch rahi (internet, VPN ya ad-blocker check karein).";
 };
 
-// "Taza activity" as a bottom-sheet style card: the newest activity first, then everything back to the very first visit.
-// Grouped by date (Pakistan time), scrolls inside the card (hidden scrollbar) and loads older pages while you scroll.
-const PKT = 5 * 3600e3, dayKey = (ts) => new Date(ts + PKT).toISOString().slice(0, 10);
-const clock = (ts) => { const d = new Date(ts + PKT), h = d.getUTCHours(); return `${h % 12 || 12}:${String(d.getUTCMinutes()).padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`; };
-const dayName = (k) => { const t = dayKey(Date.now()); if (k === t) return "Aaj"; if (k === dayKey(Date.now() - 864e5)) return "Kal"; return dlabel(k, { weekday: "short", day: "numeric", month: "short", year: "numeric" }); };
-function ActivitySheet({ load, fresh, ok }) {
-  const [rows, setRows] = useState([]), [more, setMore] = useState(true), [busy, setBusy] = useState(false), [big, setBig] = useState(false), [bad, setBad] = useState(false);
-  const next = useRef(0), seen = useRef(new Set()), box = useRef(null), loading = useRef(false), done = useRef(false);
-  const take = useCallback((evs) => { const add = evs.filter((e) => !seen.current.has(e.id)); if (!add.length) return; add.forEach((e) => seen.current.add(e.id)); setRows((r) => [...r, ...add].sort((a, b) => b.id - a.id)); }, []);
-  const more1 = useCallback(async () => {
-    if (loading.current || done.current) return; loading.current = true; setBusy(true);
-    try { const d = await load("activity", { before: next.current }); take(d.events || []); next.current = d.next || next.current; done.current = !d.more; setMore(!!d.more); setBad(false); }
-    catch { setBad(true); } finally { loading.current = false; setBusy(false); }
-  }, [load, take]);
-  useEffect(() => { if (ok) more1(); }, [ok]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { take(fresh || []); }, [fresh, take]);
-  useEffect(() => { const el = box.current; if (el && more && !busy && el.scrollHeight <= el.clientHeight + 8 && rows.length) more1(); }, [rows, more, busy, big, more1]);
-  const onScroll = (e) => { const el = e.currentTarget; if (el.scrollTop + el.clientHeight > el.scrollHeight - 160) more1(); };
-  const list = dedupe(rows), groups = [];
-  list.forEach((f) => { const k = dayKey(f.ts), g = groups[groups.length - 1]; if (g && g.k === k) g.items.push(f); else groups.push({ k, items: [f] }); });
-  if (!list.length && !busy && !bad) return null;
-  return (<section className={`in-sheet${big ? " is-big" : ""}`} aria-label="Taza activity">
-    <span className="in-sheet__grab" aria-hidden="true" />
-    <div className="in-sheet__head"><h3>Taza activity</h3><span>{list.length}{more ? "+" : ""}</span>
-      <button type="button" className="in-sheet__x" onClick={() => setBig((b) => !b)} aria-pressed={big} aria-label={big ? "Chhota karein" : "Bara karein"}>{big ? "⤡" : "⤢"}</button></div>
-    <div className="in-sheet__body" ref={box} onScroll={onScroll} tabIndex={0}>
-      {groups.map((g) => (<div key={g.k} className="in-sheet__day"><h4>{dayName(g.k)}<small>{g.items.length}</small></h4>
-        <ul className="in-feed">{g.items.map((f) => { const [h, d] = evText(f); return <li key={f.id}><div><b>{h}</b><small>{[where(f), d].filter(Boolean).join(" · ")}</small></div><time>{clock(f.ts)}</time></li>; })}</ul></div>))}
-      {busy && <p className="in-sheet__st">Load ho raha hai…</p>}
-      {bad && <p className="in-sheet__st"><button type="button" onClick={more1}>Dobara try karein</button></p>}
-      {!more && list.length > 0 && <p className="in-sheet__st">Yahan se pehli activity shuru hui</p>}
-    </div>
-  </section>);
+// Small "Taza activity" card on the dashboard: the latest few visits. The full history is on its own page (Activity tab).
+function ActivityPreview({ events, onOpen }) {
+  const { hidden } = useHidden(), list = dedupe(events.filter((e) => !hidden.includes(keyOf(e)))).slice(0, 5);
+  if (!list.length && !onOpen) return null;
+  return (<section className="ac-prev" aria-label="Taza activity"><div className="ac-prev__h"><h3>Taza activity</h3>{onOpen && <button type="button" onClick={onOpen}>Poori activity dekhein <span aria-hidden="true">→</span></button>}</div>
+    <ul className="in-feed">{list.map((f) => { const [h, d] = evText(f); return <li key={f.id}><div><b>{h}</b><small>{[where(f), d].filter(Boolean).join(" · ")}</small></div><time>{ago(f.ts)}</time></li>; })}</ul>
+    {!list.length && <p className="ac-st">Abhi koi taza activity nahi.</p>}</section>);
 }
 
-function LivePanel({ lv, ok, why, load, last, toast, sound, onSound }) {
+function LivePanel({ lv, ok, why, last, toast, sound, onSound, onOpen }) {
   const n = lv ? lv.online : 0, ppl = (lv && lv.people) || [], evs = (lv && lv.events) || [];
   return (<section className={`in-lv${ok ? " is-ok" : ""}${n ? " has-n" : ""}`} aria-live="polite">
     <div className="in-lv__top"><div className="in-lv__badge"><span className="in-radar" aria-hidden="true"><i /><i /><i /></span><b>{ok ? "LIVE" : ok === false ? "OFFLINE" : "CONNECTING"}</b></div>
@@ -159,7 +135,7 @@ function LivePanel({ lv, ok, why, load, last, toast, sound, onSound }) {
     <div className="in-lv__main"><div className="in-lv__n"><Num v={n} /></div><p>{n === 1 ? "visitor abhi website par hai" : "visitors abhi website par hain"}<small>Har 4 second mein khud update hota hai</small></p></div>
     {toast && <div className="in-lv__toast" key={toast.id}><b>{toast.h}</b><span>{toast.s}</span></div>}
     {ppl.length > 0 && <ul className="in-lv__ppl">{ppl.map((x, i) => <li key={`${x.ts}-${i}`}><span>{DEVICON[x.dev] || "👤"}</span><div><b>{where(x) || "Location pata nahi"}</b><small>{srcName(x.src)} · {pretty(x.path)}</small></div><time>{ago(x.ts)}</time></li>)}</ul>}
-    <ActivitySheet load={load} fresh={evs} ok={ok} />
+    <ActivityPreview events={evs} onOpen={onOpen} />
     {ok && !n && !evs.length && <p className="in-empty">{last ? `Abhi koi visitor nahi. Aakhri visit: ${ago(last)}.` : "Tracking on hai, lekin abhi tak koi visit record nahi hui."}</p>}
     {ok === false && <p className="in-empty in-empty--err">Live connection nahi ho raha (offline). {why || "Internet check karein."}</p>}
   </section>);
@@ -191,7 +167,7 @@ function highlights(d, c, p, ret) {
   return out.slice(0, 4);
 }
 
-export default function Insights({ api, out }) {
+export default function Insights({ api, out, onOpenActivity }) {
   const [range, setRange] = useState(() => { try { return sessionStorage.getItem("in-r") || "7d"; } catch { return "7d"; } });
   const [view, setView] = useState(() => { try { return sessionStorage.getItem("in-v") || "daily"; } catch { return "daily"; } });
   const [data, setData] = useState(null), [err, setErr] = useState(""), [busy, setBusy] = useState(false), [sel, setSel] = useState(null), [tsel, setTsel] = useState(null);
@@ -241,9 +217,9 @@ export default function Insights({ api, out }) {
       <div className="in-head__btns">{data && <button type="button" className="in-refresh" onClick={() => exportCsv(data)} aria-label="Excel / CSV download karein" title="CSV download"><svg viewBox="0 0 24 24" className="ad-i" aria-hidden="true"><path d="M12 4v11M7.5 11 12 15.5 16.5 11M5 19.5h14" /></svg></button>}
         <button type="button" className={`in-refresh${busy ? " is-busy" : ""}`} onClick={() => load(range)} aria-label="Refresh"><svg viewBox="0 0 24 24" className="ad-i" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v5h-5" /></svg></button></div></div>);
   const seg = (<div className="in-seg" role="group" aria-label="Muddat">{RANGES.map(([k, t]) => <button key={k} type="button" aria-pressed={range === k} className={range === k ? "on" : ""} onClick={() => setRange(k)}>{t}</button>)}</div>);
-  const livePanel = <LivePanel lv={lv} ok={liveOk} why={liveWhy} load={(...a) => fns.current.api(...a)} last={last} toast={toast} sound={sound} onSound={toggleSound} />;
+  const livePanel = <LivePanel lv={lv} ok={liveOk} why={liveWhy} onOpen={onOpenActivity} last={last} toast={toast} sound={sound} onSound={toggleSound} />;
   if (err === "no_db") return <div className="in-root">{hdr}<Setup /></div>;
-  if (!data) return (<div className="in-root">{hdr}{livePanel}{seg}{err ? <div className="ad-load in-fail"><p>Data load nahi hua. Internet check karein.</p><button type="button" className="ad-btn" onClick={() => load(range)}>Dobara try karein</button></div> : <div className="in-skel" aria-busy="true"><span /><span /><span /></div>}</div>);
+  if (!data) return (<div className="in-root">{hdr}<DigitalCounters data={data} />{livePanel}{seg}{err ? <div className="ad-load in-fail"><p>Data load nahi hua. Internet check karein.</p><button type="button" className="ad-btn" onClick={() => load(range)}>Dobara try karein</button></div> : <div className="in-skel" aria-busy="true"><span /><span /><span /></div>}</div>);
 
   const { cur: c, prev: p, series: s, periods: P, trend: T } = data, sx = s[sel ?? s.length - 1], ret = Math.max(0, c.vis - c.nw), pret = Math.max(0, p.vis - p.nw);
   const inq = c.calls + c.wa + c.qd, pinq = p.calls + p.wa + p.qd, rate = share(inq, c.vis), ppv = c.ses ? c.pv / c.ses : 0, bounce = share(c.bounce, c.ses), vpv = c.vis ? c.ses / c.vis : 0;
@@ -255,7 +231,7 @@ export default function Insights({ api, out }) {
   const bk = data.orders, tips = highlights(data, c, p, ret);
   const kpis = [["Page views", c.pv, p.pv, s.map((x) => x.pv)], ["Visits (sessions)", c.ses, p.ses], ["Naye visitors", c.nw, p.nw, s.map((x) => x.nw)], ["Purane visitors", ret, pret, s.map((x) => Math.max(0, x.vis - x.nw))], ["Inquiries", inq, pinq], ["Bookings", bk ? bk.cur : 0, bk ? bk.prev : 0]];
 
-  return (<div className="in-root">{hdr}{livePanel}{seg}
+  return (<div className="in-root">{hdr}<DigitalCounters data={data} />{livePanel}{seg}
 
     {empty && <section className="ad-card in-tip"><b>Tracking on hai ✅</b><p className="ad-note">Abhi tak koi visit record nahi hui. Website kisi bhi phone / computer se kholein (aap ka apna bhi ginta hai), data kuch second mein upar LIVE mein aur yahan aa jata hai.</p></section>}
 
@@ -309,3 +285,4 @@ export default function Insights({ api, out }) {
     <p className="ad-ver">Data anonymous hai: koi naam, phone ya IP save nahi hota.<br />Live part har 4 second, baqi numbers har 45 second mein khud refresh hote hain.</p>
   </div>);
 }
+export { evText, where, dedupe, dlabel };

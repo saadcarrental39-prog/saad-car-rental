@@ -64,7 +64,10 @@ purane visitors ka data khud us mein bhar jata hai (ek baar).
 - `src/pages/Admin.jsx`: Admin kholne par device ko khud ba khud "owner" banane wali line hata di.
 - `src/components/Insights.jsx`, `src/styles/insights.css`: white / black premium design, LIVE panel aur naye sections.
 
-# Neumorphism look + day/night (Oct 2026)
-- `src/styles/admin-neu.css` restyles the whole Admin app (soft raised / pressed surfaces, floating bottom dock) in the same black, white and gold colours. It only restyles: layout and data are unchanged.
-- Day/night toggle (sun / moon icon, top right, also on the login screen). Remembered on the phone; the first time it follows the phone's own setting. Icons: `public/icons/admin-sun.png`, `admin-night.png`.
-- "Taza activity" is now a bottom-sheet card: newest first, grouped by date (Aaj / Kal / date), scrolls inside the card with a hidden scrollbar, loads older pages while you scroll back to the very first visit (`activity` action in `functions/api/admin.js`, `activityFeed` in `functions/_lib/stats.js`). The expand button makes the sheet taller.
+# Admin app: original flat design + night mode + new dashboard (Oct 2026)
+- The neumorphism look was removed. The app uses its original flat design (black, white, gold). `src/styles/admin-theme.css` only adds night mode, the digital counters, the Activity page and swipe rows.
+- Day / night toggle (sun / moon icon, top right, also on the login screen), remembered on the phone. Icons: `public/icons/admin-sun.png`, `admin-night.png`.
+- Dashboard top: digital (LED style) counters, TOTAL VISITORS and TOTAL VIEWS since the first recorded visit (`all` in the stats API).
+- "Taza activity" on the dashboard is a small card (latest 5) with a button that opens the **Activity tab**: the complete page, newest first, grouped by date (Aaj / Kal / date), loads older pages while you scroll back to the very first visit (`activity` action in `functions/api/admin.js`).
+- Swipe a visitor left or right on the Activity page to hide that visitor (their rows disappear from the lists). It only hides on this phone, nothing is deleted. "Restore" brings everyone back, "Undo" appears for 5 seconds.
+- Phone numbers: every booking / contact form now saves the number WITH the country code (+92 ..., +44 ...), using the country the customer selects (`normPhone` in `src/components/TripForm.jsx`).

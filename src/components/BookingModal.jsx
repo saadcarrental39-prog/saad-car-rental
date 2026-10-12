@@ -6,7 +6,7 @@ import { sendBooking } from "../sendBooking";
 import { track } from "../analytics";
 import { captureLead, completeLead } from "../leads";
 import ServiceSwitch from "./ServiceSwitch";
-import TripForm, { prepare, leadNote } from "./TripForm";
+import TripForm, { prepare, leadNote, withPhone } from "./TripForm";
 export default function BookingModal() {
   const [vid, setVid] = useState(null); const [d, setD] = useState({ svc: "", service: "Car with driver" }); const [err, setErr] = useState(""); const [step, setStep] = useState("form"); const [busy, setBusy] = useState(false); const [sent, setSent] = useState(null); const [fin, setFin] = useState(null);
   useEffect(() => { const o = (e) => { setVid(e.detail); setErr(""); setStep("form"); setSent(null); }; window.addEventListener("open-booking", o); return () => window.removeEventListener("open-booking", o); }, []);
@@ -15,7 +15,7 @@ export default function BookingModal() {
     addEventListener("keydown", k); document.body.style.overflow = "hidden";
     return () => { removeEventListener("keydown", k); document.body.style.overflow = ""; };
   }, [vid]);
-  useEffect(() => { if (!vid) return; const c = allVehicles.find((x) => x.id === vid) || allVehicles[0]; captureLead("modal", { ...d, phone: d.whatsapp }, { car: `${c.name} ${c.trim || ""} ${c.color || ""}`.replace(/\s+/g, " ").trim(), extra: leadNote(d, d.svc) }); }, [d, vid]);   // saves what was typed, even if the visitor never sends
+  useEffect(() => { if (!vid) return; const c = allVehicles.find((x) => x.id === vid) || allVehicles[0]; captureLead("modal", withPhone(d), { car: `${c.name} ${c.trim || ""} ${c.color || ""}`.replace(/\s+/g, " ").trim(), extra: leadNote(d, d.svc) }); }, [d, vid]);   // saves what was typed, even if the visitor never sends
   if (!vid) return null;
   const v = allVehicles.find((x) => x.id === vid) || allVehicles[0];
   const car = `${v.name} ${v.trim || ""} ${v.color || ""}`.replace(/\s+/g, " ").trim();

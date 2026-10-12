@@ -1,3 +1,4 @@
+import { COUNTRIES, DIAL, normPhone, phoneOk } from "../components/TripForm";
 import { useEffect, useState } from "react";
 import { SITE, telHref, waHref } from "../config";
 import { allVehicles } from "../data/fleet";
@@ -48,26 +49,28 @@ async function sendToServer(d) {
 
 export default function Contact() {
   useSeo({ title: "Contact Us – Chauffeur Car Rental in Islamabad", description: "Contact SAAD CAR RENTAL SERVICES, G-11 Markaz, Islamabad. Call, WhatsApp or send an enquiry and our team will get back to you quickly.", path: "/contact" });
-  const [d, setD] = useState({ topic: TOPICS[0], car: "", website: "" });
+  const [d, setD] = useState({ topic: TOPICS[0], car: "", website: "", country: "Pakistan" });
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(null); // null | { mode: "sent" | "chat", opened: bool }
   const set = (k) => (e) => setD((x) => ({ ...x, [k]: e.target.value }));
   const lx = { car: d.car, extra: [d.topic, d.message].filter(Boolean).join(" | ") };
-  useEffect(() => { if (!done) captureLead("contact", d, lx); }, [d, done]); // eslint-disable-line react-hooks/exhaustive-deps  (saves what was typed, even if Send is never pressed)
+  useEffect(() => { if (!done) captureLead("contact", { ...d, phone: normPhone(d.phone, d.country) || d.phone }, lx); }, [d, done]); // eslint-disable-line react-hooks/exhaustive-deps  (saves what was typed, even if Send is never pressed)
 
   const submit = async (e) => {
     e.preventDefault();
     if (d.website) return; // honeypot: real people never fill this
     if (!clean(d.name)) { track("form_error", { form: "contact" }); return setErr("Please enter your name."); }
-    if (!PHONE_OK.test(clean(d.phone))) { track("form_error", { form: "contact" }); return setErr("Please enter a valid phone number."); }
+    const ph = normPhone(d.phone, d.country);
+    if (!phoneOk(ph)) { track("form_error", { form: "contact" }); return setErr(d.country === "Other" ? "Please type your number with + and your country code." : "Please enter a valid phone number."); }
     if (!d.consent) { track("form_error", { form: "contact" }); return setErr("Please tick the box to agree to the Privacy Policy."); }
     if (!clean(d.message)) { track("form_error", { form: "contact" }); return setErr("Please tell us a little about your trip or question."); }
-    setErr(""); setBusy(true); track("quote_submit", { form: "contact" }); completeLead("contact", d, lx);
-    const ok = await sendToServer(d);
+    setErr(""); setBusy(true); track("quote_submit", { form: "contact" }); completeLead("contact", { ...d, phone: ph, whatsapp: d.whatsapp ? normPhone(d.whatsapp, d.country) || d.whatsapp : "" }, lx);
+    const dd = { ...d, phone: ph, whatsapp: d.whatsapp ? normPhone(d.whatsapp, d.country) || d.whatsapp : "" };
+    const ok = await sendToServer(dd);
     if (ok) { setBusy(false); return setDone({ mode: "sent" }); }
     // Server not set up / offline: open our WhatsApp chat with the message already typed in.
-    const opened = openChat(buildText(d));
+    const opened = openChat(buildText(dd));
     setBusy(false);
     setDone({ mode: "chat", opened });
   };
@@ -141,7 +144,8 @@ export default function Contact() {
                 </div>
                 <div className="ct-row">
                   <label>Full name *<input type="text" name="name" autoComplete="name" value={d.name || ""} onChange={set("name")} maxLength={80} placeholder="Your name" /></label>
-                  <label>Phone *<input type="tel" name="phone" autoComplete="tel" inputMode="tel" value={d.phone || ""} onChange={set("phone")} maxLength={25} placeholder="03XX XXXXXXX" /></label>
+                  <label>Country *<select name="country" value={d.country || "Pakistan"} onChange={set("country")}>{COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}</select></label>
+                  <label>Phone *<input type="tel" name="phone" autoComplete="tel" inputMode="tel" value={d.phone || ""} onChange={set("phone")} maxLength={25} placeholder={DIAL[d.country || "Pakistan"] ? `+${DIAL[d.country || "Pakistan"]} 3XX XXXXXXX` : "+92 3XX XXXXXXX"} />{phoneOk(normPhone(d.phone, d.country || "Pakistan")) && <small className="tf-hint">Saved as {normPhone(d.phone, d.country || "Pakistan")}</small>}</label>
                 </div>
                 <div className="ct-row">
                   <label>WhatsApp number<input type="tel" name="whatsapp" autoComplete="tel" inputMode="tel" value={d.whatsapp || ""} onChange={set("whatsapp")} maxLength={25} placeholder="03XX XXXXXXX" /></label>

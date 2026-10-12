@@ -7,7 +7,7 @@ import { sendBooking } from "../sendBooking";
 import { track } from "../analytics";
 import { captureLead, completeLead } from "../leads";
 import ServiceSwitch, { svcFrom } from "../components/ServiceSwitch";
-import TripForm, { prepare, leadNote } from "../components/TripForm";
+import TripForm, { prepare, leadNote, withPhone } from "../components/TripForm";
 
 export default function Book() {
   useSeo({ title: "Book a Car With Driver", description: "Book a premium car with professional driver in Islamabad, today or in advance. No account needed.", path: "/book" });
@@ -17,7 +17,7 @@ export default function Book() {
   const [err, setErr] = useState(""); const [preview, setPreview] = useState(false); const [busy, setBusy] = useState(false); const [sent, setSent] = useState(null); const [fin, setFin] = useState(null);
   const v = allVehicles.find((x) => x.id === vid);
   const carLabel = `${v.name} ${v.trim || ""} ${v.color || ""}`.replace(/\s+/g, " ").trim();
-  useEffect(() => { captureLead("book", { ...d, phone: d.whatsapp }, { car: carLabel, extra: leadNote(d, d.svc) }); }, [d, vid]); // eslint-disable-line react-hooks/exhaustive-deps  (saves what was typed, even if the visitor never sends)
+  useEffect(() => { captureLead("book", withPhone(d), { car: carLabel, extra: leadNote(d, d.svc) }); }, [d, vid]); // eslint-disable-line react-hooks/exhaustive-deps  (saves what was typed, even if the visitor never sends)
   const submit = async (e) => {
     e.preventDefault();
     const r = prepare(d, d.svc);

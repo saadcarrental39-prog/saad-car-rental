@@ -3,8 +3,9 @@ import { baseFleet, applyOverrides } from "../data/fleet";
 import { saveLocal } from "../fleetSync";
 import { ADMIN_PATH } from "../config";
 import "../styles/admin.css";
-import "../styles/admin-neu.css";
+import "../styles/admin-theme.css";
 import Insights from "../components/Insights";
+import ActivityPage from "../components/ActivityPage";
 
 const TK = "adm-t";
 const LOGO = "/icons/saad-logo.png", LOGO_DARK = "/assets/brand/saadcar-logo-light-1200.png";
@@ -55,6 +56,7 @@ const IDown = I('<path d="M12 4v11M7.5 11 12 15.5 16.5 11M5 19.5h14"/>');
 const IGlobe = I('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 3.8 5.2 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.2-3.8-8.5S9.4 5.9 12 3.5z"/>');
 const IPeople = I('<circle cx="9" cy="8.5" r="3.2"/><path d="M3 19.5c.6-3.3 3.1-5 6-5s5.4 1.7 6 5"/><path d="M16 5.6a3.2 3.2 0 0 1 0 5.8M18 14.7c1.8.6 3 2.3 3.4 4.8"/>');
 const IMail = I('<rect x="3.5" y="5.5" width="17" height="13" rx="2.2"/><path d="m4.5 7.5 7.5 6 7.5-6"/>');
+const IPulse = I('<path d="M3 12h4l2.5-6 4 12 2.5-6H21"/>');
 const IBell = I('<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>');
 const IPhone = I('<path d="M6.5 4h3l1.6 4-2 1.3a10 10 0 0 0 4.6 4.6l1.3-2 4 1.6v3a2 2 0 0 1-2.2 2A14.5 14.5 0 0 1 4.5 6.2 2 2 0 0 1 6.5 4z"/>');
 const ITrash = I('<path d="M4.5 7h15M9.5 7V4.8h5V7M6.5 7l.8 12.2h9.4L17.5 7M10 11v5M14 11v5"/>');
@@ -374,12 +376,13 @@ function Panel({ tok, out, pwa }) {
   };
   if (!ov) return (<div className="ad-load">{loadErr ? <><p>{loadErr}</p><button type="button" className="ad-btn" onClick={load}>Dobara try karein</button></> : <><span className="ad-spin" /><p>Load ho raha hai…</p></>}</div>);
   const match = (c, v) => !q.trim() || `${v.name} ${v.trim || ""} ${v.color || ""} ${c.title}`.toLowerCase().includes(q.trim().toLowerCase());
-  const tabs = [["home", "Dashboard", IChart], ["orders", "Orders", IBell], ["leads", "Clients", IPeople], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["me", "Account", IUser]];
+  const tabs = [["home", "Dashboard", IChart], ["activity", "Activity", IPulse], ["orders", "Orders", IBell], ["leads", "Clients", IPeople], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["me", "Account", IUser]];
   return (<>
     <header className="ad-top"><img src={logo} alt="SAAD CAR" width="900" height="284" /><div className="ad-top__r"><ThemeToggle /><span className="ad-pill">Admin</span></div></header>
     <main className="ad-main">
       {st.banner && tab !== "orders" && <button type="button" className="ad-alert" onClick={() => { st.setBanner(""); setTab("orders"); }}>{st.banner} <b>Dekhein</b></button>}
-      {tab === "home" && <Insights api={insApi} out={out} />}
+      {tab === "home" && <Insights api={insApi} out={out} onOpenActivity={() => setTab("activity")} />}
+      {tab === "activity" && <ActivityPage api={insApi} />}
       {tab === "orders" && <Orders tok={tok} st={st} pwa={pwa} />}
       {tab === "leads" && <Leads tok={tok} out={out} onSeen={onLeadsSeen} />}
       {tab === "fleet" && <>

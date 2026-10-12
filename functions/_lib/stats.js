@@ -108,6 +108,7 @@ export async function stats(db, rangeKey) {
     spots: top(`item`, `type IN ('route_view','location_view','service_view')`, `AND item<>''`, 6),
     hours: q(`SELECT hr k, COUNT(*) n FROM hits WHERE type='pv' AND day BETWEEN ? AND ? GROUP BY hr`, from, today),
         since: q(`SELECT MIN(ts) f FROM hits`),
+    allPv: q(`SELECT COUNT(*) n FROM hits WHERE type='pv'`), allVis: q(`SELECT COUNT(*) n FROM vfirst`),
   };
   const names = Object.keys(Q), [res, tr] = await Promise.all([db.batch(names.map((k) => Q[k])), trend(db, today)]);
   const R_ = Object.fromEntries(names.map((k, i) => [k, res[i].results || []])), one = (k) => R_[k][0] || {};
@@ -121,7 +122,7 @@ export async function stats(db, rangeKey) {
   const hours = Array(24).fill(0); for (const r of R_.hours) hours[r.k] = num(r.n);
   const per = (k, n) => kpiOf(one(k), 0, one(n).n);
   return {
-    ok: true, range: key, from, to: today, now, since: one("since").f || null, series: series2,
+    ok: true, range: key, from, to: today, now, since: one("since").f || null, all: { vis: num(one("allVis").n), pv: num(one("allPv").n) }, series: series2,
     cur: kpiOf(one("cur"), one("bCur").n, one("nCur").n), prev: kpiOf(one("prev"), one("bPrev").n, one("nPrev").n),
     periods: { today: per("kToday", "nToday"), yesterday: per("kY", "nY"), week: per("kW", "nW"), month: per("kM", "nM") }, trend: tr,
     pages: R_.pages, sources: R_.sources, devices: R_.devices, places: R_.places, cars: R_.cars, spots: R_.spots, hours,
@@ -134,7 +135,7 @@ export async function stats(db, rangeKey) {
 export async function activityFeed(db, before) {
   await ensure(db);
   const lim = 40, b = Math.max(0, Number(before) || 0);
-  const EV = `SELECT h.id, h.ts, h.type, h.path, h.item, h.city, h.dev, h.src, (v.ts = h.ts) nw FROM hits h LEFT JOIN vfirst v ON v.vid = h.vid WHERE h.type NOT IN ('ping','form_error')`;
+  const EV = `SELECT h.id, h.ts, h.type, h.path, h.item, h.city, h.dev, h.src, h.vid, (v.ts = h.ts) nw FROM hits h LEFT JOIN vfirst v ON v.vid = h.vid WHERE h.type NOT IN ('ping','form_error')`;
   const r = b > 0 ? await db.prepare(`${EV} AND h.id < ? ORDER BY h.id DESC LIMIT ?`).bind(b, lim + 1).all() : await db.prepare(`${EV} ORDER BY h.id DESC LIMIT ?`).bind(lim + 1).all();
   const rows = r.results || [], more = rows.length > lim, ev = rows.slice(0, lim).map((x) => ({ ...x, nw: !!x.nw }));
   return { ok: true, events: ev, more, next: ev.length ? ev[ev.length - 1].id : 0, dayStart: undefined };
@@ -143,7 +144,7 @@ export async function activityFeed(db, before) {
 export async function liveFeed(db, since) {
   await ensure(db);
   const now = Date.now(), q = (s, ...a) => db.prepare(s).bind(...a), cut = now - 100e3, after = since > 0;
-  const EV = `SELECT h.id, h.ts, h.type, h.path, h.item, h.city, h.dev, h.src, (v.ts = h.ts) nw FROM hits h LEFT JOIN vfirst v ON v.vid = h.vid WHERE h.type NOT IN ('ping','form_error')`;
+  const EV = `SELECT h.id, h.ts, h.type, h.path, h.item, h.city, h.dev, h.src, h.vid, (v.ts = h.ts) nw FROM hits h LEFT JOIN vfirst v ON v.vid = h.vid WHERE h.type NOT IN ('ping','form_error')`;
   const out = await db.batch([
     q(`SELECT COUNT(DISTINCT vid) n FROM hits WHERE ts > ?`, cut),
     q(`SELECT path, src, dev, city, MAX(ts) ts FROM hits WHERE ts > ? AND type<>'form_error' GROUP BY vid ORDER BY ts DESC LIMIT 10`, cut),

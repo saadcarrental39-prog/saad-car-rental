@@ -6,7 +6,7 @@ import { sendBooking } from "../sendBooking";
 import { track } from "../analytics";
 import { captureLead, completeLead } from "../leads";
 import ServiceSwitch from "./ServiceSwitch";
-import TripForm, { prepare, leadNote } from "./TripForm";
+import TripForm, { prepare, leadNote, withPhone } from "./TripForm";
 
 // Home page booking box (sits under the hero pictures).
 // 1) choose the service (Out of Station / Local)  2) where + when (quick search)  3) the full booking form (same fields as the Book page).
@@ -30,7 +30,7 @@ export default function HomeBooking() {
   const v = allVehicles.find((x) => x.id === vid) || allVehicles[0];
   const out = d.svc === "out";
   const set = (k) => (e) => setD((x) => ({ ...x, [k]: e.target.value }));
-  useEffect(() => { if (step === 2) captureLead("home", { ...d, phone: d.whatsapp }, { car: carName(v), extra: leadNote(d, d.svc) }); }, [d, vid, step]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (step === 2) captureLead("home", withPhone(d), { car: carName(v), extra: leadNote(d, d.svc) }); }, [d, vid, step]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const search = (e) => {
     e.preventDefault();
