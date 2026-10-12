@@ -5,6 +5,11 @@
 - Website: https://www.saadcarremtal.com/
 - Phone / WhatsApp: +92 333 9850599
 - Office: Office No 12, 3rd Floor, Shah Nawaz Plaza, G-11 Markaz, Islamabad 44000, Pakistan
+- Full description for AI: https://www.saadcarremtal.com/llms-full.txt
+- Facts page: https://www.saadcarremtal.com/ai-info
+- Sitemap: https://www.saadcarremtal.com/sitemap.xml
+- Catalog: https://www.saadcarremtal.com/ai-catalog.json
+- How to book: call or WhatsApp +92 333 9850599, or use https://www.saadcarremtal.com/book
 - Pricing: quoted per trip (route, days, vehicle, season). No fixed public prices.
 - Vehicles: Land Cruiser V8, Land Cruiser TZ, Prado, Hilux Revo, Honda Civic, Toyota Corolla Grande, Range Rover, Toyota Coaster
 

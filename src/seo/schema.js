@@ -41,6 +41,8 @@ export function graphFor(page) {
   g.push(clean({ "@type": webPageType, "@id": `${url}#webpage`, url, name: page.fullTitle, description: page.description, inLanguage: "en", isPartOf: { "@id": ID.site }, about: { "@id": ID.biz }, primaryImageOfPage: image, image, breadcrumb: page.breadcrumbs.length > 1 ? { "@id": `${url}#breadcrumb` } : undefined }));
   if (page.breadcrumbs.length > 1) g.push({ ...breadcrumbNode(page.breadcrumbs), "@id": `${url}#breadcrumb` });
   if (page.service) g.push(clean({ "@type": "Service", "@id": `${url}#service`, name: page.h1, serviceType: page.service.type, description: page.description, url, provider: providerRef(), image: abs(page.ogImage), areaServed: page.service.areas.map((a) => ({ "@type": a.type || "Place", name: a })), availableChannel: { "@type": "ServiceChannel", serviceUrl: abs(B.bookingUrl), servicePhone: { "@type": "ContactPoint", telephone: B.phone } } }));
+  if (page.product) g.push(clean({ "@type": "Product", "@id": `${url}#product`, name: `${page.product.name} with professional driver`, brand: { "@type": "Brand", name: page.product.brand }, category: "Chauffeur-driven car rental", description: page.description, image: abs(page.ogImage), url,
+    offers: { "@type": "Offer", url, businessFunction: "http://purl.org/goodrelations/v1#LeaseOut", seller: { "@id": ID.biz }, areaServed: "Islamabad, Rawalpindi and Pakistan" } }));   // no price on purpose: every trip is quoted
   if (page.faqs && page.faqs.length) g.push({ ...faqNode(page.faqs), "@id": `${url}#faq` });
   return { "@context": "https://schema.org", "@graph": g };
 }

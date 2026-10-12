@@ -57,7 +57,7 @@ const urlset = (items, ns = "") => `<?xml version="1.0" encoding="UTF-8"?>\n<url
 const urlTag = (p, extra = "") => `<url><loc>${x(site + (p.path === "/" ? "/" : p.path))}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority.toFixed(1)}</priority>${extra}</url>`;
 const idx = PAGES.filter((p) => p.indexable);
 const groups = {
-  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "guide", "legal", "audience", "pillar"].includes(p.kind)),
+  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "guide", "legal", "audience", "pillar", "info"].includes(p.kind)),
   "sitemap-islamabad.xml": idx.filter((p) => p.kind === "spot"),
   "sitemap-vehicles.xml": idx.filter((p) => p.kind === "vehicle"),
   "sitemap-services.xml": idx.filter((p) => p.kind === "service"),
@@ -123,8 +123,38 @@ const catalog = {
 };
 mkdirSync(join(dist, ".well-known"), { recursive: true });
 writeFileSync(join(dist, ".well-known", "ai-catalog.json"), JSON.stringify(catalog, null, 2) + "\n");
+writeFileSync(join(dist, "ai-catalog.json"), JSON.stringify(catalog, null, 2) + "\n");   // same file at the root too: /ai-catalog.json
 console.log("prerender: .well-known/ai-catalog.json written");
 
 // ---- robots.txt: crawlers may read everything public (CSS, JS, images, favicon). Private areas are ALSO protected by auth / noindex headers.
-writeFileSync(join(dist, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /r/\nDisallow: ${ADMIN_PATH}\n\nSitemap: ${site}/sitemap.xml\n`);
+// AI search / assistant crawlers are named on purpose so that nobody has to guess: they may read the public site, never the private areas.
+const AI_BOTS = ["GPTBot", "ChatGPT-User", "OAI-SearchBot", "Claude-Web", "ClaudeBot", "anthropic-ai", "PerplexityBot", "Perplexity-User", "Google-Extended", "Bingbot", "Applebot", "Applebot-Extended", "cohere-ai", "Meta-ExternalAgent", "Meta-ExternalFetcher", "FacebookBot", "Bytespider"];
+const PRIVATE = `Disallow: /api/\nDisallow: /r/\nDisallow: ${ADMIN_PATH}\n`;
+writeFileSync(join(dist, "robots.txt"), `User-agent: *\nAllow: /\n${PRIVATE}\n# AI search and assistant crawlers (public pages only)\n` + AI_BOTS.map((b) => `User-agent: ${b}\nAllow: /\n${PRIVATE}`).join("\n") + `\nSitemap: ${site}/sitemap.xml\n`);
+
+// ---- /llms-full.txt : the complete plain-text business description for AI assistants. Built from the page registry on every build, so it is never stale.
+{
+  const by = (...k) => idx.filter((p) => k.includes(p.kind));
+  const line = (p) => `- [${p.h1}](${site}${p.path}): ${p.description}`;
+  const sec = (t, list) => (list.length ? `\n## ${t}\n${list.map(line).join("\n")}\n` : "");
+  const faq = (PAGES.find((p) => p.path === "/faq") || { faqs: [] }).faqs;
+  writeFileSync(join(dist, "llms-full.txt"), `# SAAD CAR RENTAL SERVICES (full description)
+
+> Car rental with professional driver (chauffeur service) based in Islamabad, Pakistan. Every vehicle is provided with an experienced driver; self-drive hire is not offered. Two services, quoted separately: Local (inside Islamabad, daily use) and Out of Station (any trip that leaves Islamabad).
+
+## Business
+- Name: SAAD CAR RENTAL SERVICES (Saad Car Rental)
+- Website: ${site}/
+- Phone / WhatsApp: ${BUSINESS.phoneDisplay} (+92 333 9850599)
+- Office: Office No 12, 3rd Floor, Shah Nawaz Plaza, G-11 Markaz, Islamabad 44000, Pakistan (the only office; no branches elsewhere)
+- Pricing: quoted per trip by vehicle, route, days and requirements. No fixed public prices.
+- Payment: cash or bank transfer. No online payment on the website.
+- How to book: call, WhatsApp, or the Book Now form at ${site}/book . A booking is confirmed when the team confirms it in writing.
+- Machine-readable: ${site}/llms.txt , ${site}/ai-catalog.json , ${site}/sitemap.xml , ${site}/ai-info
+${sec("Vehicles (each with a professional driver)", by("vehicle"))}${sec("Services", by("service"))}${sec("Local service: places in Islamabad", by("pillar").filter((p) => p.path.includes("local") || p.path.includes("places")).concat(by("spot")))}${sec("Out of Station and tour pages", by("pillar").filter((p) => p.path.includes("out-of-station")))}${sec("Cities, regions and provinces served from Islamabad", by("location", "province"))}${sec("Destinations (Islamabad to ...)", by("destination"))}${sec("Airport, hubs and guides", by("airport", "hub", "guide", "audience", "info", "about", "contact"))}${sec("Policies", by("legal"))}
+## Frequently asked questions
+${faq.map((x) => `### ${x.q}\n${x.a}`).join("\n\n")}
+`);
+  console.log("prerender: llms-full.txt written");
+}
 console.log(`prerender: sitemap index + ${files.length} sitemaps (${idx.length} indexable URLs), robots.txt`);

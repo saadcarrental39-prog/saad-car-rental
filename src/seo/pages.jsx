@@ -11,6 +11,7 @@ import { FAQS } from "./data/faq";
 import { audience } from "./data/audiences";
 import { LEGAL, LEGAL_UPDATED, REFUND_STAGES, legalPage } from "./data/legal";
 import { GUIDE } from "./data/guide";
+import { AI_INFO } from "./data/aiinfo";
 import { SPOTS, LOCAL_GROUPS, AREAS, spot } from "./data/islamabad";
 import { LOCAL_PILLAR, OUT_PILLAR, PLACES_HUB } from "./data/pillars";
 import { TERRAIN, VEHICLE_FIT, USE } from "./data/vehicles";
@@ -366,6 +367,22 @@ export function PillarPage({ slug }) {
   </>);
 }
 
+// ------------------------------------------------------------------ /ai-info : plain facts for people and AI assistants
+export function AiInfoPage() {
+  const p = pageByPath(AI_INFO.path), site = BUSINESS.website;
+  return (<>
+    <Hero eyebrow={AI_INFO.eyebrow} h1={AI_INFO.h1} lead={AI_INFO.lead} crumbs={p.breadcrumbs} />
+    <Sec id="answer" title="Quick answer"><Answer q={AI_INFO.answerQ}>{AI_INFO.answer}</Answer></Sec>
+    <Sec id="facts" title="Key facts" tone="grey"><dl className="sx-facts">{AI_INFO.facts.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl></Sec>
+    <Sec id="what" title={AI_INFO.whatTitle}><Bullets items={AI_INFO.what} /><p><Link to="/local-car-rental-islamabad">Local service →</Link> · <Link to="/out-of-station-car-rental">Out of Station trips →</Link> · <Link to="/airport-transfer/islamabad">Airport transfer →</Link> · <Link to="/cars">Our fleet →</Link> · <Link to="/services">Services →</Link></p></Sec>
+    <Sec id="how" title={AI_INFO.howTitle} tone="grey"><Steps items={AI_INFO.how} /></Sec>
+    <Sec id="files" title={AI_INFO.machineTitle}><ul className="sx-list">{AI_INFO.machine.map(([u, t]) => <li key={u}><a href={`${site}${u}`}>{`${site}${u}`}</a>: {t}</li>)}</ul></Sec>
+    <Sec id="more" title="More about the business" tone="grey"><p><Link to="/about">About us →</Link> · <Link to="/faq">FAQ →</Link> · <Link to="/contact">Contact →</Link> · <Link to="/car-rental-guide">Search guide →</Link> · <Link to="/privacy-policy">Privacy policy →</Link> · <Link to="/terms-of-service">Terms of service →</Link></p></Sec>
+    <Faq items={AI_INFO.faqs} title="Common questions" />
+    <Cta ctx="AI info" title="Tell us your plan, get a quote" text="Call, WhatsApp or send the booking form with your pickup, destination and dates." />
+  </>);
+}
+
 // ------------------------------------------------------------------ router glue
 export function SeoPage({ page }) {
   const k = page.kind;
@@ -380,6 +397,7 @@ export function SeoPage({ page }) {
   if (k === "audience") return <AudiencePage slug={page.slug} />;
   if (k === "legal") return <LegalPage slug={page.slug} />;
   if (k === "guide") return <GuidePage />;
+  if (k === "info") return <AiInfoPage />;
   if (k === "spot") return <SpotPage slug={page.slug} />;
   if (k === "pillar") return <PillarPage slug={page.slug} />;
   return null;

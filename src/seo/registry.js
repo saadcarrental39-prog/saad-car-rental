@@ -14,6 +14,7 @@ import { AUDIENCES } from "./data/audiences";
 import { LEGAL } from "./data/legal";
 import { GUIDE } from "./data/guide";
 import { SPOTS } from "./data/islamabad";
+import { AI_INFO } from "./data/aiinfo";
 import { LOCAL_PILLAR, OUT_PILLAR, PLACES_HUB } from "./data/pillars";
 import { VEHICLE_FIT, USE, TERRAIN } from "./data/vehicles";
 import { categories, category, photoOf, vehiclesForPlace, northernPlaces, placesIn, livePlacesList } from "./links";
@@ -72,7 +73,7 @@ categories().forEach((c) => {
     { q: `What is the ${nm} best suited for?`, a: `It is well suited to ${uses.join(", ")} and similar trips. See the routes and services listed on this page, or tell us your plan and we will confirm that it is the right vehicle.` },
     { q: `How do I book the ${nm}?`, a: `Use the Book Now form, call ${B.phoneDisplay} or message us on WhatsApp with your pickup, destination, date and number of passengers. Our team confirms availability and your quote.` },
   ];
-  add({ path: `/cars/${c.slug}`, kind: "vehicle", slug: c.slug, title: `${nm} Rental in Islamabad With Driver`, h1: `${c.title} – With Professional Driver`, priority: 0.8, faqs,
+  add({ path: `/cars/${c.slug}`, kind: "vehicle", slug: c.slug, product: { brand: c.slug === "honda-civic" ? "Honda" : c.slug === "range-rover" ? "Land Rover" : "Toyota", name: c.title }, title: `${nm} Rental in Islamabad With Driver`, h1: `${c.title} – With Professional Driver`, priority: 0.8, faqs,
     breadcrumbs: [home, { name: "Fleet", path: "/cars" }, { name: c.title, path: `/cars/${c.slug}` }],
     description: fit([`${nm} with professional driver in Islamabad: ${uses.join(", ")}.`, `Photos, routes and booking.`, CTA]),
     og: { a: c.title.toUpperCase(), b: "With professional driver · Islamabad", vehicle: c.slug },
@@ -146,6 +147,10 @@ LEGAL.forEach((l) => {
     breadcrumbs: [home, { name: l.short, path: l.path }], og: { a: l.ogA, b: l.ogB, vehicle: "prado" } });
 });
 
+
+// ---------------------------------------------------------------- /ai-info : plain facts for people and AI assistants
+add({ path: AI_INFO.path, kind: "info", title: AI_INFO.title, h1: AI_INFO.h1, description: AI_INFO.description, priority: 0.7, changefreq: "monthly", faqs: AI_INFO.faqs,
+  breadcrumbs: [home, { name: "AI Info", path: AI_INFO.path }], og: { a: "ABOUT SAAD CAR RENTAL", b: "Key facts · Services · How to book", vehicle: "land-cruiser-v8" } });
 
 // ---------------------------------------------------------------- the two services (Local / Out of Station) and the Islamabad places
 [[LOCAL_PILLAR, 0.9, "Daily local car with driver", ["Islamabad", "Rawalpindi"]], [OUT_PILLAR, 0.9, "Out of station car with driver", ["Islamabad", "Pakistan"]], [PLACES_HUB, 0.8, "", null]].forEach(([D, pr, svc, areas]) => {

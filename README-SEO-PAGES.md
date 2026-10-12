@@ -42,3 +42,9 @@ Share images for new pages: `npm run seo:og` (needs python3 + Pillow). Run `npm 
 - Every booking and contact form has the checkbox "I agree to the Privacy Policy" (required) just above the send button.
 - Business email: set `email` in `src/business.config.js`. It then appears at the bottom of every legal page by itself. Until then the pages point to phone, WhatsApp and the contact page.
 - Refund share per stage: only words today. Put exact percentages into `REFUND_STAGES` in `legal.js` when you decide them.
+
+# AI / agent pack (Oct 2026)
+- `/ai-info` (page), `/llms.txt` (short), `/llms-full.txt` (built at every build from the page list: vehicles, services, places, FAQ), `/ai-catalog.json` and `/.well-known/ai-catalog.json` (same catalog), `robots.txt` (named AI crawlers allowed on public pages, private areas still blocked).
+- Vehicle pages now also carry Product schema with an Offer that has no price (every trip is quoted).
+- Four more FAQs on /faq (Local vs Out of Station, near me, tours, Land Cruiser V8).
+- Keyword map: `docs/KEYWORD-RESEARCH.md`.
