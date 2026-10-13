@@ -9,4 +9,5 @@ export const SITE = {
   address: B.addressLines, maps: B.googleBusinessProfile, social: B.socialProfiles,
 };
 export const telHref = SITE.phone ? `tel:${SITE.phone.replace(/[^\d+]/g, "")}` : "";
+// api.whatsapp.com/send is the official long WhatsApp link. (wa.me is a short-link domain and short links lower the trust score on scam checkers.)
 export const waHref = (text = "") => (SITE.whatsapp ? `https://api.whatsapp.com/send?phone=${SITE.whatsapp}${text ? `&text=${encodeURIComponent(text)}` : ""}` : "");

@@ -7,6 +7,7 @@ import { track } from "../analytics";
 import { captureLead, completeLead } from "../leads";
 import ServiceSwitch from "./ServiceSwitch";
 import TripForm, { prepare, leadNote, withPhone } from "./TripForm";
+import { useT } from "../i18n";
 
 // Home page booking box (sits under the hero pictures).
 // 1) choose the service (Out of Station / Local)  2) where + when (quick search)  3) the full booking form (same fields as the Book page).
@@ -15,6 +16,7 @@ const ymd = (dt) => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2,
 const carName = (v) => `${v.name} ${v.trim || ""} ${v.color || ""}`.replace(/\s+/g, " ").trim();
 
 export default function HomeBooking() {
+  const t = useT();
   const [d, setD] = useState({ service: "Car with driver" });
   const [vid, setVid] = useState(allVehicles[0].id);
   const [step, setStep] = useState(1);
@@ -55,22 +57,22 @@ export default function HomeBooking() {
   if (step === "receipt") return (<section className="hb" id="book-now" aria-label="Booking"><div className="hb__box hb__box--r"><ReceiptView d={fin || d} v={v} initial={sent} onBack={() => { setSent(null); setStep(2); }} onDone={() => { setSent(null); setStep(1); }} /></div></section>);
 
   return (<section className="hb" id="book-now" aria-labelledby="hb-t"><div className="hb__box">
-    <h2 id="hb-t" className="hb__h">Book your car with driver</h2>
+    <h2 id="hb-t" className="hb__h">{t("Book your car with driver")}</h2>
     <ServiceSwitch dark value={d.svc || ""} onChange={(k) => { setD((x) => ({ ...x, svc: k, driver: "", addl: [], service: "Car with driver" })); setErr(""); }} />
     {!d.svc ? null : step === 1 ? (
       <form onSubmit={search} noValidate>
         <div className="hb__row">
-          <label className="hb__f hb__f--loc"><span>Pick-up location</span><input type="text" name="pickup" autoComplete="off" placeholder={out ? "e.g. Islamabad Airport" : "e.g. F-7 Markaz, Islamabad"} value={d.pickup || ""} maxLength={120} onChange={set("pickup")} /></label>
-          <label className="hb__f"><span>Pick-up date</span><input type="date" name="date" min={today || undefined} value={d.date || ""} onChange={set("date")} /></label>
-          <label className="hb__f"><span>Return date</span><input type="date" name="rdate" min={d.date || today || undefined} value={d.rdate || ""} onChange={set("rdate")} /></label>
-          <button type="submit" className="hb__btn hb__btn--s">Continue</button>
+          <label className="hb__f hb__f--loc"><span>{t("Pick-up location")}</span><input type="text" name="pickup" autoComplete="off" placeholder={out ? t("e.g. Islamabad Airport") : t("e.g. F-7 Markaz, Islamabad")} value={d.pickup || ""} maxLength={120} onChange={set("pickup")} /></label>
+          <label className="hb__f"><span>{t("Pick-up date")}</span><input type="date" name="date" min={today || undefined} value={d.date || ""} onChange={set("date")} /></label>
+          <label className="hb__f"><span>{t("Return date")}</span><input type="date" name="rdate" min={d.date || today || undefined} value={d.rdate || ""} onChange={set("rdate")} /></label>
+          <button type="submit" className="hb__btn hb__btn--s">{t("Continue")}</button>
         </div>
-        {out && <label className="hb__f hb__f--drop"><span>Destination</span><input type="text" name="drop" autoComplete="off" placeholder="e.g. Skardu, Hunza, Kumrat Valley" value={d.drop || ""} maxLength={120} onChange={set("drop")} /></label>}
-        {err && <p role="alert" className="hb__err">{err}</p>}
+        {out && <label className="hb__f hb__f--drop"><span>{t("Destination")}</span><input type="text" name="drop" autoComplete="off" placeholder={t("e.g. Skardu, Hunza, Kumrat Valley")} value={d.drop || ""} maxLength={120} onChange={set("drop")} /></label>}
+        {err && <p role="alert" className="hb__err">{t(err)}</p>}
       </form>
     ) : (
       <div className="hb__panel">
-        <p className="hb__sum"><b>{out ? "Out of Station" : "Local"} · {d.pickup}{out && d.drop ? ` → ${d.drop}` : ""}</b><button type="button" className="hb__link" onClick={() => { setErr(""); setStep(1); }}>Change</button></p>
+        <p className="hb__sum"><b>{out ? t("Out of Station") : t("Local")} · {d.pickup}{out && d.drop ? ` → ${d.drop}` : ""}</b><button type="button" className="hb__link" onClick={() => { setErr(""); setStep(1); }}>{t("Change")}</button></p>
         <TripForm svc={d.svc} vid={vid} setVid={setVid} d={d} setD={setD} err={err} busy={busy} onSubmit={book} />
       </div>
     )}

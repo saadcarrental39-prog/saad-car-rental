@@ -50,7 +50,7 @@ for (const { p, h, title, desc, h1s_ } of rows) {
   const forbidden = FORBIDDEN.filter((re) => re.test(body)).map(String);
   const maxSim = Math.max(0, ...rows.filter((o) => o.p.kind === p.kind && o.p.path !== p.path).map((o) => jac(sh[p.path], sh[o.p.path])));
   const s = { titleLen: title.length, descLen: desc.length, h1Count: h1s_.length, dupTitle: titles[title].length > 1 && p.indexable, dupDesc: descs[desc].length > 1 && p.indexable, dupH1: h1s[h1s_[0]].length > 1 && p.indexable, words: wc(body), maxSimilarity: ["location", "destination", "route", "service", "vehicle"].includes(p.kind) ? maxSim : 0, forbidden,
-    hasTel: /href="tel:/.test(h), hasWa: /href="https:\/\/(wa\.me|api\.whatsapp\.com)\//.test(h), hasBook: /href="\/book/.test(h), internalLinks: new Set(internal).size, canonicalOk: h.includes(`href="${p.canonical}"`), ogOk: !!og && existsSync(ogFile), jsonOk };
+    hasTel: /href="tel:/.test(h), hasWa: /href="https:\/\/(api\.whatsapp\.com\/send|wa\.me\/)/.test(h), hasBook: /href="\/book/.test(h), internalLinks: new Set(internal).size, canonicalOk: h.includes(`href="${p.canonical}"`), ogOk: !!og && existsSync(ogFile), jsonOk };
   if (s.h1Count !== 1) fail(`${p.path}: ${s.h1Count} H1 tags`);
   if (!s.hasTel || !s.hasWa) fail(`${p.path}: missing call / WhatsApp button`);
   if (p.kind !== "app" && !/data-seo/.test(h)) fail(`${p.path}: head tags not rendered`);

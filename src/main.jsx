@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { I18nProvider } from "./i18n";
+import "./styles/i18n.css";
 import App from "./App";
 import { initFleet } from "./fleetSync";
 import "./styles/automotive-carousel.css";
@@ -10,7 +12,7 @@ import { initAnalytics } from "./analytics";
 function Root() { // remounts once if the owner changed prices since this visitor's last visit
   const [k, setK] = useState(0);
   useEffect(() => { const f = () => setK((x) => x + 1); addEventListener("fleet-updated", f); return () => removeEventListener("fleet-updated", f); }, []);
-  return <BrowserRouter><App key={k} /></BrowserRouter>;
+  return <I18nProvider><BrowserRouter><App key={k} /></BrowserRouter></I18nProvider>;
 }
 initAnalytics();
 initFleet().finally(() => createRoot(document.getElementById("root")).render(<Root />));

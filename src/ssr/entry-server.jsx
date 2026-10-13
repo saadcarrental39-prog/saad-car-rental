@@ -4,15 +4,17 @@
 import { renderToString } from "react-dom/server";
 import { MemoryRouter } from "react-router-dom";
 import App from "../App";
+import { I18nProvider } from "../i18n";
 import { PAGES, pageByPath, headFor } from "../seo/registry";
 import { headHtml } from "../seo/head";
+export { headHtml };
 
 export function render(path) {
   const page = pageByPath(path);
-  const html = renderToString(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>);
-  return { html, head: headHtml(headFor(page)), page };
+  const html = renderToString(<I18nProvider initial="en-US"><MemoryRouter initialEntries={[path]}><App /></MemoryRouter></I18nProvider>);
+  return { html, head: page ? headHtml(headFor(page)) : "", page };
 }
-export { PAGES, pageByPath, headFor } from "../seo/registry";
+export { PAGES, pageByPath, headFor, notFoundHead } from "../seo/registry";
 export { BUSINESS, needsConfirmation } from "../business.config";
 export { PLACES, PROVINCES, PUNJAB_DISTRICTS, place } from "../seo/data/places";
 export { ROUTES, DRAFT_ROUTES } from "../seo/data/routes";

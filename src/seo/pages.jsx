@@ -242,6 +242,7 @@ export function VehicleExtras({ slug }) {
   </div>);
 }
 import { VEHICLE_PITCH } from "./data/vehicles";
+import { useT, useI18n } from "../i18n";
 const VEHICLE_PITCH_SENTENCE = (c) => `The ${c.title} is ${VEHICLE_PITCH[c.slug] || "available with a professional driver"}. Every vehicle comes with an experienced professional driver, and we are based in Islamabad (G-11 Markaz).`;
 
 // ------------------------------------------------------------------ home page sections (below the existing fleet carousels)
@@ -384,7 +385,7 @@ export function AiInfoPage() {
 }
 
 // ------------------------------------------------------------------ router glue
-export function SeoPage({ page }) {
+function SeoBody({ page }) {
   const k = page.kind;
   if (k === "location") return <LocationPage slug={page.slug} />;
   if (k === "destination") return <DestinationPage slug={page.slug} />;
@@ -402,7 +403,13 @@ export function SeoPage({ page }) {
   if (k === "pillar") return <PillarPage slug={page.slug} />;
   return null;
 }
-export const NotFoundPage = () => (
-  <div className="pad narrow"><h1>Page not found</h1><p className="lead">That page does not exist. Browse our fleet, services or routes, or contact us.</p>
-    <p className="row"><Link className="btn btn--dark" to="/cars">Our fleet</Link><Link className="btn" to="/services">Services</Link><Link className="btn" to="/contact">Contact</Link></p></div>
-);
+// Pages with long guide text are written in English. For visitors who chose another language we say so once, in their language
+// (the booking, contact, fleet and navigation parts are translated everywhere). Search engines always get the plain English page.
+export function SeoPage({ page }) {
+  const { lang, t } = useI18n();
+  return (<>{lang !== "en-US" && lang !== "en-GB" && <p className="i18n-note" lang={lang}>{t("The detailed guide text on this page is in English. Booking, contact and menus are in your language. Call or WhatsApp us and we will help you.")}</p>}<SeoBody page={page} /></>);
+}
+export const NotFoundPage = () => { const t = useT(); return (
+  <div className="pad narrow"><h1>{t("Page not found")}</h1><p className="lead">{t("That page does not exist. Browse our fleet, services or routes, or contact us.")}</p>
+    <p className="row"><Link className="btn btn--dark" to="/cars">{t("Our fleet")}</Link><Link className="btn" to="/services">{t("Services")}</Link><Link className="btn" to="/contact">{t("Contact")}</Link></p></div>
+); };

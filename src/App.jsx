@@ -14,6 +14,7 @@ import { SeoPage, NotFoundPage } from "./seo/pages";
 import { pageByPath } from "./seo/registry";
 import { useSeo } from "./seo";
 import { PROVINCES } from "./seo/data/places";
+import { useI18n, LangSelect } from "./i18n";
 const Admin = lazy(() => import("./pages/Admin"));
 
 // If anything ever crashes, recover instead of showing a white screen.
@@ -30,18 +31,19 @@ function CatchAll() {
 }
 function ScrollTop() { const { pathname } = useLocation(); useEffect(() => { window.scrollTo(0, 0); }, [pathname]); return null; }
 export default function App() {
-  const [open, setOpen] = useState(false); const { pathname } = useLocation();
+  const [open, setOpen] = useState(false); const { pathname } = useLocation(); const { t } = useI18n();
   useEffect(() => { setOpen(false); }, [pathname]);
   if (pathname === ADMIN_PATH || pathname.startsWith(`${ADMIN_PATH}/`)) return <Suspense fallback={null}><Admin /></Suspense>;
   return (
     <>
       <ScrollTop />
-      <a className="skip" href="#main">Skip to content</a>
+      <a className="skip" href="#main">{t("Skip to content")}</a>
       <header className="hdr"><Link to="/" className="logo"><img className="logo__img" src="/assets/brand/saadcar-logo-dark.svg" alt="SAAD CAR" width="3840" height="1228" /> <span>RENTAL SERVICES</span></Link>
-        <nav aria-label="Main">{[["/", "Home"], ["/cars", "Cars"], ["/services", "Services"], ["/northern-areas", "Northern Areas"], ["/routes", "Routes"], ["/about", "About"], ["/contact", "Contact"]].map(([to, t]) => <NavLink key={to} to={to} end={to === "/"}>{t}</NavLink>)}</nav>
-        <Link to="/book" className="btn btn--dark">Book Now</Link>
-        <button className="burger" aria-expanded={open} aria-controls="menu" aria-label="Menu" onClick={() => setOpen(!open)}>{open ? "✕" : "☰"}</button></header>
-      {open && <nav id="menu" className="menu" aria-label="Mobile">{[["/", "Home"], ["/cars", "All Cars"], ...fleet.map((c) => [`/cars/${c.slug}`, c.title]), ["/services", "Services"], ["/northern-areas", "Northern Areas"], ["/routes", "Routes"], ["/destinations", "Destinations"], ["/car-rental-pakistan", "Across Pakistan"], ["/airport-transfer/islamabad", "Airport Transfer"], ["/out-of-station-car-rental", "Out of Station"], ["/local-car-rental-islamabad", "Local · Islamabad"], ["/islamabad-places", "Islamabad Places"], ["/car-rental-guide", "Car Rental Guide"], ["/visit-pakistan", "Visit Pakistan"], ["/overseas-pakistanis", "Overseas Pakistanis"], ["/faq", "FAQ"], ["/about", "About"], ["/contact", "Contact"], ["/book", "Book Now"]].map(([to, t]) => <Link key={to} to={to}>{t}</Link>)}</nav>}
+        <nav aria-label={t("Main")}>{[["/", "Home"], ["/cars", "Cars"], ["/services", "Services"], ["/northern-areas", "Northern Areas"], ["/routes", "Routes"], ["/about", "About"], ["/contact", "Contact"]].map(([to, tt]) => <NavLink key={to} to={to} end={to === "/"}>{t(tt)}</NavLink>)}</nav>
+        <LangSelect className="lang--hdr" />
+        <Link to="/book" className="btn btn--dark">{t("Book Now")}</Link>
+        <button className="burger" aria-expanded={open} aria-controls="menu" aria-label={t("Menu")} onClick={() => setOpen(!open)}>{open ? "✕" : "☰"}</button></header>
+      {open && <nav id="menu" className="menu" aria-label="Mobile"><LangSelect className="lang--menu" />{[["/", "Home"], ["/cars", "All Cars"], ...fleet.map((c) => [`/cars/${c.slug}`, c.title]), ["/services", "Services"], ["/northern-areas", "Northern Areas"], ["/routes", "Routes"], ["/destinations", "Destinations"], ["/car-rental-pakistan", "Across Pakistan"], ["/airport-transfer/islamabad", "Airport Transfer"], ["/out-of-station-car-rental", "Out of Station"], ["/local-car-rental-islamabad", "Local · Islamabad"], ["/islamabad-places", "Islamabad Places"], ["/car-rental-guide", "Car Rental Guide"], ["/visit-pakistan", "Visit Pakistan"], ["/overseas-pakistanis", "Overseas Pakistanis"], ["/faq", "FAQ"], ["/about", "About"], ["/contact", "Contact"], ["/book", "Book Now"]].map(([to, tt]) => <Link key={to} to={to}>{tt === "All Cars" || !fleet.some((c) => c.title === tt) ? t(tt) : tt}</Link>)}</nav>}
       <BookingModal />
       <RecentBookings />
       <CookieNotice />
@@ -49,14 +51,14 @@ export default function App() {
         <Routes><Route path="/" element={<Home />} /><Route path="/cars" element={<Cars />} /><Route path="/cars/:slug" element={<CarPage />} />
           <Route path="/services" element={<Services />} /><Route path="/about" element={<About />} /><Route path="/contact" element={<Contact />} /><Route path="/book" element={<Book />} /><Route path="*" element={<CatchAll />} /></Routes>
       </Guard></main>
-      <footer className="ftr"><div><strong className="ftr__brand"><img src="/assets/brand/saadcar-logo-light.svg" alt="SAAD CAR" width="3840" height="1228" loading="lazy" /> <span>RENTAL SERVICES</span></strong><p>{SITE.tagline}</p></div><address>{SITE.address.map((l) => <span key={l}>{l}<br /></span>)}<a href={SITE.maps} target="_blank" rel="noopener noreferrer">Google Maps</a></address>
-        <nav aria-label="Footer"><Link to="/">Home</Link>{["cars", "services", "about", "contact", "book"].map((p) => <Link key={p} to={`/${p}`}>{p[0].toUpperCase() + p.slice(1)}</Link>)}</nav>
-        <nav aria-label="Pakistan"><Link to="/car-rental-pakistan">Pakistan</Link>{Object.values(PROVINCES).filter((v) => v.own && v.status === "live").map((v) => <Link key={v.slug} to={`/locations/${v.slug}`}>{v.name}</Link>)}<Link to="/northern-areas">Northern Areas</Link><Link to="/routes">Routes</Link><Link to="/destinations">Destinations</Link><Link to="/airport-transfer/islamabad">Airport Transfer</Link><Link to="/faq">FAQ</Link></nav>
-        <nav aria-label="Services"><Link to="/out-of-station-car-rental">Out of Station</Link><Link to="/local-car-rental-islamabad">Local · Islamabad</Link><Link to="/islamabad-places">Islamabad Places</Link></nav>
-        <nav aria-label="Legal"><Link to="/car-rental-guide">Car Rental Guide</Link><Link to="/visit-pakistan">Visit Pakistan</Link><Link to="/overseas-pakistanis">Overseas Pakistanis</Link><Link to="/privacy-policy">Privacy Policy</Link><Link to="/terms-of-service">Terms of Service</Link><Link to="/refund-policy">Refund Policy</Link><Link to="/cookie-policy">Cookie Policy</Link><Link to="/accessibility">Accessibility</Link><Link to="/data-deletion">Data Deletion</Link><Link to="/contact-consent">Form Consent</Link><Link to="/unsubscribe">Unsubscribe</Link><Link to="/disclaimer">Disclaimer</Link><Link to="/ai-info">AI Info</Link></nav>
+      <footer className="ftr"><div><strong className="ftr__brand"><img src="/assets/brand/saadcar-logo-light.svg" alt="SAAD CAR" width="3840" height="1228" loading="lazy" /> <span>RENTAL SERVICES</span></strong><p>{t(SITE.tagline)}</p></div><address>{SITE.address.map((l) => <span key={l}>{l}<br /></span>)}<a href={SITE.maps} target="_blank" rel="noopener noreferrer">{t("Google Maps")}</a></address>
+        <nav aria-label="Footer"><Link to="/">{t("Home")}</Link>{["cars", "services", "about", "contact", "book"].map((p) => <Link key={p} to={`/${p}`}>{t(p[0].toUpperCase() + p.slice(1))}</Link>)}</nav>
+        <nav aria-label={t("Pakistan")}><Link to="/car-rental-pakistan">{t("Pakistan")}</Link>{Object.values(PROVINCES).filter((v) => v.own && v.status === "live").map((v) => <Link key={v.slug} to={`/locations/${v.slug}`}>{v.name}</Link>)}<Link to="/northern-areas">{t("Northern Areas")}</Link><Link to="/routes">{t("Routes")}</Link><Link to="/destinations">{t("Destinations")}</Link><Link to="/airport-transfer/islamabad">{t("Airport Transfer")}</Link><Link to="/faq">{t("FAQ")}</Link></nav>
+        <nav aria-label={t("Services")}><Link to="/out-of-station-car-rental">{t("Out of Station")}</Link><Link to="/local-car-rental-islamabad">{t("Local · Islamabad")}</Link><Link to="/islamabad-places">{t("Islamabad Places")}</Link></nav>
+        <nav aria-label="Legal"><Link to="/car-rental-guide">{t("Car Rental Guide")}</Link><Link to="/visit-pakistan">{t("Visit Pakistan")}</Link><Link to="/overseas-pakistanis">{t("Overseas Pakistanis")}</Link><Link to="/privacy-policy">{t("Privacy Policy")}</Link><Link to="/terms-of-service">{t("Terms of Service")}</Link><Link to="/refund-policy">{t("Refund Policy")}</Link><Link to="/cookie-policy">{t("Cookie Policy")}</Link><Link to="/accessibility">{t("Accessibility")}</Link><Link to="/data-deletion">{t("Data Deletion")}</Link><Link to="/contact-consent">{t("Form Consent")}</Link><Link to="/unsubscribe">{t("Unsubscribe")}</Link><Link to="/disclaimer">{t("Disclaimer")}</Link><Link to="/ai-info">{t("AI Info")}</Link></nav>
         <nav aria-label="Fleet">{fleet.map((c) => <Link key={c.slug} to={`/cars/${c.slug}`}>{c.title}</Link>)}</nav>
-        <small>© {new Date().getFullYear()} {SITE.name} · build {typeof __BUILD_ID__ !== "undefined" ? __BUILD_ID__.slice(-6) : "dev"}</small></footer>
-      <div className="mbar">{telHref && <a href={telHref}>Call</a>}{waHref() && <a href={waHref()} target="_blank" rel="noopener noreferrer">WhatsApp</a>}<Link to="/book">Book Now</Link></div>
+        <LangSelect className="lang--ftr" /><small>© {new Date().getFullYear()} {SITE.name} · build {typeof __BUILD_ID__ !== "undefined" ? __BUILD_ID__.slice(-6) : "dev"}</small></footer>
+      <div className="mbar">{telHref && <a href={telHref}>{t("Call")}</a>}{waHref() && <a href={waHref()} target="_blank" rel="noopener noreferrer">WhatsApp</a>}<Link to="/book">{t("Book Now")}</Link></div>
     </>
   );
 }

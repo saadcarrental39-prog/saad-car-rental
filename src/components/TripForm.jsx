@@ -1,5 +1,6 @@
 import { allVehicles } from "../data/fleet";
 import { clean } from "../booking";
+import { useT } from "../i18n";
 
 // One booking form, two versions (Local / Out of Station). Used by the Book page, the car popup and the Home booking box.
 // Every vehicle is hired WITH a professional driver (there is no self-drive), so "Car with driver" is the default service.
@@ -69,13 +70,14 @@ export function prepare(d, svc) {
 // What is saved for the owner while the visitor is still typing (Clients tab), even if the form is never sent.
 export const leadNote = (d, svc) => [d.service && `Service: ${d.service}`, d.country && `From: ${d.country}`, svc === "out" && d.drop && `To: ${d.drop}`, d.pax && `Pax: ${d.pax}`, d.driver && `Driver: ${d.driver}`, clean(d.notes)].filter(Boolean).join(" | ").slice(0, 300);
 
-const Opts = ({ legend, name, options, value, onChange }) => (
+const Opts = ({ legend, name, options, value, onChange }) => { const t = useT(); return (
   <fieldset className="tf-fs"><legend>{legend} *</legend>
-    <div className="tf-opts">{options.map((o) => (<label key={o} className={`tf-o${value === o ? " is-on" : ""}`}><input type="radio" name={name} checked={value === o} onChange={() => onChange(o)} /><span>{o}</span></label>))}</div>
+    <div className="tf-opts">{options.map((o) => (<label key={o} className={`tf-o${value === o ? " is-on" : ""}`}><input type="radio" name={name} checked={value === o} onChange={() => onChange(o)} /><span>{t(o)}</span></label>))}</div>
   </fieldset>
-);
+); };
 
 export default function TripForm({ svc, vid, setVid, d, setD, err, busy, onSubmit }) {
+  const t = useT();
   const out = svc === "out"; const today = toDay();
   const set = (k) => (e) => setD({ ...d, [k]: e.target.value });
   const pick = (k) => (v) => setD({ ...d, [k]: v });
@@ -84,49 +86,49 @@ export default function TripForm({ svc, vid, setVid, d, setD, err, busy, onSubmi
   const chooseDest = (v) => (v === "Other" ? setD({ ...d, drop: "", destMode: "other" }) : setD({ ...d, drop: v, destMode: "" }));
   return (
     <form className="tf" onSubmit={onSubmit} noValidate>
-      <h3 className="tf-h"><span>1</span>Your Details</h3>
-      <label className="tf-l"><span>Full Name *</span><input type="text" name="name" autoComplete="name" placeholder="Enter your full name" maxLength={120} value={d.name || ""} onChange={set("name")} /></label>
-      <label className="tf-l"><span>Country *</span><select name="country" value={d.country || ""} onChange={set("country")}><option value="">Select your country</option>{COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}</select></label>
-      <label className="tf-l"><span>WhatsApp Number *</span><input type="tel" name="whatsapp" autoComplete="tel" inputMode="tel" placeholder={d.country && DIAL[d.country] ? `+${DIAL[d.country]} 3XX XXXXXXX` : "+92 3XX XXXXXXX"} maxLength={25} value={d.whatsapp || ""} onChange={set("whatsapp")} />{phoneOk(normPhone(d.whatsapp, d.country)) ? <small className="tf-hint">Saved as {normPhone(d.whatsapp, d.country)}</small> : <small className="tf-hint">{d.country && d.country !== "Other" ? `The country code +${DIAL[d.country]} is added automatically.` : "Choose your country first. For Other, type + and your country code."}</small>}</label>
-      <label className="tf-l"><span>Email (optional)</span><input type="email" name="email" autoComplete="email" inputMode="email" placeholder="you@example.com" maxLength={120} value={d.email || ""} onChange={set("email")} /></label>
+      <h3 className="tf-h"><span>1</span>{t("Your Details")}</h3>
+      <label className="tf-l"><span>{t("Full Name")} *</span><input type="text" name="name" autoComplete="name" placeholder={t("Enter your full name")} maxLength={120} value={d.name || ""} onChange={set("name")} /></label>
+      <label className="tf-l"><span>{t("Country")} *</span><select name="country" value={d.country || ""} onChange={set("country")}><option value="">{t("Select your country")}</option>{COUNTRIES.map((c) => <option key={c} value={c}>{t(c)}</option>)}</select></label>
+      <label className="tf-l"><span>{t("WhatsApp Number")} *</span><input type="tel" name="whatsapp" autoComplete="tel" inputMode="tel" placeholder={d.country && DIAL[d.country] ? `+${DIAL[d.country]} 3XX XXXXXXX` : "+92 3XX XXXXXXX"} maxLength={25} value={d.whatsapp || ""} onChange={set("whatsapp")} />{phoneOk(normPhone(d.whatsapp, d.country)) ? <small className="tf-hint">{t("Saved as {n}", { n: normPhone(d.whatsapp, d.country) })}</small> : <small className="tf-hint">{d.country && d.country !== "Other" ? t("The country code +{c} is added automatically.", { c: DIAL[d.country] }) : t("Choose your country first. For Other, type + and your country code.")}</small>}</label>
+      <label className="tf-l"><span>{t("Email (optional)")}</span><input type="email" name="email" autoComplete="email" inputMode="email" placeholder="you@example.com" maxLength={120} value={d.email || ""} onChange={set("email")} /></label>
 
-      <h3 className="tf-h"><span>2</span>{out ? "Tour Details" : "Ride Information"}</h3>
+      <h3 className="tf-h"><span>2</span>{out ? t("Tour Details") : t("Ride Information")}</h3>
       {out && (<>
-        <label className="tf-l"><span>Tour Destination *</span><select name="dest" value={sel} onChange={(e) => chooseDest(e.target.value)}><option value="">Select destination</option>{DESTS.map((c) => <option key={c} value={c}>{c}</option>)}<option value="Other">Other (type below)</option></select></label>
-        {sel === "Other" && <label className="tf-l"><span>Your destination *</span><input type="text" name="destother" placeholder="Type the city or place" maxLength={80} value={d.drop || ""} onChange={set("drop")} /></label>}
+        <label className="tf-l"><span>{t("Tour Destination")} *</span><select name="dest" value={sel} onChange={(e) => chooseDest(e.target.value)}><option value="">{t("Select destination")}</option>{DESTS.map((c) => <option key={c} value={c}>{c}</option>)}<option value="Other">{t("Other (type below)")}</option></select></label>
+        {sel === "Other" && <label className="tf-l"><span>{t("Your destination")} *</span><input type="text" name="destother" placeholder={t("Type the city or place")} maxLength={80} value={d.drop || ""} onChange={set("drop")} /></label>}
       </>)}
-      <label className="tf-l"><span>Preferred Vehicle *</span><select name="vehicle" value={vid} onChange={(e) => setVid(e.target.value)}>{allVehicles.map((x) => <option key={x.id} value={x.id}>{x.name} {x.trim} – {x.color}</option>)}</select></label>
-      <label className="tf-l"><span>Pickup Location *</span><input type="text" name="pickup" autoComplete="off" placeholder={out ? "e.g. Islamabad Airport / Hotel / Other" : "e.g. F-7 Markaz, Islamabad"} maxLength={120} value={d.pickup || ""} onChange={set("pickup")} /></label>
+      <label className="tf-l"><span>{t("Preferred Vehicle")} *</span><select name="vehicle" value={vid} onChange={(e) => setVid(e.target.value)}>{allVehicles.map((x) => <option key={x.id} value={x.id}>{x.name} {x.trim} – {x.color}</option>)}</select></label>
+      <label className="tf-l"><span>{t("Pickup Location")} *</span><input type="text" name="pickup" autoComplete="off" placeholder={out ? t("e.g. Islamabad Airport / Hotel / Other") : t("e.g. F-7 Markaz, Islamabad")} maxLength={120} value={d.pickup || ""} onChange={set("pickup")} /></label>
       <div className="tf-2">
-        <label className="tf-l"><span>Pickup Date *</span><input type="date" name="date" min={today} value={d.date || ""} onChange={set("date")} /></label>
-        <label className="tf-l"><span>Return Date *</span><input type="date" name="rdate" min={d.date || today} value={d.rdate || ""} onChange={set("rdate")} /></label>
+        <label className="tf-l"><span>{t("Pickup Date")} *</span><input type="date" name="date" min={today} value={d.date || ""} onChange={set("date")} /></label>
+        <label className="tf-l"><span>{t("Return Date")} *</span><input type="date" name="rdate" min={d.date || today} value={d.rdate || ""} onChange={set("rdate")} /></label>
       </div>
-      <Opts legend="Number of Passengers" name="pax" options={PAX} value={d.pax || ""} onChange={pick("pax")} />
-      <Opts legend="Service Required" name="service" options={SERVICES[svc]} value={d.service || ""} onChange={pick("service")} />
-      <p className="tf-note">Every vehicle is provided with a professional driver. We do not offer self-drive.</p>
+      <Opts legend={t("Number of Passengers")} name="pax" options={PAX} value={d.pax || ""} onChange={pick("pax")} />
+      <Opts legend={t("Service Required")} name="service" options={SERVICES[svc]} value={d.service || ""} onChange={pick("service")} />
+      <p className="tf-note">{t("Every vehicle is provided with a professional driver. We do not offer self-drive.")}</p>
 
-      <h3 className="tf-h"><span>3</span>Driver Arrangement</h3>
+      <h3 className="tf-h"><span>3</span>{t("Driver Arrangement")}</h3>
       {out ? (
-        <label className={`tf-agree${d.driver === "agree" ? " is-on" : ""}`}><input type="checkbox" checked={d.driver === "agree"} onChange={(e) => setD({ ...d, driver: e.target.checked ? "agree" : "" })} /><span><b>I will provide the driver's accommodation and meals for the whole trip. *</b><em>This is compulsory for every Out of Station trip.</em></span></label>
+        <label className={`tf-agree${d.driver === "agree" ? " is-on" : ""}`}><input type="checkbox" checked={d.driver === "agree"} onChange={(e) => setD({ ...d, driver: e.target.checked ? "agree" : "" })} /><span><b>{t("I will provide the driver's accommodation and meals for the whole trip.")} *</b><em>{t("This is compulsory for every Out of Station trip.")}</em></span></label>
       ) : (
-        <fieldset className="tf-fs"><legend>Driver's accommodation and meals *</legend>
+        <fieldset className="tf-fs"><legend>{t("Driver's accommodation and meals")} *</legend>
           <div className="tf-opts tf-opts--col">
-            <label className={`tf-o${d.driver === "provide" ? " is-on" : ""}`}><input type="radio" name="driver" checked={d.driver === "provide"} onChange={() => setD({ ...d, driver: "provide" })} /><span><b>I will provide the driver's accommodation and meals.</b><em>The driver stays with you for the whole booking.</em></span></label>
-            <label className={`tf-o${d.driver === "own" ? " is-on" : ""}`}><input type="radio" name="driver" checked={d.driver === "own"} onChange={() => setD({ ...d, driver: "own" })} /><span><b>I will not provide accommodation and meals.</b><em>After your schedule the car returns to our office and we send it again at your next pickup time. You pay the driver {DRIVER_FOOD_PKR} PKR for food, and he arranges his own accommodation.</em></span></label>
+            <label className={`tf-o${d.driver === "provide" ? " is-on" : ""}`}><input type="radio" name="driver" checked={d.driver === "provide"} onChange={() => setD({ ...d, driver: "provide" })} /><span><b>{t("I will provide the driver's accommodation and meals.")}</b><em>{t("The driver stays with you for the whole booking.")}</em></span></label>
+            <label className={`tf-o${d.driver === "own" ? " is-on" : ""}`}><input type="radio" name="driver" checked={d.driver === "own"} onChange={() => setD({ ...d, driver: "own" })} /><span><b>{t("I will not provide accommodation and meals.")}</b><em>{t("After your schedule the car returns to our office and we send it again at your next pickup time. You pay the driver {n} PKR for food, and he arranges his own accommodation.", { n: DRIVER_FOOD_PKR })}</em></span></label>
           </div>
         </fieldset>
       )}
 
-      <h3 className="tf-h"><span>4</span>Additional Services <small>(optional)</small></h3>
-      <div className="tf-checks">{ADDL[svc].map((o) => (<label key={o} className="tf-c"><input type="checkbox" checked={(d.addl || []).includes(o)} onChange={() => toggleAddl(o)} /><span>{o}</span></label>))}</div>
+      <h3 className="tf-h"><span>4</span>{t("Additional Services")} <small>({t("optional")})</small></h3>
+      <div className="tf-checks">{ADDL[svc].map((o) => (<label key={o} className="tf-c"><input type="checkbox" checked={(d.addl || []).includes(o)} onChange={() => toggleAddl(o)} /><span>{t(o)}</span></label>))}</div>
 
-      <h3 className="tf-h"><span>5</span>Extra Notes</h3>
-      <label className="tf-l"><span>Any special requests or details?</span><textarea rows="3" maxLength={300} placeholder={out ? "Tell us about your itinerary, hotel preferences, luggage, or budget..." : "Tell us about your plan, timing, or any other requirements..."} value={d.notes || ""} onChange={set("notes")} /></label>
+      <h3 className="tf-h"><span>5</span>{t("Extra Notes")}</h3>
+      <label className="tf-l"><span>{t("Any special requests or details?")}</span><textarea rows="3" maxLength={300} placeholder={out ? t("Tell us about your itinerary, hotel preferences, luggage, or budget...") : t("Tell us about your plan, timing, or any other requirements...")} value={d.notes || ""} onChange={set("notes")} /></label>
 
-      <label className={`tf-agree tf-agree--s${d.consent ? " is-on" : ""}`}><input type="checkbox" name="consent" checked={!!d.consent} onChange={(e) => setD({ ...d, consent: e.target.checked })} /><span>I agree to the <a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a> *</span></label>
-      {err && <p role="alert" className="tf-err">{err}</p>}
-      <button className="tf-btn" type="submit" disabled={busy}>{busy ? "Sending…" : out ? "Submit Out of Station Booking Request" : "Submit Local Booking Request"}</button>
-      <p className="tf-note tf-note--c">After you submit, WhatsApp opens with your booking message ready. Just tap Send.</p>
+      <label className={`tf-agree tf-agree--s${d.consent ? " is-on" : ""}`}><input type="checkbox" name="consent" checked={!!d.consent} onChange={(e) => setD({ ...d, consent: e.target.checked })} /><span>{t("I agree to the")} <a href="/privacy-policy" target="_blank" rel="noopener">{t("Privacy Policy")}</a> *</span></label>
+      {err && <p role="alert" className="tf-err">{t(err)}</p>}
+      <button className="tf-btn" type="submit" disabled={busy}>{busy ? t("Sending…") : out ? t("Submit Out of Station Booking Request") : t("Submit Local Booking Request")}</button>
+      <p className="tf-note tf-note--c">{t("After you submit, WhatsApp opens with your booking message ready. Just tap Send.")}</p>
     </form>
   );
 }

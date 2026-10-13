@@ -57,3 +57,8 @@
 - Free plan: 500 MB database, 5 GB egress/month. Admin dashboard har 4 second mein live data mangta hai. Isey poora din kai devices par khula na chhodein.
 - Supabase ki taraf se aane wale reminders/emails ignore na karein.
 - 30 second wale "ping" rows 7 din baad khud delete ho jati hain (sirf "abhi online" ke liye chahiye). Baqi visits ki detail ~13 mahine rehti hai, is liye 500 MB free limit aaram se kaafi rehti hai.
+
+## Final13 update merged in (Oct 2026)
+This zip now also contains everything from saad-car-rental-final13: Google indexing fix (functions/_middleware.js, flat route.html pages, not-found.html, known-paths.json),
+16 languages (src/i18n, functions/api/geo.js), and the trust-score changes. See README-INDEXING-LANGUAGES.md.
+Supabase files (functions/_lib/sb*.js, functions/api/admin|collect|lead.js, supabase-setup.sql) were NOT changed. The middleware leaves /api/* alone.

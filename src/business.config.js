@@ -36,7 +36,9 @@ export const BUSINESS = {
   country: "Pakistan",
   countryCode: "PK",
   geo: null,                                           // { latitude, longitude } [BUSINESS CONFIRMATION REQUIRED] (copy from Google Maps)
-  googleBusinessProfile: "https://maps.app.goo.gl/MHzBvUAZeretA5Q86",
+  // A normal (long) Google Maps address. The old maps.app.goo.gl SHORT link was removed: scam checkers (ScamAdviser) flag "link-shortening technology".
+  // BEST: open your business on Google Maps in a browser, copy the long address from the address bar (https://www.google.com/maps/place/...) and paste it here.
+  googleBusinessProfile: "https://www.google.com/maps/search/?api=1&query=SAAD+CAR+RENTAL+SERVICES+Shah+Nawaz+Plaza+G-11+Markaz+Islamabad",
   reviewsUrl: "https://www.google.com/search?q=saad+car+rental+with+driver",
   businessHours: null,                                 // [BUSINESS CONFIRMATION REQUIRED] e.g. [{ days: ["Mo","Tu"], opens: "09:00", closes: "21:00" }]
 

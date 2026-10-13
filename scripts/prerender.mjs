@@ -24,7 +24,7 @@ await build({
   plugins: [{ name: "no-glob", setup(b) { b.onLoad({ filter: /src[\\/]data[\\/]services\.js$/ }, (a) => ({ contents: readFileSync(a.path, "utf8").replace(/import\.meta\.glob\([^)]*\)/g, "{}"), loader: "js" })); } }],
 });
 const mod = await import(pathToFileURL(join(work, "entry.mjs")).href);
-const { PAGES, render, BUSINESS, ADMIN_PATH, baseFleet, imgSet, HERO_SIZES } = mod;
+const { PAGES, render, BUSINESS, ADMIN_PATH, baseFleet, imgSet, HERO_SIZES, notFoundHead, headHtml } = mod;
 
 // ---- quiet the harmless React "useLayoutEffect does nothing on the server" warning
 const err = console.error; console.error = (...a) => { if (!/useLayoutEffect|fetchpriority/.test(String(a[0]))) err(...a); };
@@ -65,7 +65,17 @@ console.log(`prerender: wrote ${written} HTML pages`);
 const site = BUSINESS.website, today = new Date().toISOString().slice(0, 10);
 const x = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
 const urlset = (items, ns = "") => `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"${ns}>\n${items.join("\n")}\n</urlset>\n`;
-const urlTag = (p, extra = "") => `<url><loc>${x(site + (p.path === "/" ? "/" : p.path))}</loc><lastmod>${today}</lastmod><changefreq>${p.changefreq}</changefreq><priority>${p.priority.toFixed(1)}</priority>${extra}</url>`;
+// ---- real "not found" page (served with status 404 by functions/_middleware.js for URLs that do not exist; otherwise the single-page
+// fallback would answer 200 for every wrong URL = "soft 404" in Google Search Console)
+{
+  const { html } = render("/page-not-found-xyz");
+  const nf = strip(template).replace("</head>", `${headHtml(notFoundHead())}\n</head>`).replace('<div id="root"></div>', `<div id="root">${html}</div>`);
+  writeFileSync(join(dist, "not-found.html"), nf);
+  // every URL that really exists (the middleware uses this list; anything else gets the 404 page)
+  writeFileSync(join(dist, "known-paths.json"), JSON.stringify(PAGES.map((p) => p.path)));
+}
+
+const urlTag = (p, extra = "") => `<url><loc>${x(site + (p.path === "/" ? "/" : p.path))}</loc>${extra}</url>`;
 const idx = PAGES.filter((p) => p.indexable);
 const groups = {
   "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "guide", "legal", "audience", "pillar", "info"].includes(p.kind)),
@@ -88,7 +98,7 @@ const imgItems = idx.map((p) => {
   return urlTag(p, imgs.join(""));
 });
 writeFileSync(join(dist, "sitemap-images.xml"), urlset(imgItems, IMG)); files.push("sitemap-images.xml");
-writeFileSync(join(dist, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${files.map((f) => `<sitemap><loc>${site}/${f}</loc><lastmod>${today}</lastmod></sitemap>`).join("\n")}\n</sitemapindex>\n`);
+writeFileSync(join(dist, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${files.map((f) => `<sitemap><loc>${site}/${f}</loc></sitemap>`).join("\n")}\n</sitemapindex>\n`);
 
 // ---- /.well-known/ai-catalog.json : the list of public resources that AI agents may discover (Agentic Resource Discovery, ARD).
 // Only real, public things that exist on this website are listed. No invented tools, APIs or agents.

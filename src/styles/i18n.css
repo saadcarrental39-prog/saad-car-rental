@@ -1,0 +1,22 @@
+/* language selector + right-to-left (Urdu, Arabic, Persian) support */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.lang{display:inline-flex;align-items:center;gap:6px;font-size:.78rem}
+.lang select{appearance:none;-webkit-appearance:none;border:1px solid #d4d4d0;background:#fff;color:#16181b;border-radius:999px;padding:8px 12px;font:inherit;font-weight:600;cursor:pointer;max-width:150px}
+.lang--menu{padding:12px 16px}.lang--ftr{margin:12px 0}
+.ftr .lang select{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}.ftr .lang select option{color:#16181b}
+@media(max-width:900px){.lang--hdr{display:none}}
+.i18n-note{margin:0;padding:10px clamp(16px,4vw,48px);background:#f6f6f3;border-bottom:1px solid #eee;font-size:.82rem;color:#4a4d52}
+/* fonts for scripts the main font does not contain */
+:root[lang^="ar"],:root[lang^="ur"],:root[lang^="fa"]{--i18n-font:"Noto Naskh Arabic","Noto Nastaliq Urdu","Segoe UI",Tahoma,"Geeza Pro",system-ui,sans-serif}
+:root[lang^="ar"] body,:root[lang^="ur"] body,:root[lang^="fa"] body{font-family:var(--i18n-font);line-height:1.8}
+:root[lang^="ar"] *,:root[lang^="ur"] *,:root[lang^="fa"] *{letter-spacing:0!important}
+:root[lang^="zh"] body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif}
+:root[lang^="ja"] body{font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",system-ui,sans-serif}
+:root[lang^="ko"] body{font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif}
+/* uppercase + wide spacing looks wrong in non-Latin scripts */
+:root[lang^="zh"] *,:root[lang^="ja"] *,:root[lang^="ko"] *,:root[lang^="ru"] *{letter-spacing:normal!important}
+:root[lang^="ar"] *,:root[lang^="ur"] *,:root[lang^="fa"] *,:root[lang^="zh"] *,:root[lang^="ja"] *,:root[lang^="ko"] *{text-transform:none!important}
+/* image carousels and the logo keep their left-to-right behaviour (swipe direction, arrows) */
+[dir="rtl"] .showroom,[dir="rtl"] .hero__show,[dir="rtl"] .logo,[dir="rtl"] .cp-colors,[dir="rtl"] input[type="tel"],[dir="rtl"] input[type="email"],[dir="rtl"] input[type="date"]{direction:ltr}
+[dir="rtl"] input[type="tel"],[dir="rtl"] input[type="email"]{text-align:right}
+[dir="rtl"] .hdr nav a,[dir="rtl"] .ftr{text-align:start}

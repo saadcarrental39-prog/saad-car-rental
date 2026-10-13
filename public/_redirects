@@ -1,3 +1,5 @@
 # Old policy addresses -> the current ones (permanent redirect, keeps any Google ranking)
 /terms-and-conditions /terms-of-service 301
 /cancellation-policy /refund-policy 301
+# Old car page that no longer exists -> the fleet page (keeps visitors; Google drops the dead URL)
+/cars/mercedes-luxury /cars 301

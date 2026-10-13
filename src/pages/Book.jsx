@@ -8,8 +8,10 @@ import { track } from "../analytics";
 import { captureLead, completeLead } from "../leads";
 import ServiceSwitch, { svcFrom } from "../components/ServiceSwitch";
 import TripForm, { prepare, leadNote, withPhone } from "../components/TripForm";
+import { useT } from "../i18n";
 
 export default function Book() {
+  const t = useT();
   useSeo({ title: "Book a Car With Driver", description: "Book a premium car with professional driver in Islamabad, today or in advance. No account needed.", path: "/book" });
   const [q] = useSearchParams();
   const [vid, setVid] = useState(allVehicles.find((v) => v.id === q.get("car"))?.id || allVehicles[0].id);
@@ -27,7 +29,7 @@ export default function Book() {
     const res = await sendBooking(r.dd, v); setBusy(false); setSent(res); setPreview(true);
   };
   if (preview) return (<div className="pad narrow"><ReceiptView d={fin || d} v={v} initial={sent} onBack={() => { setSent(null); setFin(null); setPreview(false); }} /></div>);
-  return (<div className="pad narrow"><h1>Book Now</h1><p className="lead">No account needed. Planning ahead? Pick any future date: visiting from abroad or coming home, you can book days or weeks in advance. Our team confirms your vehicle and quote on WhatsApp.</p>
+  return (<div className="pad narrow"><h1>{t("Book Now")}</h1><p className="lead">{t("No account needed. Planning ahead? Pick any future date: visiting from abroad or coming home, you can book days or weeks in advance. Our team confirms your vehicle and quote on WhatsApp.")}</p>
     <ServiceSwitch value={d.svc || ""} onChange={(k) => { setD({ ...d, svc: k, driver: "", addl: [], service: "Car with driver" }); setErr(""); }} />
     {d.svc && <TripForm svc={d.svc} vid={vid} setVid={setVid} d={d} setD={setD} err={err} busy={busy} onSubmit={submit} />}
   </div>);

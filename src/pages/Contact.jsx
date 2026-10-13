@@ -8,6 +8,7 @@ import { openChat } from "../sendBooking";
 import { track } from "../analytics";
 import { captureLead, completeLead } from "../leads";
 import { RvRating, RvCount } from "../components/reviews/Live";
+import { useT } from "../i18n";
 
 const TOPICS = ["Booking enquiry", "Airport transfer", "Wedding / event", "Corporate / business travel", "Long distance / tours", "Other"];
 const PHONE_OK = /^[\d+\s()-]{7,20}$/;
@@ -48,6 +49,7 @@ async function sendToServer(d) {
 }
 
 export default function Contact() {
+  const t = useT();
   useSeo({ title: "Contact Us – Chauffeur Car Rental in Islamabad", description: "Contact SAAD CAR RENTAL SERVICES, G-11 Markaz, Islamabad. Call, WhatsApp or send an enquiry and our team will get back to you quickly.", path: "/contact" });
   const [d, setD] = useState({ topic: TOPICS[0], car: "", website: "", country: "Pakistan" });
   const [err, setErr] = useState("");
@@ -82,39 +84,39 @@ export default function Contact() {
     <>
       <section className="ct-hero">
         <div className="ct-hero__in">
-          <p className="eyebrow">Contact</p>
-          <h1>Let’s plan your journey.</h1>
-          <p className="ct-hero__lead">Tell us where you are headed and we will take care of the rest: the right vehicle, a professional driver, and a smooth ride from pickup to drop-off.</p>
+          <p className="eyebrow">{t("Contact")}</p>
+          <h1>{t("Let’s plan your journey.")}</h1>
+          <p className="ct-hero__lead">{t("Tell us where you are headed and we will take care of the rest: the right vehicle, a professional driver, and a smooth ride from pickup to drop-off.")}</p>
           <div className="ct-hero__row">
-            {chatHref && <a className="ct-btn ct-btn--wa" href={chatHref} target="_blank" rel="noopener noreferrer">{Ico.chat}<span>Chat on WhatsApp</span></a>}
-            {telHref && <a className="ct-btn ct-btn--ghost" href={telHref}>{Ico.phone}<span>Call {SITE.phoneDisplay}</span></a>}
+            {chatHref && <a className="ct-btn ct-btn--wa" href={chatHref} target="_blank" rel="noopener noreferrer">{Ico.chat}<span>{t("Chat on WhatsApp")}</span></a>}
+            {telHref && <a className="ct-btn ct-btn--ghost" href={telHref}>{Ico.phone}<span>{t("Call")} {SITE.phoneDisplay}</span></a>}
           </div>
-          <ul className="ct-trust" aria-label="Why choose us">
-            <li><b>{SITE.years}+</b> years in Islamabad</li>
-            <li><b><RvRating /> ★</b> <RvCount /> Google reviews</li>
-            <li><b>100%</b> with professional driver</li>
+          <ul className="ct-trust" aria-label={t("Why choose us")}>
+            <li><b>{SITE.years}+</b> {t("years in Islamabad")}</li>
+            <li><b><RvRating /> ★</b> <RvCount /> {t("Google reviews")}</li>
+            <li><b>100%</b> {t("with professional driver")}</li>
           </ul>
         </div>
       </section>
 
       <section className="ct-wrap">
         <div className="ct-grid">
-          <aside className="ct-info" aria-label="Contact details">
+          <aside className="ct-info" aria-label={t("Contact details")}>
             {telHref && (
               <a className="ct-card" href={telHref}>
                 <span className="ct-ico">{Ico.phone}</span>
-                <span><small>Call us</small><strong>{SITE.phoneDisplay}</strong><em>Tap to call from your phone</em></span>
+                <span><small>{t("Call us")}</small><strong>{SITE.phoneDisplay}</strong><em>{t("Tap to call from your phone")}</em></span>
               </a>
             )}
             {chatHref && (
               <a className="ct-card" href={chatHref} target="_blank" rel="noopener noreferrer">
                 <span className="ct-ico ct-ico--wa">{Ico.chat}</span>
-                <span><small>WhatsApp</small><strong>Message our team</strong><em>Quick replies, share your trip details</em></span>
+                <span><small>WhatsApp</small><strong>{t("Message our team")}</strong><em>{t("Quick replies, share your trip details")}</em></span>
               </a>
             )}
             <a className="ct-card" href={SITE.maps} target="_blank" rel="noopener noreferrer">
               <span className="ct-ico">{Ico.pin}</span>
-              <span><small>Visit our office</small><strong>{SITE.address.slice(0, 3).join(" ").replace(/,\s*$/, "")}</strong><em>{SITE.address.slice(3).join(" ").replace(/,\s*$/, "")}</em></span>
+              <span><small>{t("Visit our office")}</small><strong>{SITE.address.slice(0, 3).join(" ").replace(/,\s*$/, "")}</strong><em>{SITE.address.slice(3).join(" ").replace(/,\s*$/, "")}</em></span>
             </a>
           </aside>
 
@@ -124,44 +126,44 @@ export default function Contact() {
                 <span className="ct-done__ico">{Ico.check}</span>
                 {done.mode === "sent" ? (
                   <>
-                    <h2>Thank you, we have your message.</h2>
-                    <p>Your enquiry was sent to our team on WhatsApp. We will contact you on <b>{clean(d.phone)}</b> shortly.</p>
+                    <h2>{t("Thank you, we have your message.")}</h2>
+                    <p>{t("Your enquiry was sent to our team on WhatsApp. We will contact you on")} <b>{clean(d.phone)}</b> {t("shortly.")}</p>
                   </>
                 ) : (
                   <>
-                    <h2>One last step.</h2>
-                    <p>{done.opened ? "WhatsApp is opening with your message already written. Just tap Send and our team will reply." : "Tap the button below to open WhatsApp with your message already written, then press Send."}</p>
-                    {chatHref && <a className="ct-btn ct-btn--wa" href={waHref(buildText(d))} target="_blank" rel="noopener noreferrer">{Ico.chat}<span>Open WhatsApp</span></a>}
+                    <h2>{t("One last step.")}</h2>
+                    <p>{done.opened ? t("WhatsApp is opening with your message already written. Just tap Send and our team will reply.") : t("Tap the button below to open WhatsApp with your message already written, then press Send.")}</p>
+                    {chatHref && <a className="ct-btn ct-btn--wa" href={waHref(buildText(d))} target="_blank" rel="noopener noreferrer">{Ico.chat}<span>{t("Open WhatsApp")}</span></a>}
                   </>
                 )}
-                <button type="button" className="ct-link" onClick={reset}>Send another message</button>
+                <button type="button" className="ct-link" onClick={reset}>{t("Send another message")}</button>
               </div>
             ) : (
               <form className="ct-form" onSubmit={submit} noValidate>
                 <div className="ct-form__head">
-                  <h2>Send an enquiry</h2>
-                  <p>Fill in the details below. It goes straight to our team on WhatsApp.</p>
+                  <h2>{t("Send an enquiry")}</h2>
+                  <p>{t("Fill in the details below. It goes straight to our team on WhatsApp.")}</p>
                 </div>
                 <div className="ct-row">
-                  <label>Full name *<input type="text" name="name" autoComplete="name" value={d.name || ""} onChange={set("name")} maxLength={80} placeholder="Your name" /></label>
-                  <label>Country *<select name="country" value={d.country || "Pakistan"} onChange={set("country")}>{COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}</select></label>
-                  <label>Phone *<input type="tel" name="phone" autoComplete="tel" inputMode="tel" value={d.phone || ""} onChange={set("phone")} maxLength={25} placeholder={DIAL[d.country || "Pakistan"] ? `+${DIAL[d.country || "Pakistan"]} 3XX XXXXXXX` : "+92 3XX XXXXXXX"} />{phoneOk(normPhone(d.phone, d.country || "Pakistan")) && <small className="tf-hint">Saved as {normPhone(d.phone, d.country || "Pakistan")}</small>}</label>
+                  <label>{t("Full name")} *<input type="text" name="name" autoComplete="name" value={d.name || ""} onChange={set("name")} maxLength={80} placeholder={t("Your name")} /></label>
+                  <label>{t("Country")} *<select name="country" value={d.country || "Pakistan"} onChange={set("country")}>{COUNTRIES.map((c) => <option key={c} value={c}>{t(c)}</option>)}</select></label>
+                  <label>{t("Phone")} *<input type="tel" name="phone" autoComplete="tel" inputMode="tel" value={d.phone || ""} onChange={set("phone")} maxLength={25} placeholder={DIAL[d.country || "Pakistan"] ? `+${DIAL[d.country || "Pakistan"]} 3XX XXXXXXX` : "+92 3XX XXXXXXX"} />{phoneOk(normPhone(d.phone, d.country || "Pakistan")) && <small className="tf-hint">{t("Saved as {n}", { n: normPhone(d.phone, d.country || "Pakistan") })}</small>}</label>
                 </div>
                 <div className="ct-row">
-                  <label>WhatsApp number<input type="tel" name="whatsapp" autoComplete="tel" inputMode="tel" value={d.whatsapp || ""} onChange={set("whatsapp")} maxLength={25} placeholder="03XX XXXXXXX" /></label>
-                  <label>Email<input type="email" name="email" autoComplete="email" inputMode="email" value={d.email || ""} onChange={set("email")} maxLength={80} placeholder="you@example.com" /></label>
+                  <label>{t("WhatsApp number")}<input type="tel" name="whatsapp" autoComplete="tel" inputMode="tel" value={d.whatsapp || ""} onChange={set("whatsapp")} maxLength={25} placeholder="03XX XXXXXXX" /></label>
+                  <label>{t("Email")}<input type="email" name="email" autoComplete="email" inputMode="email" value={d.email || ""} onChange={set("email")} maxLength={80} placeholder="you@example.com" /></label>
                 </div>
                 <div className="ct-row">
-                  <label>Enquiry type<select value={d.topic} onChange={set("topic")}>{TOPICS.map((t) => <option key={t}>{t}</option>)}</select></label>
-                  <label>Preferred vehicle<select value={d.car} onChange={set("car")}><option value="">Not sure yet</option>{allVehicles.filter((v) => !v.placeholder).map((v) => { const n = `${v.name} ${v.trim || ""} – ${v.color}`.replace(/\s+/g, " "); return <option key={v.id} value={n}>{n}</option>; })}</select></label>
+                  <label>{t("Enquiry type")}<select value={d.topic} onChange={set("topic")}>{TOPICS.map((tp) => <option key={tp} value={tp}>{t(tp)}</option>)}</select></label>
+                  <label>{t("Preferred vehicle")}<select value={d.car} onChange={set("car")}><option value="">{t("Not sure yet")}</option>{allVehicles.filter((v) => !v.placeholder).map((v) => { const n = `${v.name} ${v.trim || ""} – ${v.color}`.replace(/\s+/g, " "); return <option key={v.id} value={n}>{n}</option>; })}</select></label>
                 </div>
-                <label>Travel date (optional)<input type="date" name="date" value={d.date || ""} onChange={set("date")} /></label>
-                <label>Your message *<textarea name="message" rows="4" maxLength={400} value={d.message || ""} onChange={set("message")} placeholder="Pickup and drop-off, number of passengers, anything we should know…" /></label>
+                <label>{t("Travel date (optional)")}<input type="date" name="date" value={d.date || ""} onChange={set("date")} /></label>
+                <label>{t("Your message")} *<textarea name="message" rows="4" maxLength={400} value={d.message || ""} onChange={set("message")} placeholder={t("Pickup and drop-off, number of passengers, anything we should know…")} /></label>
                 {/* honeypot: hidden from people, bots fill it */}
                 <input className="ct-hp" type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={d.website} onChange={set("website")} />
-                {err && <p role="alert" className="ct-err">{err}</p>}
-                <label className="ct-consent"><input type="checkbox" name="consent" checked={!!d.consent} onChange={(e) => setD({ ...d, consent: e.target.checked })} /><span>I agree to the <a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a> *</span></label>
-                <button className="ct-btn ct-btn--dark ct-submit" type="submit" disabled={busy}>{busy ? "Sending…" : <><span>Send via WhatsApp</span>{Ico.arrow}</>}</button>
+                {err && <p role="alert" className="ct-err">{t(err)}</p>}
+                <label className="ct-consent"><input type="checkbox" name="consent" checked={!!d.consent} onChange={(e) => setD({ ...d, consent: e.target.checked })} /><span>{t("I agree to the")} <a href="/privacy-policy" target="_blank" rel="noopener">{t("Privacy Policy")}</a> *</span></label>
+                <button className="ct-btn ct-btn--dark ct-submit" type="submit" disabled={busy}>{busy ? t("Sending…") : <><span>{t("Send via WhatsApp")}</span>{Ico.arrow}</>}</button>
               </form>
             )}
           </div>
@@ -169,8 +171,8 @@ export default function Contact() {
 
         <div className="ct-map">
           <div className="ct-map__bar">
-            <div><p className="eyebrow">Find us</p><strong>{SITE.name}</strong></div>
-            <a className="ct-btn ct-btn--dark ct-btn--sm" href={SITE.maps} target="_blank" rel="noopener noreferrer">Get directions</a>
+            <div><p className="eyebrow">{t("Find us")}</p><strong>{SITE.name}</strong></div>
+            <a className="ct-btn ct-btn--dark ct-btn--sm" href={SITE.maps} target="_blank" rel="noopener noreferrer">{t("Get directions")}</a>
           </div>
           <iframe title="SAAD CAR RENTAL SERVICES location" loading="lazy" referrerPolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Shah+Nawaz+Plaza+G-11+Markaz+Islamabad&output=embed" />
         </div>
