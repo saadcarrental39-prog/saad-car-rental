@@ -3,83 +3,117 @@
 export const SETS = {
  "civic-rs-black": [
   480,
+  620,
+  680,
   800,
   1200
  ],
  "civic-rs-red": [
   480,
+  620,
+  680,
   800,
   1200
  ],
  "civic-rs-white": [
   480,
+  620,
+  680,
   800,
   1200
  ],
  "civic-silver": [
   480,
+  620,
+  680,
   800,
   1200
  ],
  "corolla-altis-silver": [
   480,
+  620,
+  680,
   800,
   1200
  ],
  "corolla-white": [
   480,
+  620,
+  680,
   800,
   1200
  ],
  "grande-plum": [
   480,
+  620,
+  680,
   800,
   1200
  ],
  "grande-x-black": [
   480,
+  620,
+  680,
   800,
   1200
  ],
  "hilux-white": [
   480,
+  620,
+  680,
   800,
   1200
  ],
  "land-cruiser-grey": [
   480,
+  620,
+  680,
   805
  ],
  "land-cruiser-tz-black": [
   480,
+  620,
+  680,
   805
  ],
  "land-cruiser-v8-white": [
   480,
+  620,
+  680,
   805
  ],
  "prado-black": [
   480,
+  620,
+  680,
   800,
   1200
  ],
  "prado-red": [
   480,
+  620,
+  680,
   800,
   1200
  ],
  "prado-white": [
   480,
+  620,
+  680,
   800,
   1200
  ],
  "revo-black": [
   480,
+  620,
+  680,
   800,
   1200
  ],
  "revo-blue": [
   480,
+  620,
+  680,
   800,
   1200
  ]

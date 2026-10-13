@@ -4,17 +4,17 @@
 import glob, os, re, json
 from PIL import Image
 D = "public/assets/vehicles"
-WIDTHS = [480, 800]
+WIDTHS = [480, 620, 680, 800]
 sets = {}
 for f in sorted(glob.glob(f"{D}/*.webp")):
     name = os.path.basename(f)[:-5]
-    if re.search(r"-(480|800)$", name): continue
+    if re.search(r"-(480|620|680|800)$", name): continue
     im = Image.open(f); im.load(); w, h = im.size
     ws = []
     for t in WIDTHS:
         if t >= w * 0.9: continue
         out = im.resize((t, round(h * t / w)), Image.LANCZOS)
-        out.save(f"{D}/{name}-{t}.webp", "WEBP", quality=80, method=4)
+        out.save(f"{D}/{name}-{t}.webp", "WEBP", quality=76, method=6)
         ws.append(t)
     ws.append(w); sets[name] = ws
     print(name, ws, [os.path.getsize(f"{D}/{name}-{t}.webp")//1024 if t != w else os.path.getsize(f)//1024 for t in ws], "KB")

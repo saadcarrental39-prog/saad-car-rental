@@ -48,3 +48,9 @@ Share images for new pages: `npm run seo:og` (needs python3 + Pillow). Run `npm 
 - Vehicle pages now also carry Product schema with an Offer that has no price (every trip is quoted).
 - Four more FAQs on /faq (Local vs Out of Station, near me, tours, Land Cruiser V8).
 - Keyword map: `docs/KEYWORD-RESEARCH.md`.
+
+# Speed pass (Oct 2026)
+- Car photos: extra 620 and 680 pixel wide copies (`npm run`-free: `python3 scripts/make-image-sizes.py` after adding a photo). Phones pick the closest size instead of the 800 wide file.
+- The main stylesheet is placed inside each page (one request less before the first paint). `/bundle/*` is cached for 1 year (file names change with the content; the self-heal script in index.html covers a bad copy).
+- Cookie notice is a plain `div role="dialog"` (an `aside` cannot take that role, which broke the Agentic browsing accessibility check).
+- Live review number is requested 4 seconds after the page has loaded.

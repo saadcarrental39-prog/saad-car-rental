@@ -30,7 +30,17 @@ const { PAGES, render, BUSINESS, ADMIN_PATH, baseFleet, imgSet, HERO_SIZES } = m
 const err = console.error; console.error = (...a) => { if (!/useLayoutEffect|fetchpriority/.test(String(a[0]))) err(...a); };
 
 // ---- write every page
-const template = readFileSync(join(dist, "index.html"), "utf8");
+// The main stylesheet is small, so it is put INSIDE every page (a <style> block) instead of a separate render-blocking file:
+// one request less before the first paint. Admin / lazy files keep their own files. Skipped automatically if the CSS is large.
+let template = readFileSync(join(dist, "index.html"), "utf8");
+template = template.replace(/<link\b[^>]*>/g, (tag) => {
+  const href = /rel="stylesheet"/.test(tag) && (/href="(\/bundle\/[^"]+\.css)"/.exec(tag) || [])[1];
+  if (!href) return tag;
+  const css = readFileSync(join(dist, href), "utf8");
+  if (css.length > 120000) return tag;
+  console.log(`prerender: main stylesheet inlined (${Math.round(css.length / 1024)} KB, ${href})`);
+  return `<style>${css}</style>`;
+});
 const strip = (h) => h.replace(/<title>[\s\S]*?<\/title>\s*/i, "").replace(/<meta\s+name="description"[^>]*>\s*/i, "");
 let written = 0;
 for (const page of PAGES) {

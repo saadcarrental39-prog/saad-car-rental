@@ -16,9 +16,9 @@ export default function CookieNotice() {
   const choose = (v) => { try { localStorage.setItem("saad_cookie", v); } catch { /* ignore */ } setShow(false); window.dispatchEvent(new CustomEvent("saad-consent", { detail: v })); };
   if (!show) return null;
   return (
-    <aside className="ck" role="dialog" aria-label="Cookie notice">
+    <div className="ck" role="dialog" aria-label="Cookie notice">
       <p><b>Cookies</b>This website stores only what it needs to work. With your permission it also uses visit-statistics tools (Google Analytics, Cloudflare). No advertising. <Link to="/cookie-policy">Cookie policy</Link></p>
       <div className="ck__b"><button type="button" onClick={() => choose("no")}>Decline</button><button type="button" onClick={() => choose("yes")}>Accept</button></div>
-    </aside>
+    </div>
   );
 }

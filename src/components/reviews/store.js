@@ -40,7 +40,7 @@ export function useReviewSummary() {
     // asked after the page has loaded + the browser is idle, so it never slows the first paint
     const go = () => (window.requestIdleCallback ? requestIdleCallback(run, { timeout: 4000 }) : setTimeout(run, 2500));
     const run = () => loadSummary().then((x) => { if (x && on) { setD(x); try { sessionStorage.setItem(SUM_KEY, JSON.stringify(x)); } catch { /* ignore */ } } });
-    if (document.readyState === "complete") go(); else addEventListener("load", () => setTimeout(go, 300), { once: true });
+    if (document.readyState === "complete") go(); else addEventListener("load", () => setTimeout(go, 4000), { once: true });
     return () => { on = false; };
   }, []);
   return { rating: d && d.rating != null ? Number(d.rating).toFixed(1) : SITE.rating, count: d ? d.count : SITE.reviewCount, live: !!d };
