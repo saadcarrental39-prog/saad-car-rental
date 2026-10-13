@@ -5,7 +5,7 @@ import { pathToFileURL } from "node:url";
 const root = process.cwd(); const { PAGES, place } = await import(pathToFileURL(join(root, ".seo-build/entry.mjs")).href);
 mkdirSync(join(root, "dist-reports"), { recursive: true });
 const q = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`; const csv = (rows) => rows.map((r) => r.map(q).join(",")).join("\n") + "\n";
-const html = (p) => readFileSync(join(root, "dist", p === "/" ? "" : p, "index.html"), "utf8");
+const html = (p) => readFileSync(join(root, "dist", p === "/" ? "index.html" : `${p}.html`), "utf8");
 const intent = { location: "local / commercial", destination: "tourism + route / transactional", route: "route / transactional", service: "service / commercial", vehicle: "vehicle / commercial", airport: "airport / transactional", hub: "category / navigational", province: "regional / commercial", faq: "informational (AEO)", app: "navigational / commercial", about: "brand", contact: "brand / transactional" };
 const kw = (p) => (p.kind === "location" || p.kind === "destination" || p.kind === "route") && place(p.kind === "route" ? p.slug.replace("islamabad-to-", "") : p.slug) ? place(p.kind === "route" ? p.slug.replace("islamabad-to-", "") : p.slug).kw : p.h1.toLowerCase();
 const w = (n, rows) => writeFileSync(join(root, "dist-reports", n), csv(rows));

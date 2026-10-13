@@ -45,7 +45,8 @@ for (const page of PAGES) {
   let out = strip(template).replace("</head>", `${head}${preload}\n</head>`);
   if (!out.includes('<div id="root"></div>')) throw new Error('index.html is missing <div id="root"></div>');
   out = out.replace('<div id="root"></div>', `<div id="root">${html}</div>`);
-  const file = page.path === "/" ? join(dist, "index.html") : join(dist, page.path, "index.html");
+  // flat file (routes/x.html, not routes/x/index.html): Cloudflare Pages serves it at /routes/x with NO redirect to /routes/x/, which matches our canonical and sitemap
+  const file = page.path === "/" ? join(dist, "index.html") : join(dist, `${page.path}.html`);
   mkdirSync(dirname(file), { recursive: true }); writeFileSync(file, out); written++;
 }
 console.log(`prerender: wrote ${written} HTML pages`);
@@ -123,6 +124,7 @@ const catalog = {
 };
 mkdirSync(join(dist, ".well-known"), { recursive: true });
 writeFileSync(join(dist, ".well-known", "ai-catalog.json"), JSON.stringify(catalog, null, 2) + "\n");
+{ const exp = new Date(Date.now() + 365 * 864e5).toISOString(); writeFileSync(join(dist, ".well-known", "security.txt"), `Contact: ${site}/contact\nExpires: ${exp}\nPreferred-Languages: en, ur\nCanonical: ${site}/.well-known/security.txt\n`); }
 writeFileSync(join(dist, "ai-catalog.json"), JSON.stringify(catalog, null, 2) + "\n");   // same file at the root too: /ai-catalog.json
 console.log("prerender: .well-known/ai-catalog.json written");
 

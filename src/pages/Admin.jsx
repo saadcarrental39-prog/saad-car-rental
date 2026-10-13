@@ -262,7 +262,7 @@ function Orders({ tok, st, pwa }) {
       <dl>{[["👤 Naam", o.name], ["📞 Phone", o.phone], ["🧭 Service", o.svc === "out" ? "Out of Station" : o.svc === "local" ? "Local (Islamabad)" : ""], ["💬 WhatsApp", o.whatsapp], ["✉️ Email", o.email], ["📍 Pickup", o.pickup], ["🏁 Drop-off", o.drop], ["📅 Date", fmtDate(o.date)], ["⏰ Time", fmtTime(o.time)], ["👥 Passengers", o.pax], ["📝 Notes", o.extra]].filter(([, v]) => v).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
       <div className="ad-acts">
         <a className="ad-btn ad-btn--ghost" href={`tel:${String(o.phone).replace(/[^\d+]/g, "")}`}><IPhone />Call</a>
-        <a className="ad-btn ad-btn--ghost" href={`https://wa.me/${waNum(o.phone)}`} target="_blank" rel="noopener noreferrer"><IChat />WhatsApp</a>
+        <a className="ad-btn ad-btn--ghost" href={`https://api.whatsapp.com/send?phone=${waNum(o.phone)}`} target="_blank" rel="noopener noreferrer"><IChat />WhatsApp</a>
         <a className="ad-btn ad-btn--ghost" href={src(o.id)} download={`${o.ref}.png`}><IDown />Receipt</a>
         <button type="button" className="ad-btn ad-btn--del" disabled={busy === o.id} onClick={async () => { if (!confirm("Yeh order delete karein? Receipt bhi hat jayegi.")) return; setBusy(o.id); try { await del(o.id); } catch { alert("Delete nahi hua. Internet check karein."); } setBusy(""); }}><ITrash />Delete</button>
       </div></article>))}
@@ -309,7 +309,7 @@ function Leads({ tok, out, onSeen }) {
       <dl>{[["📞 Phone", l.phone], ["💬 WhatsApp", l.whatsapp && l.whatsapp !== l.phone ? l.whatsapp : ""], ["✉️ Email", l.email], ["🚗 Gaari", l.car], ["📍 Pickup", l.pickup], ["🏁 Drop-off", l.dropoff], ["📅 Date", l.day && fmtDate(l.day)], ["⏰ Time", l.tm && fmtTime(l.tm)], ["👥 Passengers", l.pax], ["📝 Notes", l.extra], ["🌍 Shehr", [l.city, l.dev].filter(Boolean).join(" · ")]].filter(([, v]) => v).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
       <div className="ad-acts">
         {l.phone && <a className="ad-btn ad-btn--ghost" href={`tel:${String(l.phone).replace(/[^\d+]/g, "")}`}><IPhone />Call</a>}
-        {l.phone && <a className="ad-btn ad-btn--ghost" href={`https://wa.me/${waNum(l.whatsapp || l.phone)}`} target="_blank" rel="noopener noreferrer"><IChat />WhatsApp</a>}
+        {l.phone && <a className="ad-btn ad-btn--ghost" href={`https://api.whatsapp.com/send?phone=${waNum(l.whatsapp || l.phone)}`} target="_blank" rel="noopener noreferrer"><IChat />WhatsApp</a>}
         {l.email && <a className="ad-btn ad-btn--ghost" href={`mailto:${l.email}`}><IMail />Email</a>}
         <button type="button" className={`ad-btn ${l.called ? "ad-btn--ok" : "ad-btn--ghost"}`} disabled={busy === lkey(l)} onClick={() => call(l)}>{l.called ? "✅ Rabta ho gaya" : "Rabta ho gaya?"}</button>
         <button type="button" className="ad-btn ad-btn--del" disabled={busy === lkey(l)} onClick={() => del(l)}><ITrash />Delete</button>

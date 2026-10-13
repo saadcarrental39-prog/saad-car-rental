@@ -9,7 +9,7 @@ const mod = await import(pathToFileURL(join(root, ".seo-build/entry.mjs")).href)
 const { PAGES, BUSINESS, PLACES, PROVINCES, ROUTES, DRAFT_ROUTES, SERVICE_PAGES, baseFleet, MIN_SCORE, FORBIDDEN, score, uniqueText, needsConfirmation, PUNJAB_DISTRICTS, notOffered } = mod;
 const problems = [], warnings = [];
 const fail = (m) => problems.push(m), warn = (m) => warnings.push(m);
-const pathOf = (p) => (p === "/" ? join(dist, "index.html") : join(dist, p, "index.html"));
+const pathOf = (p) => (p === "/" ? join(dist, "index.html") : join(dist, `${p}.html`));
 const text = (h) => h.replace(/<script[\s\S]*?<\/script>/g, " ").replace(/<style[\s\S]*?<\/style>/g, " ").replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
 const wc = (t) => (t.match(/[\p{L}\p{N}']+/gu) || []).length;
 const shingles = (t) => { const w = (t.toLowerCase().match(/[\p{L}\p{N}]+/gu) || []); const s = new Set(); for (let i = 0; i + 6 <= w.length; i++) s.add(w.slice(i, i + 6).join(" ")); return s; };
@@ -50,7 +50,7 @@ for (const { p, h, title, desc, h1s_ } of rows) {
   const forbidden = FORBIDDEN.filter((re) => re.test(body)).map(String);
   const maxSim = Math.max(0, ...rows.filter((o) => o.p.kind === p.kind && o.p.path !== p.path).map((o) => jac(sh[p.path], sh[o.p.path])));
   const s = { titleLen: title.length, descLen: desc.length, h1Count: h1s_.length, dupTitle: titles[title].length > 1 && p.indexable, dupDesc: descs[desc].length > 1 && p.indexable, dupH1: h1s[h1s_[0]].length > 1 && p.indexable, words: wc(body), maxSimilarity: ["location", "destination", "route", "service", "vehicle"].includes(p.kind) ? maxSim : 0, forbidden,
-    hasTel: /href="tel:/.test(h), hasWa: /href="https:\/\/wa\.me\//.test(h), hasBook: /href="\/book/.test(h), internalLinks: new Set(internal).size, canonicalOk: h.includes(`href="${p.canonical}"`), ogOk: !!og && existsSync(ogFile), jsonOk };
+    hasTel: /href="tel:/.test(h), hasWa: /href="https:\/\/(wa\.me|api\.whatsapp\.com)\//.test(h), hasBook: /href="\/book/.test(h), internalLinks: new Set(internal).size, canonicalOk: h.includes(`href="${p.canonical}"`), ogOk: !!og && existsSync(ogFile), jsonOk };
   if (s.h1Count !== 1) fail(`${p.path}: ${s.h1Count} H1 tags`);
   if (!s.hasTel || !s.hasWa) fail(`${p.path}: missing call / WhatsApp button`);
   if (p.kind !== "app" && !/data-seo/.test(h)) fail(`${p.path}: head tags not rendered`);
