@@ -5,6 +5,9 @@
 import { getVapid, subId } from "../_lib/push.js";
 import { stats, liveFeed, activityFeed, dayOf, addDays, RANGE_DAYS } from "../_lib/stats.js";
 import { leadsAdmin } from "../_lib/leads.js";
+import { hasSb } from "../_lib/sb.js";
+import * as SB from "../_lib/sbstats.js";
+import * as SBL from "../_lib/sbleads.js";
 const enc = new TextEncoder();
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 const same = (a, b) => { a = String(a); b = String(b); let d = a.length ^ b.length; for (let i = 0; i < Math.max(a.length, b.length); i++) d |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0); return d === 0; };
@@ -79,25 +82,25 @@ export async function onRequestPost({ request, env }) {
     await Promise.all([kv.delete(`oimg:${id}`), ...l.keys.filter((k) => k.name.endsWith(`:${id}`)).map((k) => kv.delete(k.name))]);   // oid:<id> stays, so a repeat post cannot bring it back
     return json({ ok: true });
   }
-  if (b.action === "stats") {                                       // website analytics for the Insights tab (data lives in D1, binding DB)
-    if (!env.DB) return json({ error: "no_db" }, 503);
+  if (b.action === "stats") {                                       // website analytics for the Insights tab (data lives in Supabase, or in D1 binding DB if Supabase is not set up)
+    if (!env.DB && !hasSb(env)) return json({ error: "no_db" }, 503);
     try {
-      const data = await stats(env.DB, String(b.range || "7d"));
+      const data = await (hasSb(env) ? SB.stats(env, String(b.range || "7d")) : stats(env.DB, String(b.range || "7d")));
       data.orders = await orderCounts(kv, data.range);          // bookings received through the website (Orders tab), same period + previous period
       return json(data);
     } catch (e) { return json({ error: "stats_failed", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
   }
   if (b.action === "activity") {                                    // older activity, page by page (the "Taza activity" sheet scrolls back to the very first visit)
-    if (!env.DB) return json({ error: "no_db" }, 503);
-    try { return json(await activityFeed(env.DB, b.before)); } catch (e) { return json({ error: "activity_failed", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
+    if (!env.DB && !hasSb(env)) return json({ error: "no_db" }, 503);
+    try { return json(await (hasSb(env) ? SB.activityFeed(env, b.before) : activityFeed(env.DB, b.before))); } catch (e) { return json({ error: "activity_failed", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
   }
   if (b.action === "live") {                                        // who is on the website right now (polled every ~4 s by the dashboard)
-    if (!env.DB) return json({ error: "no_db" }, 503);
-    try { return json(await liveFeed(env.DB, Math.max(0, Number(b.since) || 0))); } catch (e) { return json({ error: "live_failed", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
+    if (!env.DB && !hasSb(env)) return json({ error: "no_db" }, 503);
+    try { return json(await (hasSb(env) ? SB.liveFeed(env, Math.max(0, Number(b.since) || 0)) : liveFeed(env.DB, Math.max(0, Number(b.since) || 0)))); } catch (e) { return json({ error: "live_failed", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
   }
   if (typeof b.action === "string" && b.action.startsWith("lead")) {   // customers / leads typed into the website forms (Clients tab)
-    if (!env.DB) return json({ error: "no_db" }, 503);
-    try { const r = await leadsAdmin(env.DB, b); return json(r, r.status || 200); } catch (e) { return json({ error: "leads_failed", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
+    if (!env.DB && !hasSb(env)) return json({ error: "no_db" }, 503);
+    try { const r = await (hasSb(env) ? SBL.leadsAdmin(env, b) : leadsAdmin(env.DB, b)); return json(r, r.status || 200); } catch (e) { return json({ error: "leads_failed", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
   }
   if (b.action === "reviews_get") {                                  // Google review numbers shown on the website (manual backup + live status)
     const get = async (k) => { try { return JSON.parse((await kv.get(k)) || "null"); } catch { return null; } }, g = await get("reviews:g");
