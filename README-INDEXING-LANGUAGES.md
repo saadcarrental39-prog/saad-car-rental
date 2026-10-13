@@ -44,3 +44,7 @@ You must do (cannot be done in code)
 - The "recent bookings" popup must only show real customers who agreed (see `src/data/customers.js`); invented names harm trust.
 
 Cloudflare variable (optional): `CANONICAL_HOST` = `www.saadcarremtal.com` (default already).
+
+## Google Analytics (GA4)
+Measurement ID G-4X8SSHV3BG is set in src/business.config.js (analytics.ga4). It loads only after the visitor presses Accept in the cookie notice.
+To change it later, edit that one value (or set VITE_GA4_ID in Cloudflare, which wins over the file). Check: Analytics > Reports > Realtime.

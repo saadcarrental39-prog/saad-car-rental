@@ -56,7 +56,7 @@ export const BUSINESS = {
   themeColor: "#16181b",
 
   // ---- analytics (public IDs only; leave empty to disable) ----
-  analytics: { ga4: env.VITE_GA4_ID || "", cfBeacon: env.VITE_CF_BEACON || "" },
+  analytics: { ga4: env.VITE_GA4_ID || "G-4X8SSHV3BG", cfBeacon: env.VITE_CF_BEACON || "" },
 };
 
 // What the owner still has to confirm. The build prints this list (npm run seo:audit) and /BUSINESS-INFO-REQUIRED.md repeats it.
