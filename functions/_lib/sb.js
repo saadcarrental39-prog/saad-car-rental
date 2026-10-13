@@ -6,7 +6,8 @@ export const hasSb = (env) => !!(env && env.SUPABASE_URL && env.SUPABASE_SERVICE
 
 /** Calls one database function (see supabase-setup.sql). Returns the JSON it answers, or null when it answers nothing. Throws on any error. */
 export async function rpc(env, fn, args = {}) {
-  const base = String(env.SUPABASE_URL).trim().replace(/\/+$/, ""), key = String(env.SUPABASE_SERVICE_ROLE_KEY).trim();
+  // Pasted values often carry hidden characters (new line, space, zero-width mark): keep only visible ASCII, otherwise fetch() throws "invalid header value".
+  const base = String(env.SUPABASE_URL).replace(/[^\x21-\x7E]/g, "").replace(/\/+$/, ""), key = String(env.SUPABASE_SERVICE_ROLE_KEY).replace(/[^\x21-\x7E]/g, "");
   const headers = { apikey: key, "content-type": "application/json", accept: "application/json" };
   if (key.startsWith("eyJ")) headers.authorization = `Bearer ${key}`;   // old-style (legacy JWT) keys also go in Authorization; the new sb_secret_ keys must NOT
   const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 8000);
