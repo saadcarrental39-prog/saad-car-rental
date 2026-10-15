@@ -7,11 +7,11 @@ import { imgSet } from "../imgset";
 import { useT } from "../i18n";
 
 // Which filter tab each category belongs to (add a new category slug here when you add a car in fleet.js).
-const TYPE = { "land-cruiser-v8": "SUV", "land-cruiser-tz": "SUV", prado: "SUV", "range-rover": "SUV", revo: "Pickup", "honda-civic": "Sedan", "toyota-grande": "Sedan", coaster: "Van / Coaster" };
+const TYPE = { "land-cruiser-v8": "SUV", "land-cruiser-tz": "SUV", prado: "SUV", "range-rover": "SUV", "lexus-lx-570": "SUV", "mercedes-g-wagon": "SUV", "toyota-fortuner": "SUV", audi: "Sedan", revo: "Pickup", "honda-civic": "Sedan", "toyota-grande": "Sedan", coaster: "Van / Coaster" };
 const TABS = ["All", "SUV", "Sedan", "Pickup", "Van / Coaster"];
 
 // Swatch colour from the colour NAME in fleet.js (so the dot always matches the car it shows).
-const SWATCH = [["white", "#f2f2f0"], ["black", "#17171a"], ["grey", "#8b94a0"], ["gray", "#8b94a0"], ["silver", "#c3c7cd"], ["red", "#b3262b"], ["blue", "#1f56b8"], ["plum", "#6b2d5c"]];
+const SWATCH = [["white", "#f2f2f0"], ["black", "#17171a"], ["grey", "#8b94a0"], ["gray", "#8b94a0"], ["silver", "#c3c7cd"], ["red", "#b3262b"], ["blue", "#1f56b8"], ["plum", "#6b2d5c"], ["maroon", "#6e2a2a"], ["cream", "#efe7d3"]];
 const swatch = (name = "") => (SWATCH.find(([k]) => name.toLowerCase().includes(k)) || [0, "#9aa0a8"])[1];
 const label = (v) => `${v.color} ${v.name} ${v.trim}`.replace(/\s+/g, " ").trim();
 
@@ -51,7 +51,7 @@ function CarCard({ c }) {
 
 export default function Cars() {
   const t = useT();
-  useSeo({ title: "Our Fleet – Cars With Professional Driver", description: "Explore the SAAD CAR RENTAL SERVICES fleet in Islamabad: Land Cruiser, Prado, Revo, Honda Civic, Toyota Grande and more, all with a professional driver.", path: "/cars" });
+  useSeo({ title: "Our Fleet – Cars With Professional Driver", description: "Explore the SAAD CAR RENTAL SERVICES fleet in Islamabad: Land Cruiser, Lexus LX 570, Prado, Fortuner, G Wagon, Audi, Revo, Civic and more, all with a professional driver.", path: "/cars" });
   const [tab, setTab] = useState("All");
   const list = fleet.filter((c) => tab === "All" || TYPE[c.slug] === tab);
   const tabs = TABS.filter((tb) => tb === "All" || fleet.some((c) => TYPE[c.slug] === tb));

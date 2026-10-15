@@ -233,7 +233,9 @@ export function FaqPage() {
 export function VehicleExtras({ slug }) {
   const c = category(slug); if (!c) return null; const path = `/cars/${slug}`; const pg = pageByPath(path);
   const fit = (VEHICLE_FIT[slug] || []).map((u) => USE[u]); const places = placesForVehicle(slug); const svc = servicesForVehicle(slug);
+  const X = vehicleSeo(slug);
   return (<div className="sx-extra">
+    {X && <Sec id="about" title={`About the ${X.name} with driver`}>{X.about.map((t, i) => <p key={i}>{t}</p>)}<p className="sx-note">People also search for: {X.alias.join(", ")}.</p></Sec>}
     <Sec id="best" title={`What the ${c.title} is best for`}><p>{VEHICLE_PITCH_SENTENCE(c)}</p><Chips items={fit} />{!photoOf(c) && <p className="sx-note">Photos coming soon. This vehicle is available on request, so please call or WhatsApp to confirm your date.</p>}</Sec>
     <Sec id="trips" title={`Popular trips in the ${c.title}`} tone="grey"><LinkCards items={places.map((p) => ({ to: tripPath(p), title: tripLabel(p), text: p.highlights[0] }))} /></Sec>
     <Sec id="svc" title="Related services"><LinkCards items={svc.map(svcCard)} /></Sec>
@@ -242,6 +244,7 @@ export function VehicleExtras({ slug }) {
   </div>);
 }
 import { VEHICLE_PITCH } from "./data/vehicles";
+import { vehicleSeo } from "./data/vehicleSeo";
 import { useT, useI18n } from "../i18n";
 const VEHICLE_PITCH_SENTENCE = (c) => `The ${c.title} is ${VEHICLE_PITCH[c.slug] || "available with a professional driver"}. Every vehicle comes with an experienced professional driver, and we are based in Islamabad (G-11 Markaz).`;
 

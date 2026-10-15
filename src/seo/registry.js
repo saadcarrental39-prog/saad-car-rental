@@ -17,6 +17,7 @@ import { SPOTS } from "./data/islamabad";
 import { AI_INFO } from "./data/aiinfo";
 import { LOCAL_PILLAR, OUT_PILLAR, PLACES_HUB } from "./data/pillars";
 import { VEHICLE_FIT, USE, TERRAIN } from "./data/vehicles";
+import { VEHICLE_SEO } from "./data/vehicleSeo";
 import { categories, category, photoOf, vehiclesForPlace, northernPlaces, placesIn, livePlacesList } from "./links";
 import { graphFor, abs } from "./schema";
 
@@ -48,8 +49,8 @@ add({ path: "/", kind: "app", title: `Car Rental in Islamabad With Driver | ${BR
   description: fit(["Premium car rental with professional driver in Islamabad: airport transfers, family and business travel, weddings and trips to Murree, Hunza and Skardu.", CTA]),
   og: { a: "CAR RENTAL WITH DRIVER", b: "Islamabad, Pakistan", vehicle: "land-cruiser-v8" }, faqs: FAQS.slice(0, 8), breadcrumbs: [home],
   service: { type: "Car rental with driver", areas: ["Islamabad", "Rawalpindi", "Pakistan"] }, areaServed: PLACES.filter((p) => p.status === "live" && p.type === "location").map((p) => ({ "@type": "City", name: p.name })).slice(0, 20) });
-add({ path: "/cars", kind: "app", title: "Our Fleet: Cars With Professional Driver", h1: "Our Fleet: Cars With Professional Driver", priority: 0.9, breadcrumbs: [home, { name: "Fleet", path: "/cars" }],
-  description: fit(["Land Cruiser V8 and TZ, Prado, Hilux Revo, Honda Civic, Toyota Grande, Range Rover and Coaster, every vehicle with a professional driver in Islamabad.", CTA]),
+add({ path: "/cars", kind: "app", itemList: categories().map((c) => ({ name: c.title, path: `/cars/${c.slug}`, image: (photoOf(c) || {}).image })), title: "Our Fleet: Cars With Professional Driver", h1: "Our Fleet: Cars With Professional Driver", priority: 0.9, breadcrumbs: [home, { name: "Fleet", path: "/cars" }],
+  description: fit(["Land Cruiser, Lexus LX 570, Prado, Fortuner, G Wagon, Audi, Revo, Civic, Corolla and Coaster, each with a professional driver in Islamabad.", CTA]),
   og: { a: "OUR FLEET", b: "Every car with a professional driver", vehicle: "prado" } });
 add({ path: "/services", kind: "app", title: "Chauffeur & Car Rental Services Islamabad", h1: "Our Chauffeur and Car Rental Services", priority: 0.9, breadcrumbs: [home, { name: "Services", path: "/services" }],
   description: fit(["Airport transfers, chauffeur service, business and family travel, weddings, tours and long-distance trips, all with a professional driver in Islamabad.", CTA]),
@@ -64,18 +65,21 @@ add({ path: "/book", kind: "app", title: "Book a Car With Driver", h1: "Book Now
   description: "Book a premium car with professional driver in Islamabad. No account needed.", og: { a: "BOOK NOW", b: "Car with professional driver", vehicle: "prado" } });
 
 // ---------------------------------------------------------------- vehicles (/cars/<slug>: URLs unchanged, SEO value kept)
-const VEH_SEO = { "land-cruiser-v8": "Land Cruiser V8", "land-cruiser-tz": "Land Cruiser TZ", prado: "Prado", revo: "Hilux Revo", "honda-civic": "Honda Civic", "toyota-grande": "Toyota Corolla Grande", "range-rover": "Range Rover", coaster: "Toyota Coaster" };
+const VEH_SEO = { "land-cruiser-v8": "Land Cruiser V8", "land-cruiser-tz": "Land Cruiser TZ", prado: "Prado", revo: "Hilux Revo", "honda-civic": "Honda Civic", "toyota-grande": "Toyota Corolla Grande", "range-rover": "Range Rover", coaster: "Toyota Coaster", "lexus-lx-570": "Lexus LX 570", "mercedes-g-wagon": "Mercedes G Wagon", audi: "Audi", "toyota-fortuner": "Toyota Fortuner" };
+const BRANDS = { "honda-civic": "Honda", "range-rover": "Land Rover" };
 categories().forEach((c) => {
-  const nm = VEH_SEO[c.slug] || c.title;
+  const nm = VEH_SEO[c.slug] || c.title; const X = VEHICLE_SEO[c.slug];
   const uses = (VEHICLE_FIT[c.slug] || []).slice(0, 3).map((u) => USE[u].toLowerCase());
-  const faqs = [
+  const base = [
     { q: `Can I hire a ${nm} with a driver in Islamabad?`, a: `Yes. The ${nm} is provided with an experienced professional driver. ${photoOf(c) ? "" : "Photos are coming soon and it is available on request, so please contact us to confirm your date. "}Call or WhatsApp us with your date, pickup and destination for a quote.` },
     { q: `What is the ${nm} best suited for?`, a: `It is well suited to ${uses.join(", ")} and similar trips. See the routes and services listed on this page, or tell us your plan and we will confirm that it is the right vehicle.` },
     { q: `How do I book the ${nm}?`, a: `Use the Book Now form, call ${B.phoneDisplay} or message us on WhatsApp with your pickup, destination, date and number of passengers. Our team confirms availability and your quote.` },
   ];
-  add({ path: `/cars/${c.slug}`, kind: "vehicle", slug: c.slug, product: { brand: c.slug === "honda-civic" ? "Honda" : c.slug === "range-rover" ? "Land Rover" : "Toyota", name: c.title }, title: `${nm} Rental in Islamabad With Driver`, h1: `${c.title} – With Professional Driver`, priority: 0.8, faqs,
+  const faqs = X ? [...X.faqs, base[2]] : base;
+  const photos = c.vehicles.filter((v) => !v.placeholder);
+  add({ path: `/cars/${c.slug}`, kind: "vehicle", slug: c.slug, product: { brand: X ? X.brand : BRANDS[c.slug] || "Toyota", name: c.title, model: X ? X.model : undefined, alias: X ? X.alias : undefined, colors: photos.map((v) => v.color), images: photos.map((v) => v.image) }, title: (X && X.title) || `${nm} Rental in Islamabad With Driver`, h1: `${c.title} – With Professional Driver`, priority: 0.8, faqs,
     breadcrumbs: [home, { name: "Fleet", path: "/cars" }, { name: c.title, path: `/cars/${c.slug}` }],
-    description: fit([`${nm} with professional driver in Islamabad: ${uses.join(", ")}.`, `Photos, routes and booking.`, CTA]),
+    description: X ? X.desc : fit([`${nm} with professional driver in Islamabad: ${uses.join(", ")}.`, `Photos, routes and booking.`, CTA]),
     og: { a: c.title.toUpperCase(), b: "With professional driver · Islamabad", vehicle: c.slug },
     service: { type: "Car rental with driver", areas: ["Islamabad", "Rawalpindi", "Pakistan"] } });
 });

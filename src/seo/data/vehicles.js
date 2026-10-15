@@ -15,6 +15,10 @@ export const VEHICLE_FIT = {
   "range-rover": ["vip", "corporate", "wedding", "executive", "airport"],
   "honda-civic": ["city", "airport", "corporate", "executive", "couples", "short-distance"],
   "toyota-grande": ["family", "airport", "city", "corporate", "intercity"],
+  "lexus-lx-570": ["vip", "executive", "corporate", "wedding", "airport", "long-distance", "family"],
+  "mercedes-g-wagon": ["vip", "wedding", "executive", "city", "corporate", "airport"],
+  audi: ["executive", "airport", "corporate", "wedding", "city", "couples"],
+  "toyota-fortuner": ["family", "northern", "long-distance", "airport", "tourism", "mountain", "luggage"],
   coaster: ["groups", "family-groups", "corporate-groups", "tours", "events", "wedding-guests", "northern-group"],
 };
 // One short, honest sentence per vehicle used on route / service / location pages.
@@ -26,13 +30,17 @@ export const VEHICLE_PITCH = {
   "range-rover": "a VIP choice for executive, wedding and airport travel (available on request)",
   "honda-civic": "a refined sedan for city travel, airport transfers and executive journeys",
   "toyota-grande": "a comfortable sedan for family, airport, city and intercity travel",
+  "lexus-lx-570": "a full-size luxury SUV for VIP, executive, wedding and long-distance travel with a quiet, spacious cabin",
+  "mercedes-g-wagon": "an iconic luxury SUV for weddings, VIP arrivals, events and city travel (also searched as G Wagon, G Wagen or G Vegan)",
+  audi: "a sleek luxury car for executives, airport transfers, weddings and city travel, best kept to paved roads",
+  "toyota-fortuner": "a practical seven-seat SUV for families, airport pickups, hill roads and intercity journeys",
   coaster: "a group vehicle for families, tours, events and wedding guests (available on request)",
 };
 // Terrain -> default recommendation order (a place can override with its own `vehicles` list).
 export const TERRAIN = {
-  city:     { label: "city", vehicles: ["honda-civic", "toyota-grande", "prado", "land-cruiser-v8", "range-rover"], advice: "Sedans are the practical choice for city and airport runs; choose an SUV when you want more room or a more premium arrival." },
-  plains:   { label: "highway / motorway", vehicles: ["toyota-grande", "honda-civic", "prado", "land-cruiser-v8", "coaster"], advice: "On motorway and highway journeys comfort matters most: a sedan suits one to three passengers, an SUV suits families with luggage, and a Coaster suits groups." },
-  hills:    { label: "hill-road", vehicles: ["prado", "land-cruiser-v8", "revo", "toyota-grande", "coaster"], advice: "Hill roads are fine for a comfortable SUV; in winter, when snow or ice is possible, ask us about a 4x4 choice before you book." },
-  mountain: { label: "mountain-road", vehicles: ["prado", "land-cruiser-v8", "land-cruiser-tz", "revo", "coaster"], advice: "Mountain routes reward higher ground clearance and a driver who knows the road: an SUV or 4x4 is the sensible choice, and a Coaster works for larger groups on the main routes." },
-  extreme:  { label: "rough-road / 4x4", vehicles: ["revo", "land-cruiser-v8", "prado"], advice: "Some stretches here are rough, steep or seasonal. A 4x4 such as the Revo or Land Cruiser is the sensible choice, and some final legs use local jeeps." },
+  city:     { label: "city", vehicles: ["honda-civic", "toyota-grande", "audi", "prado", "toyota-fortuner", "land-cruiser-v8", "lexus-lx-570", "mercedes-g-wagon", "range-rover"], advice: "Sedans are the practical choice for city and airport runs; choose an SUV when you want more room or a more premium arrival." },
+  plains:   { label: "highway / motorway", vehicles: ["toyota-grande", "honda-civic", "prado", "toyota-fortuner", "land-cruiser-v8", "lexus-lx-570", "coaster"], advice: "On motorway and highway journeys comfort matters most: a sedan suits one to three passengers, an SUV suits families with luggage, and a Coaster suits groups." },
+  hills:    { label: "hill-road", vehicles: ["prado", "toyota-fortuner", "land-cruiser-v8", "revo", "toyota-grande", "coaster"], advice: "Hill roads are fine for a comfortable SUV; in winter, when snow or ice is possible, ask us about a 4x4 choice before you book." },
+  mountain: { label: "mountain-road", vehicles: ["prado", "toyota-fortuner", "land-cruiser-v8", "land-cruiser-tz", "revo", "coaster"], advice: "Mountain routes reward higher ground clearance and a driver who knows the road: an SUV or 4x4 is the sensible choice, and a Coaster works for larger groups on the main routes." },
+  extreme:  { label: "rough-road / 4x4", vehicles: ["revo", "land-cruiser-v8", "prado", "toyota-fortuner"], advice: "Some stretches here are rough, steep or seasonal. A 4x4 such as the Revo or Land Cruiser is the sensible choice, and some final legs use local jeeps." },
 };

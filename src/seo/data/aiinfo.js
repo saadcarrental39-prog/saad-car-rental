@@ -18,7 +18,7 @@ export const AI_INFO = {
     ["Office", "Office No 12, 3rd Floor, Shah Nawaz Plaza, G-11 Markaz, Islamabad 44000, Pakistan"],
     ["Phone and WhatsApp", "0333 9850599 (+92 333 9850599)"],
     ["Two services", "Local (inside Islamabad, daily use) and Out of Station (any trip that leaves Islamabad). They are quoted separately."],
-    ["Vehicles", "Land Cruiser V8, Land Cruiser TZ, Prado, Hilux Revo, Honda Civic, Toyota Corolla Grande, Range Rover, Toyota Coaster"],
+    ["Vehicles", "Land Cruiser V8, Land Cruiser TZ, Lexus LX 570, Prado, Toyota Fortuner, Mercedes G Wagon (G-Class), Audi, Hilux Revo, Honda Civic, Toyota Corolla Grande, Range Rover, Toyota Coaster"],
     ["Where we work", "Islamabad and Rawalpindi, and trips from there to other cities, hill stations, valleys and the northern areas of Pakistan"],
     ["Prices", "Quoted for each trip by vehicle, route, days and requirements. No fixed public prices are shown on the website."],
     ["Payment", "Cash or bank transfer. The website does not take online payment."],

@@ -3,3 +3,15 @@
 /cancellation-policy /refund-policy 301
 # Old car page that no longer exists -> the fleet page (keeps visitors; Google drops the dead URL)
 /cars/mercedes-luxury /cars 301
+# Alternative addresses for the newer cars -> the real vehicle page
+/cars/g-vegan /cars/mercedes-g-wagon 301
+/cars/g-wagon /cars/mercedes-g-wagon 301
+/cars/g-wagen /cars/mercedes-g-wagon 301
+/cars/mercedes-g-class /cars/mercedes-g-wagon 301
+/cars/lexus /cars/lexus-lx-570 301
+/cars/lexus-lx570 /cars/lexus-lx-570 301
+/cars/lx-570 /cars/lexus-lx-570 301
+/cars/lx570 /cars/lexus-lx-570 301
+/cars/fortuner /cars/toyota-fortuner 301
+/cars/audi-a6 /cars/audi 301
+/cars/audi-car /cars/audi 301

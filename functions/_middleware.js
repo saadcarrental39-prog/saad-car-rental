@@ -10,7 +10,7 @@
 const ADMIN = "/saad-owner-7k3x9";
 const PASS = [/^\/api\//, /^\/r\//, /^\/receipt$/, /^\/\.well-known\//, new RegExp(`^${ADMIN}(/|$)`)];   // handled by their own functions / the admin app
 // old addresses (same list as public/_redirects, repeated here so the order of the two features never matters)
-const LEGACY = { "/terms-and-conditions": "/terms-of-service", "/cancellation-policy": "/refund-policy", "/cars/mercedes-luxury": "/cars" };
+const LEGACY = { "/terms-and-conditions": "/terms-of-service", "/cancellation-policy": "/refund-policy", "/cars/mercedes-luxury": "/cars", "/cars/g-vegan": "/cars/mercedes-g-wagon", "/cars/g-wagon": "/cars/mercedes-g-wagon", "/cars/g-wagen": "/cars/mercedes-g-wagon", "/cars/mercedes-g-class": "/cars/mercedes-g-wagon", "/cars/lexus": "/cars/lexus-lx-570", "/cars/lexus-lx570": "/cars/lexus-lx-570", "/cars/lx-570": "/cars/lexus-lx-570", "/cars/lx570": "/cars/lexus-lx-570", "/cars/fortuner": "/cars/toyota-fortuner", "/cars/audi-a6": "/cars/audi", "/cars/audi-car": "/cars/audi" };
 const FALLBACK_HOST = "www.saadcarremtal.com";
 
 let known = null, knownAt = 0;

@@ -25,7 +25,7 @@ export const AUDIENCES = [
     arrival: "Share your flight number and landing time when you book. Tell us how many people are travelling and how much luggage you carry so we can suggest a sedan, an SUV or a Coaster. If your flight is delayed, message us on WhatsApp so the driver can adjust.",
     tripsTitle: "Popular trips for visitors",
     trips: ["hunza", "skardu", "fairy-meadows", "swat", "naran", "murree", "lahore", "attabad-lake"],
-    vehicles: ["land-cruiser-v8", "land-cruiser-tz", "prado", "range-rover", "revo", "coaster"],
+    vehicles: ["land-cruiser-v8", "land-cruiser-tz", "lexus-lx-570", "prado", "toyota-fortuner", "mercedes-g-wagon", "range-rover", "revo", "coaster"],
     adviceTitle: "Plan ahead and book in advance",
     advice: [
       "Mountain roads and weather change with the season, so tell us your dates early and we confirm the right vehicle and a realistic plan.",
@@ -64,7 +64,7 @@ export const AUDIENCES = [
     arrival: "Send your flight number, landing time, the address you are going to and the number of passengers and bags. Our team confirms the vehicle and driver. If your flight changes, message us on WhatsApp and we adjust the pickup.",
     tripsTitle: "Trips overseas families often plan",
     trips: ["murree", "naran", "swat", "hunza", "lahore", "peshawar", "nathia-gali", "kalam"],
-    vehicles: ["prado", "land-cruiser-v8", "toyota-grande", "honda-civic", "coaster", "range-rover"],
+    vehicles: ["prado", "toyota-fortuner", "land-cruiser-v8", "lexus-lx-570", "mercedes-g-wagon", "audi", "toyota-grande", "honda-civic", "coaster", "range-rover"],
     adviceTitle: "Book early, especially in holiday and wedding season",
     advice: [
       "Eid, school holidays and wedding season are busy, so send your dates as early as you can and we confirm the vehicle you want.",
