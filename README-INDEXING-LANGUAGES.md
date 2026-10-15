@@ -48,3 +48,10 @@ Cloudflare variable (optional): `CANONICAL_HOST` = `www.saadcarremtal.com` (defa
 ## Google Analytics (GA4)
 Measurement ID G-4X8SSHV3BG is set in src/business.config.js (analytics.ga4). It loads only after the visitor presses Accept in the cookie notice.
 To change it later, edit that one value (or set VITE_GA4_ID in Cloudflare, which wins over the file). Check: Analytics > Reports > Realtime.
+
+## Update (15 Oct 2026): 3 pages "Crawled - currently not indexed"
+Pages: `/services/islamabad-rawalpindi-transportation`, `/routes/islamabad-to-faisalabad`, `/routes/islamabad-to-murree`.
+Technically they were correct (canonical, sitemap, 200). Google judged them too similar to other pages, so each got its own text:
+- `src/seo/data/routes.js` -> new `EXTRA` paragraphs (shown in "About the journey"); `src/seo/data/services.js` -> `more` + `moreTitle` + 3 extra FAQs for the twin-city service.
+- `src/seo/pages.jsx` shows `r.extra` / `s.more`; `src/seo/quality.js` counts them in the uniqueness score.
+After deploy: Search Console -> URL Inspection -> Request indexing for these 3 URLs (no trailing slash).

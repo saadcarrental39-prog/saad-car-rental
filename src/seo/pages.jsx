@@ -81,7 +81,7 @@ export function RoutePage({ slug }) {
   return (<>
     <Hero eyebrow={`Route · ${T.label.replace(/-/g, " ")}`} h1={pageByPath(path).h1} lead={`Islamabad to ${p.name} with a professional driver. ${p.plan}`} crumbs={crumbsOf(path)} />
     <Sec id="answer" title={`Islamabad to ${p.name}: the short answer`}><Answer q={`Do you provide a car with driver from Islamabad to ${p.name}?`}>{`Yes. SAAD CAR RENTAL SERVICES provides a car with professional driver from Islamabad or Rawalpindi to ${p.name}. Tell us your date, pickup address and passengers by WhatsApp or phone and we confirm the vehicle and quote.`}</Answer></Sec>
-    <Sec id="journey" title="About the journey" tone="grey"><p>{r.note}</p><p>{p.road}</p><p>{p.season}</p></Sec>
+    <Sec id="journey" title="About the journey" tone="grey"><p>{r.note}</p>{(r.extra || []).map((t, i) => <p key={i}>{t}</p>)}<p>{p.road}</p><p>{p.season}</p></Sec>
     <Sec id="vehicle" title={`Best vehicles for Islamabad to ${p.name}`}><p>{T.advice}</p><VehicleStrip cats={veh} /></Sec>
     <Sec id="formats" title="One-way, round trip or multi-day" tone="grey">
       <ul className="sx-list">
@@ -106,6 +106,7 @@ export function ServicePage({ slug }) {
     <Hero eyebrow="Service" h1={s.h1} lead={s.intro} crumbs={crumbsOf(path)} />
     <Sec id="answer" title={`What is the ${s.name.toLowerCase()} service?`}><Answer q="In short:">{`${s.name} with SAAD CAR RENTAL SERVICES means a premium vehicle with an experienced professional driver, arranged around your plan. We are based in Islamabad (G-11 Markaz). Call, WhatsApp or use Book Now for a quote.`}</Answer></Sec>
     <Sec id="incl" title="What you can expect" tone="grey"><Bullets items={s.points} /></Sec>
+    {s.more && <Sec id="detail" title={s.moreTitle || "Good to know"}>{s.more.map((t, i) => <p key={i}>{t}</p>)}</Sec>}
     <Sec id="vehicles" title="Vehicles for this service"><VehicleStrip cats={veh} /></Sec>
     <Sec id="where" title="Where we provide it" tone="grey"><LinkCards items={s.places.map(place).filter(Boolean).map((p) => ({ to: p.basis === "base" || p.slug === "rawalpindi" ? placePath(p) : tripPath(p), title: p.name, text: p.highlights[0] }))} /></Sec>
     <Sec id="how" title="How to book"><Steps items={BOOKING_STEPS} /></Sec>

@@ -19,7 +19,20 @@ const NOTES = {
  "skardu": "Skardu is reached by the Karakoram Highway and then a turn onto the Skardu road along the Indus, which makes the journey long and scenic. Tell us whether you want the vehicle to stay with you in Skardu or return, and whether you need side trips to Shigar, Khaplu or Deosai, and we will quote it accordingly.",
  "muzaffarabad": "The road to Muzaffarabad climbs through the hills near Murree and then descends toward the Jhelum River, so it is slower than the distance suggests. Many guests treat it as a day trip, while others use it as the first leg toward Neelum Valley. Share your plan and we will quote the full journey."
 };
-export const ROUTES = ROUTE_PLACES.map((to) => ({ slug: `islamabad-to-${to}`, from: "islamabad", to, status: "live", note: NOTES[to] }));
+// Extra route-specific paragraphs (optional). Only practical, non-price, non-promise information that is specific to this one trip.
+const EXTRA = {
+ "faisalabad": [
+  "Faisalabad is roughly 300 km from Islamabad and the drive normally takes about four hours, usually by motorway through the Pindi Bhattian link. Plan a little more time for the last stretch inside the city, because traffic around the main bazaars, industrial areas and Jaranwala Road can slow a short distance down.",
+  "Most of our Faisalabad bookings are business days: a morning departure from Islamabad or Rawalpindi, meetings or factory visits, and a return the same evening. If you expect to finish late, tell us when you book so the driver is rested and the return time is realistic. In winter, fog on the motorway can delay or interrupt travel in the early morning and late evening, so we suggest daytime travel between December and January where you can.",
+  "For weddings and family visits the pattern is different: one vehicle takes the family to Faisalabad, stays through the event and brings everyone back on the day you choose, or the vehicle returns empty and you book the way back separately. Faisalabad is also a convenient first stop for guests continuing towards Lahore or Multan, and we can quote that as one connected trip."
+ ],
+ "murree": [
+  "Murree is roughly 60 km from Islamabad, and in light traffic the drive takes about an hour and a half. On summer weekends, Eid holidays and snow days the same road can take twice as long, so the time you leave matters more than the distance. Leaving before the morning rush, and starting the return before late afternoon, is the simplest way to avoid the longest queues.",
+  "In winter, snowfall can slow or close sections of the hill road for a while. If you are travelling to see snow, tell us your dates and we will discuss the road situation with you before the trip, and the driver will decide on the day whether the route is safe to continue. A driver who knows the bends and the local parking areas near Mall Road also saves the stress of finding a place to stop on a busy day.",
+  "Murree works well as a day trip with the driver waiting for you, as an overnight stay, or as the first stage of a longer journey towards Nathia Gali, Muzaffarabad or Abbottabad. Families usually ask for an SUV with space for coats, children and shopping bags; groups often choose the Coaster. Share your group size and plan and we will suggest the vehicle."
+ ]
+};
+export const ROUTES = ROUTE_PLACES.map((to) => ({ slug: `islamabad-to-${to}`, from: "islamabad", to, status: "live", note: NOTES[to], extra: EXTRA[to] || [] }));
 
 // Planned only: data for the owner to confirm. No pages, not in the sitemap, not linked.
 const OTHER_ORIGINS = ["lahore", "peshawar", "faisalabad", "multan"];

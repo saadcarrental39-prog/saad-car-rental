@@ -13,8 +13,8 @@ export function uniqueText(page) {
   const faq = (page.faqs || []).map((f) => `${f.q} ${f.a}`).join(" ");
   if (page.kind === "location") { const p = place(page.slug); return [p.intro, p.highlights.join(" "), p.audience.join(" "), faq].join(" "); }
   if (page.kind === "destination") { const p = place(page.slug); return [p.intro, p.highlights.join(" "), p.road, p.season, p.plan, faq].join(" "); }
-  if (page.kind === "route") { const r = route(page.slug); const p = place(r.to); return [r.note, p.plan, p.road, p.season].join(" "); }
-  if (page.kind === "service") { const s = SERVICE_PAGES.find((x) => x.slug === page.slug); return [s.intro, s.points.join(" "), faq].join(" "); }
+  if (page.kind === "route") { const r = route(page.slug); const p = place(r.to); return [r.note, (r.extra || []).join(" "), p.plan, p.road, p.season].join(" "); }
+  if (page.kind === "service") { const s = SERVICE_PAGES.find((x) => x.slug === page.slug); return [s.intro, s.points.join(" "), (s.more || []).join(" "), faq].join(" "); }
   if (page.kind === "vehicle") { const c = category(page.slug); return [c.description, c.vehicles.map((v) => v.description).join(" "), faq].join(" "); }
   return faq;
 }
