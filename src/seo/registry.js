@@ -54,7 +54,7 @@ add({ path: "/cars", kind: "app", itemList: categories().map((c) => ({ name: c.t
   og: { a: "OUR FLEET", b: "Every car with a professional driver", vehicle: "prado" } });
 add({ path: "/services", kind: "app", title: "Chauffeur & Car Rental Services Islamabad", h1: "Our Chauffeur and Car Rental Services", priority: 0.9, breadcrumbs: [home, { name: "Services", path: "/services" }],
   description: fit(["Airport transfers, chauffeur service, business and family travel, weddings, tours and long-distance trips, all with a professional driver in Islamabad.", CTA]),
-  og: { a: "OUR SERVICES", b: "Airport · Business · Family · Weddings · Tours", vehicle: "land-cruiser-tz" } });
+  og: { a: "OUR SERVICES", b: "Airport · Business · Family · Weddings · Tours", vehicle: "premium-luxury-land-cruiser" } });
 add({ path: "/about", kind: "about", title: "About Us: Chauffeur Car Rental in Islamabad", h1: "About SAAD CAR RENTAL SERVICES", priority: 0.6, breadcrumbs: [home, { name: "About", path: "/about" }],
   description: fit([`${B.businessName} has provided premium car rental with professional drivers in Islamabad for ${B.years} years. Rated ${B.rating} on Google from ${B.reviewCount} reviews.`]),
   og: { a: "ABOUT US", b: `${B.years} years in Islamabad`, vehicle: "land-cruiser-v8" } });
@@ -65,7 +65,7 @@ add({ path: "/book", kind: "app", title: "Book a Car With Driver", h1: "Book Now
   description: "Book a premium car with professional driver in Islamabad. No account needed.", og: { a: "BOOK NOW", b: "Car with professional driver", vehicle: "prado" } });
 
 // ---------------------------------------------------------------- vehicles (/cars/<slug>: URLs unchanged, SEO value kept)
-const VEH_SEO = { "land-cruiser-v8": "Land Cruiser V8", "land-cruiser-tz": "Land Cruiser TZ", prado: "Prado", revo: "Hilux Revo", "honda-civic": "Honda Civic", "toyota-grande": "Toyota Corolla Grande", "range-rover": "Range Rover", coaster: "Toyota Coaster", "lexus-lx-570": "Lexus LX 570", "mercedes-g-wagon": "Mercedes G Wagon", audi: "Audi", "toyota-fortuner": "Toyota Fortuner" };
+const VEH_SEO = { "land-cruiser-v8": "Land Cruiser V8 2018 Model", "premium-luxury-land-cruiser": "Premium Luxury Land Cruiser", prado: "Prado", revo: "Hilux Revo", "honda-civic": "Honda Civic", "toyota-grande": "Toyota Corolla Grande", "range-rover": "Range Rover", coaster: "Toyota Coaster", "lexus-lx-570": "Lexus LX 570", "mercedes-g-wagon": "Mercedes G Wagon", audi: "Audi", "toyota-fortuner": "Toyota Fortuner" };
 const BRANDS = { "honda-civic": "Honda", "range-rover": "Land Rover" };
 categories().forEach((c) => {
   const nm = VEH_SEO[c.slug] || c.title; const X = VEHICLE_SEO[c.slug];

@@ -15,3 +15,9 @@
 /cars/fortuner /cars/toyota-fortuner 301
 /cars/audi-a6 /cars/audi 301
 /cars/audi-car /cars/audi 301
+# Land Cruiser pages renamed -> new pages
+/cars/land-cruiser-tz /cars/premium-luxury-land-cruiser 301
+/cars/premium-land-cruiser /cars/premium-luxury-land-cruiser 301
+/cars/land-cruiser-2025 /cars/premium-luxury-land-cruiser 301
+/cars/land-cruiser-v8-2018 /cars/land-cruiser-v8 301
+/cars/land-cruiser-2018 /cars/land-cruiser-v8 301

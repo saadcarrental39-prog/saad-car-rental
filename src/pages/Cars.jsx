@@ -7,7 +7,7 @@ import { imgSet } from "../imgset";
 import { useT } from "../i18n";
 
 // Which filter tab each category belongs to (add a new category slug here when you add a car in fleet.js).
-const TYPE = { "land-cruiser-v8": "SUV", "land-cruiser-tz": "SUV", prado: "SUV", "range-rover": "SUV", "lexus-lx-570": "SUV", "mercedes-g-wagon": "SUV", "toyota-fortuner": "SUV", audi: "Sedan", revo: "Pickup", "honda-civic": "Sedan", "toyota-grande": "Sedan", coaster: "Van / Coaster" };
+const TYPE = { "land-cruiser-v8": "SUV", "premium-luxury-land-cruiser": "SUV", prado: "SUV", "range-rover": "SUV", "lexus-lx-570": "SUV", "mercedes-g-wagon": "SUV", "toyota-fortuner": "SUV", audi: "Sedan", revo: "Pickup", "honda-civic": "Sedan", "toyota-grande": "Sedan", coaster: "Van / Coaster" };
 const TABS = ["All", "SUV", "Sedan", "Pickup", "Van / Coaster"];
 
 // Swatch colour from the colour NAME in fleet.js (so the dot always matches the car it shows).

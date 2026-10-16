@@ -4,9 +4,15 @@ import { place } from "./data/places";
 import { route } from "./data/routes";
 import { SERVICE_PAGES } from "./data/services";
 import { category } from "./links";
+import { baseFleet } from "../data/fleet";
 
 export const MIN_SCORE = 80;
-export const FORBIDDEN = [/\bRs\.?\s?\d/i, /\bPKR\s?\d/i, /\$\s?\d/, /guarantee/i, /\bbest price\b/i, /\b#\s?1\b/, /\bcheapest\b/i, /\bto be confirmed\b/i, /\[BUSINESS CONFIRMATION/i];
+// Prices are allowed ONLY when they are the rent set in src/data/fleet.js (the owner's own per-day rate shown on the car card).
+// Any other "Rs 12345" figure still fails the build, so an invented or stale price cannot slip into a page.
+const OWN_PRICES = [...new Set(baseFleet.flatMap((c) => c.vehicles.map((v) => v.price)).filter(Boolean))]
+  .flatMap((n) => [String(n), n.toLocaleString("en-US"), n.toLocaleString("en-PK")]);
+const OWN = OWN_PRICES.length ? `(?!(?:${[...new Set(OWN_PRICES)].join("|")})\\b)` : "";
+export const FORBIDDEN = [new RegExp(`\\bRs\\.?\\s?${OWN}\\d`, "i"), /\bPKR\s?\d/i, /\$\s?\d/, /guarantee/i, /\bbest price\b/i, /\b#\s?1\b/, /\bcheapest\b/i, /\bto be confirmed\b/i, /\[BUSINESS CONFIRMATION/i];
 
 // The text that is specific to ONE page (not shared template text). Used to measure real uniqueness between pages.
 export function uniqueText(page) {

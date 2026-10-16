@@ -126,11 +126,31 @@ export const SETS = {
   680,
   805
  ],
+ "land-cruiser-premium-black": [
+  480,
+  620,
+  680,
+  805
+ ],
  "land-cruiser-tz-black": [
   480,
   620,
   680,
   805
+ ],
+ "land-cruiser-v8-2018-black": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
+ "land-cruiser-v8-2018-white": [
+  480,
+  620,
+  680,
+  800,
+  1200
  ],
  "land-cruiser-v8-white": [
   480,

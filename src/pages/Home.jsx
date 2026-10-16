@@ -13,7 +13,7 @@ import { imgSet, CARD_SIZES } from "../imgset";
 import { useT } from "../i18n";
 const featured = allVehicles.filter((v) => !v.placeholder);
 // One showroom per row. To add a car later: add its images in fleet.js and put its category slug in a row here.
-const ROOMS = [["Land Cruiser", ["land-cruiser-v8", "land-cruiser-tz"]], ["Lexus LX 570", ["lexus-lx-570"]], ["Prado", ["prado"]], ["Toyota Fortuner", ["toyota-fortuner"]], ["Mercedes G Wagon", ["mercedes-g-wagon"]], ["Audi", ["audi"]], ["Revo", ["revo"]], ["Honda Civic", ["honda-civic"]], ["Toyota Grande", ["toyota-grande"]]];
+const ROOMS = [["Premium Luxury Land Cruiser", ["premium-luxury-land-cruiser"]], ["Land Cruiser V8 2018 Model", ["land-cruiser-v8"]], ["Lexus LX 570", ["lexus-lx-570"]], ["Prado", ["prado"]], ["Toyota Fortuner", ["toyota-fortuner"]], ["Mercedes G Wagon", ["mercedes-g-wagon"]], ["Audi", ["audi"]], ["Revo", ["revo"]], ["Honda Civic", ["honda-civic"]], ["Toyota Grande", ["toyota-grande"]]];
 const roomCars = (slugs) => fleet.filter((c) => slugs.includes(c.slug)).flatMap((c) => c.vehicles).filter((v) => !v.placeholder);
 export default function Home() {
   useSeo(); const t = useT();

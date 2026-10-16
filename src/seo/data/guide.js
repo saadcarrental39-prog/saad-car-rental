@@ -55,8 +55,8 @@ export const GUIDE = {
     {
       id: "cars", title: "The cars you can hire",
       intro: "Choose by group size, luggage and the kind of road. Each vehicle comes with a professional driver.",
-      phrases: ["Land Cruiser V8 rental with driver", "Land Cruiser TZ on rent", "Toyota Prado rent a car", "Hilux Revo on rent", "Honda Civic with driver", "Toyota Corolla Grande with driver", "Range Rover rental with driver", "Toyota Coaster on rent Islamabad", "Lexus LX 570 on rent Islamabad", "Toyota Fortuner rent a car", "Mercedes G Wagon on rent", "G Vegan rental Islamabad", "Audi rent a car with driver"],
-      cards: [{ vehicle: "land-cruiser-v8" }, { vehicle: "land-cruiser-tz" }, { vehicle: "prado" }, { vehicle: "revo" }, { vehicle: "honda-civic" }, { vehicle: "toyota-grande" }, { vehicle: "lexus-lx-570" }, { vehicle: "toyota-fortuner" }, { vehicle: "mercedes-g-wagon" }, { vehicle: "audi" }, { vehicle: "range-rover" }, { vehicle: "coaster" }],
+      phrases: ["Land Cruiser V8 2018 model rental with driver", "Premium Luxury Land Cruiser on rent", "Toyota Prado rent a car", "Hilux Revo on rent", "Honda Civic with driver", "Toyota Corolla Grande with driver", "Range Rover rental with driver", "Toyota Coaster on rent Islamabad", "Lexus LX 570 on rent Islamabad", "Toyota Fortuner rent a car", "Mercedes G Wagon on rent", "G Vegan rental Islamabad", "Audi rent a car with driver"],
+      cards: [{ vehicle: "land-cruiser-v8" }, { vehicle: "premium-luxury-land-cruiser" }, { vehicle: "prado" }, { vehicle: "revo" }, { vehicle: "honda-civic" }, { vehicle: "toyota-grande" }, { vehicle: "lexus-lx-570" }, { vehicle: "toyota-fortuner" }, { vehicle: "mercedes-g-wagon" }, { vehicle: "audi" }, { vehicle: "range-rover" }, { vehicle: "coaster" }],
     },
     {
       id: "urdu", title: "Search in Urdu or Roman Urdu",
@@ -68,7 +68,7 @@ export const GUIDE = {
   faqs: [
     f("Do you rent cars without a driver in Pakistan?", "No. Every vehicle is provided with an experienced professional driver, so you do not drive yourself. This suits visitors, families and business travellers who want a comfortable and safe journey."),
     f("How do I rent a car with a driver in Islamabad?", "Call 0333 9850599, message us on WhatsApp or use the Book Now form with your pickup, destination, date and number of passengers. We confirm the vehicle and reply with a quote for your trip."),
-    f("Which cars can I hire in Islamabad?", "Land Cruiser V8, Land Cruiser TZ, Lexus LX 570, Prado, Toyota Fortuner, Mercedes G Wagon, Audi, Hilux Revo, Honda Civic, Toyota Corolla Grande, Range Rover and a Toyota Coaster for groups, each with a professional driver."),
+    f("Which cars can I hire in Islamabad?", "Premium Luxury Land Cruiser (2025 model), Land Cruiser V8 (2018 model), Lexus LX 570, Prado, Toyota Fortuner, Mercedes G Wagon, Audi, Hilux Revo, Honda Civic, Toyota Corolla Grande, Range Rover and a Toyota Coaster for groups, each with a professional driver."),
     f("Can I book a car from Islamabad airport?", "Yes. Share your flight number, landing time, number of passengers and luggage and we arrange the pickup. You can also book a drop to the airport."),
     f("Which car is best for Hunza, Skardu or Naran?", "An SUV or 4x4 such as the Land Cruiser, Prado or Hilux Revo is the sensible choice for mountain roads. A Coaster suits larger groups on the main routes."),
     f("Do you drive to Lahore, Peshawar and other cities?", "Yes. We provide chauffeur-driven trips from Islamabad and Rawalpindi to Lahore, Peshawar, Faisalabad, Multan and other cities, one way or round trip."),
