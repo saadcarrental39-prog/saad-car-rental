@@ -1,10 +1,9 @@
 // "Car rental with driver in Pakistan: search guide". A VISIBLE page that helps people (and search engines) match what they type into Google
 // with the right page on this site.
 //
-// HOW TO ADD A SEARCH PHRASE:  add the words to the `phrases` list of the best-fitting group below, rebuild (npm run build / update.bat).
-// The page, its FAQ data, the sitemap and the internal links update by themselves. Phrases are shown to visitors on purpose:
-// hidden text (white-on-white, tiny text, code-only keywords) is treated as spam by Google and can get the whole site removed from search.
-// Only add phrases that describe a service we really provide (a car with a professional driver). Cards use place / service / vehicle
+// NOTE (Oct 2026 SEO audit): the `phrases` lists are NO LONGER shown on the page. Long blocks of raw search phrases look like keyword stuffing.
+// The page now shows natural sentences, cards and FAQs; write new content as sentences (intro / cards / faqs), not as phrase lists.
+// Never hide keywords (white-on-white, tiny text, code-only): Google treats that as spam. Cards use place / service / vehicle
 // slugs; a place that is not "live" is skipped automatically.
 const f = (q, a) => ({ q, a });
 

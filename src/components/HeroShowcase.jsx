@@ -31,7 +31,7 @@ export default function HeroShowcase({ images }) {
   return (
     <div className="hero__show" role="img" aria-label={cur.alt}>
       <div key={idx} ref={box} className={`hero__slide${isFirst ? " hero__slide--first" : ""}`}>
-        <img src={cur.src} {...s} alt="" width="805" height="510" decoding="async" {...(idx === 0 ? { fetchpriority: "high" } : {})} />
+        <img src={cur.src} {...s} alt={cur.alt} width="805" height="510" decoding="async" {...(idx === 0 ? { fetchpriority: "high" } : {})} />
       </div>
     </div>
   );

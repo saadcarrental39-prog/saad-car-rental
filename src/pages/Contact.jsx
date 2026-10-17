@@ -1,3 +1,4 @@
+import { BUSINESS } from "../business.config";
 import { COUNTRIES, DIAL, normPhone, phoneOk } from "../components/TripForm";
 import { useEffect, useState } from "react";
 import { SITE, telHref, waHref } from "../config";
@@ -117,6 +118,22 @@ export default function Contact() {
             <a className="ct-card" href={SITE.maps} target="_blank" rel="noopener noreferrer">
               <span className="ct-ico">{Ico.pin}</span>
               <span><small>{t("Visit our office")}</small><strong>{SITE.address.slice(0, 3).join(" ").replace(/,\s*$/, "")}</strong><em>{SITE.address.slice(3).join(" ").replace(/,\s*$/, "")}</em></span>
+            </a>
+            {BUSINESS.email && (
+              <a className="ct-card" href={`mailto:${BUSINESS.email}`}>
+                <span className="ct-ico">{Ico.chat}</span>
+                <span><small>{t("Email")}</small><strong>{BUSINESS.email}</strong><em>{t("Send us your trip details in writing")}</em></span>
+              </a>
+            )}
+            {BUSINESS.businessHours && BUSINESS.businessHours.length > 0 && (
+              <div className="ct-card" role="group" aria-label="Opening hours">
+                <span className="ct-ico">{Ico.pin}</span>
+                <span><small>{t("Opening hours")}</small>{BUSINESS.businessHours.map((h) => <strong key={h.days.join()}>{h.days.join(", ")}: {h.opens} to {h.closes}</strong>)}</span>
+              </div>
+            )}
+            <a className="ct-card" href={SITE.reviewsUrl} target="_blank" rel="noopener noreferrer">
+              <span className="ct-ico">{Ico.check}</span>
+              <span><small>{t("Google reviews")}</small><strong>{SITE.rating} ★ · {SITE.reviewCount}</strong><em>{t("Read what customers say")}</em></span>
             </a>
           </aside>
 

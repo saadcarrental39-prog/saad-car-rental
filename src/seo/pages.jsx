@@ -15,8 +15,11 @@ import { AI_INFO } from "./data/aiinfo";
 import { SPOTS, LOCAL_GROUPS, AREAS, spot } from "./data/islamabad";
 import { LOCAL_PILLAR, OUT_PILLAR, PLACES_HUB } from "./data/pillars";
 import { TERRAIN, VEHICLE_FIT, USE } from "./data/vehicles";
+import { baseFleet } from "../data/fleet";
 import { categories, category, vehiclesForPlace, servicesForPlace, servicesForVehicle, placesForVehicle, nearby, routeFor, routePath, tripPath, tripLabel, northernPlaces, placesIn, livePlacesList, photoOf } from "./links";
-import { Hero, Cta, Answer, Sec, Faq, Chips, Bullets, LinkCards, VehicleStrip, Steps, BOOKING_STEPS } from "./blocks";
+import { Hero, Cta, Answer, Sec, Faq, Chips, Bullets, LinkCards, VehicleStrip, Steps, BOOKING_STEPS, Updated, DataTable, PriceGuide, Crumbs } from "./blocks";
+import { factRows, ratesOf, seatsOf, similarCars, rs } from "./data/vehicleFacts";
+import { GUIDES, GUIDES_HUB, guide, TERMS_ROWS } from "./data/articles";
 
 const crumbsOf = (path) => (pageByPath(path) || { breadcrumbs: [] }).breadcrumbs;
 const placeCard = (p) => ({ to: placePath(p), title: p.name, text: p.highlights[0] });
@@ -53,7 +56,7 @@ export function LocationPage({ slug }) {
 export function DestinationPage({ slug }) {
   const p = place(slug); const path = placePath(p); const veh = vehiclesForPlace(p); const near = nearby(p); const svc = servicesForPlace(p);
   return (<>
-    <Hero eyebrow={p.area ? `${p.area} · ${PROVINCES[p.province].name}` : PROVINCES[p.province].name} h1={pageByPath(path).h1} lead={p.intro} crumbs={crumbsOf(path)} />
+    <Hero eyebrow={p.area ? `${p.area} · ${PROVINCES[p.province].name}` : PROVINCES[p.province].name} h1={pageByPath(path).h1} lead={p.intro} crumbs={crumbsOf(path)}><Updated /></Hero>
     <Sec id="answer" title={`Can I hire a car with driver to ${nm(p)}?`}><Answer q="Short answer: yes.">{`SAAD CAR RENTAL SERVICES is based in Islamabad and provides a car with professional driver from Islamabad or Rawalpindi to ${p.name}. ${p.plan}`}</Answer></Sec>
     <Sec id="see" title={`What to expect at ${nm(p)}`}><Bullets items={p.highlights} /><h3 className="sx-h3">Who books this</h3><Chips items={p.audience} /></Sec>
     <Sec id="road" title="Road and journey" tone="grey"><p>{p.road}</p></Sec>
@@ -79,7 +82,7 @@ export function RoutePage({ slug }) {
     { q: `Which vehicle should I choose for ${p.name}?`, a: `${T.advice} Tell us your group size and luggage and we will confirm the best choice for your date.` },
   ];
   return (<>
-    <Hero eyebrow={`Route · ${T.label.replace(/-/g, " ")}`} h1={pageByPath(path).h1} lead={`Islamabad to ${p.name} with a professional driver. ${p.plan}`} crumbs={crumbsOf(path)} />
+    <Hero eyebrow={`Route · ${T.label.replace(/-/g, " ")}`} h1={pageByPath(path).h1} lead={`Islamabad to ${p.name} with a professional driver. ${p.plan}`} crumbs={crumbsOf(path)}><Updated /></Hero>
     <Sec id="answer" title={`Islamabad to ${p.name}: the short answer`}><Answer q={`Do you provide a car with driver from Islamabad to ${p.name}?`}>{`Yes. SAAD CAR RENTAL SERVICES provides a car with professional driver from Islamabad or Rawalpindi to ${p.name}. Tell us your date, pickup address and passengers by WhatsApp or phone and we confirm the vehicle and quote.`}</Answer></Sec>
     <Sec id="journey" title="About the journey" tone="grey"><p>{r.note}</p>{(r.extra || []).map((t, i) => <p key={i}>{t}</p>)}<p>{p.road}</p><p>{p.season}</p></Sec>
     <Sec id="vehicle" title={`Best vehicles for Islamabad to ${p.name}`}><p>{T.advice}</p><VehicleStrip cats={veh} /></Sec>
@@ -93,6 +96,7 @@ export function RoutePage({ slug }) {
     <Sec id="related" title="Related pages" tone="grey">
       <LinkCards items={[{ to: placePath(p), title: `Car rental in ${p.name}`, text: "About the destination and how we serve it" }, ...near.slice(0, 3).map((x) => ({ to: tripPath(x), title: tripLabel(x) })), ...servicesForPlace(p).slice(0, 2).map(svcCard)]} />
     </Sec>
+    <Sec id="guides" title="Guides for this trip"><LinkCards items={[{ to: "/guides/northern-pakistan-road-trip-itineraries", title: "Northern Pakistan road trip itineraries", text: "Day-by-day plans with typical driving times" }, { to: "/guides/car-rental-with-driver-islamabad-rates", title: "Rates guide: what decides the price", text: "How a quote is built and what to ask" }, { to: "/guides/murree-galiyat-winter-road-guide", title: "Winter road guide: Murree and Galiyat", text: "Vehicle, timing and what to carry in snow" }]} /></Sec>
     <Faq items={faqs} />
     <Cta ctx={`Islamabad to ${p.name}`} {...bookingFor(p)} />
   </>);
@@ -223,7 +227,7 @@ export function HubPage({ slug }) {
 export function FaqPage() {
   const p = pageByPath("/faq");
   return (<>
-    <Hero eyebrow="FAQ" h1={p.h1} lead="Straight answers about hiring a car with a professional driver from SAAD CAR RENTAL SERVICES. No prices are published because every trip is quoted individually." crumbs={p.breadcrumbs} />
+    <Hero eyebrow="FAQ" h1={p.h1} lead="Straight answers about hiring a car with a professional driver from SAAD CAR RENTAL SERVICES. Daily rents are shown on the cars where listed, and every other trip is quoted before you travel." crumbs={p.breadcrumbs} />
     <Faq items={FAQS} title="Questions and answers" />
     <Sec id="more" title="Still have a question?" tone="grey"><LinkCards items={[{ to: "/contact", title: "Contact us" }, { to: "/services", title: "Our services" }, { to: "/routes", title: "Routes from Islamabad" }, { to: "/cars", title: "Our fleet" }]} /></Sec>
     <Cta ctx="General enquiry" />
@@ -234,12 +238,19 @@ export function FaqPage() {
 export function VehicleExtras({ slug }) {
   const c = category(slug); if (!c) return null; const path = `/cars/${slug}`; const pg = pageByPath(path);
   const fit = (VEHICLE_FIT[slug] || []).map((u) => USE[u]); const places = placesForVehicle(slug); const svc = servicesForVehicle(slug);
-  const X = vehicleSeo(slug);
+  const X = vehicleSeo(slug); const nm = (X && X.name) || c.title; const rates = ratesOf(c); const seats = seatsOf(c); const sim = similarCars(slug);
+  const short = `The ${nm} suits ${fit.slice(0, 3).join(", ").toLowerCase()} and similar trips. It comes with a professional driver${seats ? ` and typically seats ${seats.replace(/^Up to /i, "up to ")} passengers` : ""}. ${rates.length ? `The listed rent is ${rates.map((n) => `Rs ${Number(n).toLocaleString("en-PK")}`).join(" to ")} per day. ` : "We quote each trip before you travel. "}Call, WhatsApp or use Book Now to confirm your date.`;
   return (<div className="sx-extra">
-    {X && <Sec id="about" title={`About the ${X.name} with driver`}>{X.about.map((t, i) => <p key={i}>{t}</p>)}<p className="sx-note">People also search for: {X.alias.join(", ")}.</p></Sec>}
-    <Sec id="best" title={`What the ${c.title} is best for`}><p>{VEHICLE_PITCH_SENTENCE(c)}</p><Chips items={fit} />{!photoOf(c) && <p className="sx-note">Photos coming soon. This vehicle is available on request, so please call or WhatsApp to confirm your date.</p>}</Sec>
-    <Sec id="trips" title={`Popular trips in the ${c.title}`} tone="grey"><LinkCards items={places.map((p) => ({ to: tripPath(p), title: tripLabel(p), text: p.highlights[0] }))} /></Sec>
-    <Sec id="svc" title="Related services"><LinkCards items={svc.map(svcCard)} /></Sec>
+    <Sec id="short" title={`${nm} on rent in Islamabad: the short answer`}><Answer q={`Can I hire a ${nm} with a driver?`}>{short}</Answer></Sec>
+    <Sec id="facts" title={`${nm}: quick facts`} tone="grey"><dl className="sx-facts">{factRows(c).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+      <p className="sx-note">Seating is typical for this model. We confirm the exact vehicle, seats and luggage space for your date when you book.</p></Sec>
+    <Sec id="price" title={`${nm} price guide`}><PriceGuide name={nm} rates={rates} /></Sec>
+    {X && <Sec id="about" title={`About the ${X.name} with driver`} tone="grey">{X.about.map((t, i) => <p key={i}>{t}</p>)}<p className="sx-note">People also search for: {X.alias.join(", ")}.</p></Sec>}
+    <Sec id="best" title={`What the ${c.title} is best for`} tone={X ? undefined : "grey"}><p>{VEHICLE_PITCH_SENTENCE(c)}</p><Chips items={fit} />{!photoOf(c) && <p className="sx-note">Real photos of this vehicle are sent on request. It is available on request, so please call or WhatsApp to confirm your date and ask for photos.</p>}</Sec>
+    <Sec id="trips" title={`Best trips in the ${c.title}`} tone={X ? "grey" : undefined}><LinkCards items={places.map((p) => ({ to: tripPath(p), title: tripLabel(p), text: p.highlights[0] }))} /></Sec>
+    <Sec id="similar" title="Similar vehicles you may prefer"><VehicleStrip cats={sim} /></Sec>
+    <Sec id="svc" title="Related services" tone="grey"><LinkCards items={svc.map(svcCard)} /></Sec>
+    <Sec id="trust" title="Booking with confidence"><p>{SITE.name} has served Islamabad for {SITE.years} years and is rated {SITE.rating} on Google from {SITE.reviewCount} reviews. <a href={SITE.reviewsUrl} target="_blank" rel="noopener noreferrer">Read our Google reviews</a> · <Link to="/about">About us</Link> · <Link to="/guides/booking-terms-explained">Booking terms explained</Link> · <Link to="/refund-policy">Refund and cancellation policy</Link></p><Updated /></Sec>
     <Faq items={pg.faqs} />
     <Cta ctx={c.title} car={(photoOf(c) || c.vehicles[0]).id} />
   </div>);
@@ -254,7 +265,16 @@ export function HomeSeoSections() {
   const feat = ["murree", "naran", "hunza", "skardu", "lahore", "peshawar"].map(place);
   return (<div className="sx-home">
     <Sec id="intro" title="Car rental with a professional driver in Islamabad"><p className="sx-lead">{SITE.name} has served Islamabad for {SITE.years} years. Every car comes with an experienced professional driver for airport transfers, business and family travel, weddings, events and journeys to the northern areas of Pakistan. Call or WhatsApp us for today's availability and quote.</p></Sec>
-    <Sec id="svc" title="Our services" tone="grey"><LinkCards items={SERVICE_PAGES.slice(0, 6).map(svcCard)} /><p><Link to="/services">All services →</Link></p></Sec>
+    <Sec id="who" title="Who we drive, and what every booking includes" tone="grey">
+      <p>Our customers are families planning a day out or a holiday, executives and business travellers, companies hosting guests, tourists and overseas Pakistanis arriving at Islamabad airport, and wedding parties who need cars that arrive on time. Each of them gets the same thing: a well-kept vehicle and an experienced professional driver who knows the roads of Islamabad, Rawalpindi and the routes beyond.</p>
+      <p>Every booking includes the vehicle and the driver. Fuel, tolls, parking, driver meals and stay, waiting time and advance payment are agreed for your trip and written in the quote before you travel, so you know what is covered. Our <Link to="/guides/booking-terms-explained">booking terms guide</Link> lists every point worth asking.</p>
+      <h3 className="sx-h3">How pricing works</h3>
+      <p>The price depends on the vehicle, whether you book the <Link to="/local-car-rental-islamabad">Local service</Link> inside Islamabad and Rawalpindi or an <Link to="/out-of-station-car-rental">Out of Station</Link> trip, the route, the number of days and any extras. Where a daily rent is listed on a car, it is shown on that car's page. For every other trip you send your plan by WhatsApp or phone and receive a clear quote. Read the full <Link to="/guides/car-rental-with-driver-islamabad-rates">rates guide</Link>.</p>
+      <h3 className="sx-h3">Choosing the right vehicle</h3>
+      <p>A sedan suits one to three guests in the city. A Prado, Fortuner or Land Cruiser suits families with luggage and hill roads. The Lexus LX 570, G Wagon and Premium Luxury Land Cruiser suit VIP arrivals and weddings, the Revo suits rougher routes, and a Coaster suits groups. Not sure? Use the <Link to="/guides/which-car-for-which-trip-pakistan">car comparison guide</Link> or tell us your plan.</p>
+      <h3 className="sx-h3">Why customers trust us</h3>
+      <p>{SITE.name} has operated from G-11 Markaz, Islamabad for {SITE.years} years and is rated {SITE.rating} on Google from {SITE.reviewCount} reviews. Our address, phone number and WhatsApp are the same on every page, and you can <Link to="/about">read more about us</Link>, <Link to="/contact">visit or contact the office</Link> and <a href={SITE.reviewsUrl} target="_blank" rel="noopener noreferrer">read our Google reviews</a>.</p></Sec>
+    <Sec id="svc" title="Our services"><LinkCards items={SERVICE_PAGES.slice(0, 6).map(svcCard)} /><p><Link to="/services">All services →</Link></p></Sec>
     <Sec id="routes" title="Popular routes from Islamabad"><LinkCards items={feat.map((x) => ({ to: tripPath(x), title: tripLabel(x), text: x.plan }))} /><p><Link to="/routes">All routes →</Link> · <Link to="/northern-areas">Northern areas →</Link> · <Link to="/car-rental-pakistan">Across Pakistan →</Link></p></Sec>
     <Sec id="air" title="Airport transfers" tone="grey"><p>Arrive at Islamabad International Airport and find a professional driver ready. <Link to="/airport-transfer/islamabad">See how airport pickup works →</Link></p></Sec>
     <Sec id="abroad" title="Visiting Pakistan or coming home from abroad?"><LinkCards items={[{ to: "/visit-pakistan", title: "Tourists visiting Pakistan", text: "Airport pickup and a professional driver for Hunza, Skardu, Swat and more. Book in advance." }, { to: "/overseas-pakistanis", title: "Overseas Pakistanis", text: "Book a premium car with a driver before you land. Family trips, weddings and airport pickup." }]} /></Sec>
@@ -318,10 +338,12 @@ export function GuidePage() {
     return null;
   };
   return (<>
-    <Hero eyebrow={GUIDE.eyebrow} h1={GUIDE.h1} lead={GUIDE.lead} crumbs={p.breadcrumbs} />
+    <Hero eyebrow={GUIDE.eyebrow} h1={GUIDE.h1} lead={GUIDE.lead} crumbs={p.breadcrumbs}><Updated /></Hero>
     <Sec id="answer" title="Quick answer"><Answer q="Can I hire a car with a professional driver in Pakistan?">Yes. SAAD CAR RENTAL SERVICES in Islamabad provides every vehicle with an experienced professional driver, for airport pickup, city travel, family and business trips, weddings, and journeys to other cities and the northern areas. Send your plan and we reply with a quote.</Answer></Sec>
-    {GUIDE.groups.map((g, i) => (<Sec key={g.id} id={g.id} title={g.title} tone={i % 2 ? "grey" : undefined}><p>{g.intro}</p><Chips items={g.phrases} /><LinkCards items={g.cards.map(card).filter(Boolean)} /></Sec>))}
-    <Sec id="more" title="Explore more" tone="grey"><p><Link to="/car-rental-pakistan">Car rental across Pakistan →</Link> · <Link to="/northern-areas">Northern areas →</Link> · <Link to="/routes">Routes from Islamabad →</Link> · <Link to="/destinations">Destinations →</Link> · <Link to="/services">Services →</Link> · <Link to="/cars">Fleet →</Link> · <Link to="/faq">FAQ →</Link></p></Sec>
+    {GUIDE.groups.map((g, i) => (<Sec key={g.id} id={g.id} title={g.title} tone={i % 2 ? "grey" : undefined}><p>{g.intro}</p><LinkCards items={g.cards.map(card).filter(Boolean)} /></Sec>))}
+    <Sec id="urdu" title="اردو میں خلاصہ: ڈرائیور کے ساتھ گاڑی کرائے پر" tone="grey"><div lang="ur" dir="rtl" className="sx-ur"><p>سعد کار رینٹل سروسز اسلام آباد کے جی-11 مرکز میں واقع ہے۔ ہماری ہر گاڑی تجربہ کار پیشہ ور ڈرائیور کے ساتھ دی جاتی ہے۔</p><p>ایئرپورٹ پک اینڈ ڈراپ، شہر کے اندر روزانہ سفر، شادی اور فیملی ٹرپ، یا مری، ناران، سوات، ہنزہ اور سکردو کے سفر کے لیے ہمیں کال یا واٹس ایپ کریں۔ اپنا پک اپ مقام، منزل، تاریخ اور مسافروں کی تعداد بتائیں، ہم سفر سے پہلے واضح قیمت بتا دیتے ہیں۔</p></div>
+      <p lang="ur-Latn">Islamabad mein driver ke saath gaari kiraye par chahiye? Pickup, manzil, tareekh aur musafiron ki tadaad bhejein, hum safar se pehle quote bhej dete hain.</p></Sec>
+    <Sec id="more" title="Explore more"><p><Link to="/guides">Rates, routes and booking guides →</Link> · <Link to="/car-rental-pakistan">Car rental across Pakistan →</Link> · <Link to="/northern-areas">Northern areas →</Link> · <Link to="/routes">Routes from Islamabad →</Link> · <Link to="/destinations">Destinations →</Link> · <Link to="/services">Services →</Link> · <Link to="/cars">Fleet →</Link> · <Link to="/faq">FAQ →</Link></p></Sec>
     <Faq items={GUIDE.faqs} title="Common questions" />
     <Cta ctx="Search guide" title="Tell us your plan, get a quote" text="Call, WhatsApp or send the booking form with your pickup, destination and dates." />
   </>);
@@ -388,6 +410,41 @@ export function AiInfoPage() {
   </>);
 }
 
+
+// ------------------------------------------------------------------ guides (/guides, /guides/<slug>)
+export function GuidesHubPage() {
+  const p = pageByPath(GUIDES_HUB.path);
+  return (<>
+    <Hero eyebrow="Guides" h1={GUIDES_HUB.h1} lead={GUIDES_HUB.lead} crumbs={p.breadcrumbs}><Updated /></Hero>
+    <Sec id="all" title="All guides"><LinkCards items={GUIDES.map((g) => ({ to: `/guides/${g.slug}`, title: g.h1.split(":")[0], text: g.description }))} /></Sec>
+    <Sec id="more" title="Plan your trip" tone="grey"><p><Link to="/cars">Our fleet →</Link> · <Link to="/routes">Routes →</Link> · <Link to="/northern-areas">Northern areas →</Link> · <Link to="/faq">FAQ →</Link> · <Link to="/contact">Contact →</Link></p></Sec>
+    <Cta ctx="Guides" title="Tell us your plan, get a quote" text="Call, WhatsApp or send the booking form with your pickup, destination and dates." />
+  </>);
+}
+export function ArticlePage({ slug }) {
+  const a = guide(slug); const p = pageByPath(`/guides/${slug}`);
+  const priced = baseFleet.flatMap((c) => c.vehicles.map((v) => [c.slug, v])).filter(([, v]) => v.price);
+  const seen = new Set(); const listed = priced.filter(([, v]) => { const k = `${v.name}${v.trim}`; if (seen.has(k)) return false; seen.add(k); return true; });
+  const rel = a.related.map((path) => pageByPath(path)).filter(Boolean).map((x) => ({ to: x.path, title: x.h1, text: (x.description || "").split(". ")[0] }));
+  return (<>
+    <Hero eyebrow="Guide" h1={a.h1} lead={a.lead} crumbs={p.breadcrumbs}><Updated date={a.updated} /></Hero>
+    <Sec id="answer" title="The short answer"><Answer q={a.answerQ}>{a.answer}</Answer></Sec>
+    {a.sections.map((sec, i) => (<Sec key={sec.id} id={sec.id} title={sec.title} tone={i % 2 === 0 ? "grey" : undefined}>
+      {sec.p && sec.p.map((t, j) => <p key={j}>{t}</p>)}
+      {sec.list && <Bullets items={sec.list} />}
+      {sec.fleetTable && <DataTable head={["Vehicle", "Seats (typical)", "Best for", "Roads"]} rows={categories().map((c) => [c.title, (seatsOf(c) || "Confirmed when you book").replace(/^Up to /i, "Up to "), (VEHICLE_FIT[c.slug] || []).slice(0, 3).map((u) => USE[u]).join(", "), factRows(c).find((r) => r[0] === "Roads")[1].replace(/ \(best kept to paved roads\)/, "")])} />}
+      {sec.rates && <>{listed.length > 0 ? <ul className="sx-list">{listed.map(([sl, v]) => <li key={v.id}><Link to={`/cars/${sl}`}>{`${v.name} ${v.trim}`.trim()}</Link>: <b>{rs(v.price)} per day</b> with a professional driver</li>)}</ul> : <p>Daily rents appear on a car page when they are listed.</p>}
+        {(BUSINESS.pricing || {}).localFromPerDay && <p>Local service: from {rs(BUSINESS.pricing.localFromPerDay)} per day.{BUSINESS.pricing.outOfStationFromPerDay ? ` Out of Station: from ${rs(BUSINESS.pricing.outOfStationFromPerDay)} per day.` : ""}</p>}
+        <p>Every other vehicle is quoted per trip, and the quote is always sent before you travel.</p></>}
+      {sec.terms && <DataTable head={["Point", "How it is handled"]} rows={TERMS_ROWS} />}
+      {sec.links && <p>{sec.links.map(([to, t], j) => <span key={to}>{j > 0 ? " · " : ""}<Link to={to}>{t} →</Link></span>)}</p>}
+    </Sec>))}
+    <Faq items={a.faqs} />
+    <Sec id="related" title="Related pages" tone="grey"><LinkCards items={rel} /></Sec>
+    <Cta ctx={a.h1} title="Tell us your plan, get a quote" text="Call, WhatsApp or send the booking form with your pickup, destination and dates." />
+  </>);
+}
+
 // ------------------------------------------------------------------ router glue
 function SeoBody({ page }) {
   const k = page.kind;
@@ -405,6 +462,7 @@ function SeoBody({ page }) {
   if (k === "info") return <AiInfoPage />;
   if (k === "spot") return <SpotPage slug={page.slug} />;
   if (k === "pillar") return <PillarPage slug={page.slug} />;
+  if (k === "article") return page.slug === "index" ? <GuidesHubPage /> : <ArticlePage slug={page.slug} />;
   return null;
 }
 // Pages with long guide text are written in English. For visitors who chose another language we say so once, in their language

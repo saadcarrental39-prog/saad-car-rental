@@ -19,7 +19,9 @@ import { LOCAL_PILLAR, OUT_PILLAR, PLACES_HUB } from "./data/pillars";
 import { VEHICLE_FIT, USE, TERRAIN } from "./data/vehicles";
 import { VEHICLE_SEO } from "./data/vehicleSeo";
 import { categories, category, photoOf, vehiclesForPlace, northernPlaces, placesIn, livePlacesList } from "./links";
+import { GUIDES, GUIDES_HUB } from "./data/articles";
 import { graphFor, abs } from "./schema";
+import { vehicleFaqs } from "./data/vehicleFacts";
 
 const BRAND = B.shortName;
 // Keep text inside search-result limits: join sentences until the limit is reached.
@@ -71,13 +73,14 @@ categories().forEach((c) => {
   const nm = VEH_SEO[c.slug] || c.title; const X = VEHICLE_SEO[c.slug];
   const uses = (VEHICLE_FIT[c.slug] || []).slice(0, 3).map((u) => USE[u].toLowerCase());
   const base = [
-    { q: `Can I hire a ${nm} with a driver in Islamabad?`, a: `Yes. The ${nm} is provided with an experienced professional driver. ${photoOf(c) ? "" : "Photos are coming soon and it is available on request, so please contact us to confirm your date. "}Call or WhatsApp us with your date, pickup and destination for a quote.` },
+    { q: `Can I hire a ${nm} with a driver in Islamabad?`, a: `Yes. The ${nm} is provided with an experienced professional driver. ${photoOf(c) ? "" : "It is available on request and we send real photos on WhatsApp, so please contact us to confirm your date. "}Call or WhatsApp us with your date, pickup and destination for a quote.` },
     { q: `What is the ${nm} best suited for?`, a: `It is well suited to ${uses.join(", ")} and similar trips. See the routes and services listed on this page, or tell us your plan and we will confirm that it is the right vehicle.` },
     { q: `How do I book the ${nm}?`, a: `Use the Book Now form, call ${B.phoneDisplay} or message us on WhatsApp with your pickup, destination, date and number of passengers. Our team confirms availability and your quote.` },
   ];
-  const faqs = X ? [...X.faqs, base[2]] : base;
+  const hasPrice = !!(X && X.faqs.some((f) => /rent|cost|price/i.test(f.q)));
+  const faqs = [...(X ? [...X.faqs, base[2]] : base), ...vehicleFaqs(c, nm, hasPrice)];
   const photos = c.vehicles.filter((v) => !v.placeholder);
-  add({ path: `/cars/${c.slug}`, kind: "vehicle", slug: c.slug, product: { brand: X ? X.brand : BRANDS[c.slug] || "Toyota", name: c.title, model: X ? X.model : undefined, alias: X ? X.alias : undefined, colors: photos.map((v) => v.color), images: photos.map((v) => v.image) }, title: (X && X.title) || `${nm} Rental in Islamabad With Driver`, h1: `${c.title} – With Professional Driver`, priority: 0.8, faqs,
+  add({ path: `/cars/${c.slug}`, kind: "vehicle", slug: c.slug, product: { brand: X ? X.brand : BRANDS[c.slug] || "Toyota", name: c.title, model: X ? X.model : undefined, alias: X ? X.alias : undefined, colors: photos.map((v) => v.color), images: photos.map((v) => v.image) }, title: (X && X.title) || `${nm} Rental in Islamabad With Driver`, h1: `${(X && X.name) || c.title} on Rent in Islamabad With Professional Driver`, priority: 0.8, faqs,
     breadcrumbs: [home, { name: "Fleet", path: "/cars" }, { name: c.title, path: `/cars/${c.slug}` }],
     description: X ? X.desc : fit([`${nm} with professional driver in Islamabad: ${uses.join(", ")}.`, `Photos, routes and booking.`, CTA]),
     og: { a: c.title.toUpperCase(), b: "With professional driver · Islamabad", vehicle: c.slug },
@@ -146,11 +149,21 @@ AUDIENCES.filter((a) => a.status === "live").forEach((a) => {
 add({ path: GUIDE.path, kind: "guide", title: GUIDE.title, h1: GUIDE.h1, description: GUIDE.description, priority: 0.8, changefreq: "weekly", faqs: GUIDE.faqs,
   breadcrumbs: [home, { name: "Guide", path: GUIDE.path }], og: { a: "CAR RENTAL GUIDE", b: "Islamabad · Pakistan · Airport · Northern areas", vehicle: "land-cruiser-v8" },
   service: { type: "Car rental with driver", areas: ["Islamabad", "Rawalpindi", "Pakistan"] } });
+const UTILITY = ["unsubscribe", "data-deletion", "contact-consent"];   // form/utility pages: kept for compliance, not for search results
 LEGAL.forEach((l) => {
-  add({ path: l.path, kind: "legal", slug: l.slug, title: l.title, h1: l.h1, description: l.description, priority: 0.4, changefreq: "yearly", faqs: l.faqs,
+  add({ path: l.path, kind: "legal", indexable: !UTILITY.includes(l.slug), slug: l.slug, title: l.title, h1: l.h1, description: l.description, priority: 0.4, changefreq: "yearly", faqs: l.faqs,
     breadcrumbs: [home, { name: l.short, path: l.path }], og: { a: l.ogA, b: l.ogB, vehicle: "prado" } });
 });
 
+
+
+// ---------------------------------------------------------------- guides (informational pages that answer buyer questions)
+add({ path: GUIDES_HUB.path, kind: "article", slug: "index", title: GUIDES_HUB.title, h1: GUIDES_HUB.h1, description: GUIDES_HUB.description, priority: 0.8, changefreq: "weekly", faqs: [],
+  breadcrumbs: [home, { name: "Guides", path: GUIDES_HUB.path }], og: GUIDES_HUB.og, updated: B.contentUpdated });
+GUIDES.forEach((g) => {
+  add({ path: `/guides/${g.slug}`, kind: "article", slug: g.slug, title: g.title, h1: g.h1, description: g.description, priority: 0.7, changefreq: "monthly", faqs: g.faqs, updated: g.updated,
+    breadcrumbs: [home, { name: "Guides", path: GUIDES_HUB.path }, { name: g.title, path: `/guides/${g.slug}` }], og: g.og, service: undefined });
+});
 
 // ---------------------------------------------------------------- /ai-info : plain facts for people and AI assistants
 add({ path: AI_INFO.path, kind: "info", title: AI_INFO.title, h1: AI_INFO.h1, description: AI_INFO.description, priority: 0.7, changefreq: "monthly", faqs: AI_INFO.faqs,

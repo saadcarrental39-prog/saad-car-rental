@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 const Arrow = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
 );
 
 // Keyed by vehicle id in the parent, so the text re-mounts and plays its enter animation on every change.
 export default function VehicleInfo({ v }) {
+  const { pathname } = useLocation();
+  const onOwnPage = pathname.replace(/\/+$/, "") === `/cars/${v.category}`;   // never link a car page to itself
   return (
     <div className="lc__info" aria-live="polite">
       <p className="lc__label">{v.subtitle}</p>
@@ -13,10 +15,10 @@ export default function VehicleInfo({ v }) {
       <ul className="lc__chips">
         <li>{v.color}</li><li>With Professional Driver</li>
       </ul>
-      <p className="lc__price">{v.price ? <><b>Rs {Number(v.price).toLocaleString("en-PK")}</b><span> / day</span></> : <span>Call for price</span>}</p>
+      <p className="lc__price">{v.price ? <><b>Rs {Number(v.price).toLocaleString("en-PK")}</b><span> / day</span></> : <span>Quote on request</span>}</p>
       <div className="lc__cta">
         <button type="button" className="lc__btn-primary" onClick={() => window.dispatchEvent(new CustomEvent("open-booking", { detail: v.id }))}>Book With Driver  <Arrow /></button>
-        <Link className="lc__btn-ghost" to={`/cars/${v.category}`}>Details</Link>
+        {!onOwnPage && <Link className="lc__btn-ghost" to={`/cars/${v.category}`}>Details</Link>}
       </div>
     </div>
   );

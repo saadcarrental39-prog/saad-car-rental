@@ -75,10 +75,10 @@ const urlset = (items, ns = "") => `<?xml version="1.0" encoding="UTF-8"?>\n<url
   writeFileSync(join(dist, "known-paths.json"), JSON.stringify(PAGES.map((p) => p.path)));
 }
 
-const urlTag = (p, extra = "") => `<url><loc>${x(site + (p.path === "/" ? "/" : p.path))}</loc>${extra}</url>`;
+const urlTag = (p, extra = "") => `<url><loc>${x(site + (p.path === "/" ? "/" : p.path))}</loc><lastmod>${(p.updated || BUSINESS.contentUpdated)}</lastmod>${extra}</url>`;   // lastmod = the content review date in business.config.js (stable between deploys)
 const idx = PAGES.filter((p) => p.indexable);
 const groups = {
-  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "guide", "legal", "audience", "pillar", "info"].includes(p.kind)),
+  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "guide", "legal", "audience", "pillar", "info", "article"].includes(p.kind)),
   "sitemap-islamabad.xml": idx.filter((p) => p.kind === "spot"),
   "sitemap-vehicles.xml": idx.filter((p) => p.kind === "vehicle"),
   "sitemap-services.xml": idx.filter((p) => p.kind === "service"),
@@ -138,6 +138,10 @@ const catalog = {
       description: "Overseas Pakistanis can book a car with a professional driver in advance, for airport pickup, family trips and weddings.",
       tags: ["overseas-pakistanis", "airport-pickup", "family-travel"],
       representativeQueries: ["car with driver for overseas Pakistanis", "book a car in Islamabad from abroad"] },
+    { identifier: urn("site:guides"), displayName: "Car rental guides for Pakistan", type: "text/html", url: site + "/guides",
+      description: "Guides on rates and what is included, northern Pakistan itineraries, choosing a vehicle, winter roads to Murree, wedding cars, airport pickup and booking terms.",
+      tags: ["guides", "rates", "itineraries", "booking-terms"],
+      representativeQueries: ["car with driver rates in Islamabad", "northern Pakistan road trip itinerary by car", "which car for Hunza and Skardu"] },
     { identifier: urn("site:sitemap"), displayName: "Sitemap index", type: "application/xml", url: site + "/sitemap.xml",
       description: "Index of every public page on the website (vehicles, services, locations, destinations, routes).", tags: ["sitemap"] },
   ],

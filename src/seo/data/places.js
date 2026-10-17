@@ -46,7 +46,7 @@ export const PLACES = [
   { slug: "rawalpindi", name: "Rawalpindi", type: "location", province: "punjab", terrain: "city", status: "live", basis: "owner",
     kw: "car rental in Rawalpindi with driver",
     intro: "Rawalpindi sits next to Islamabad and our drivers cover both cities daily. Pickups in Rawalpindi are arranged from our Islamabad base, so you get the same professional driver service whether you start in Saddar, Chaklala, Satellite Town or Bahria Town.",
-    highlights: ["Pickups and drop-offs between Rawalpindi and Islamabad International Airport", "Rawalpindi to Murree, Galiyat and northern-areas departures", "Railway station and Grand Trunk Road journeys", "Corporate and family bookings across the twin cities"],
+    highlights: ["Rawalpindi to Islamabad International Airport pickups and drop-offs", "Rawalpindi to Murree, Galiyat and northern-areas departures", "Railway station and Grand Trunk Road journeys", "Corporate and family bookings across the twin cities"],
     season: "Traffic on Murree Road and around Saddar is heavier at peak hours; early departures save time on long trips.",
     road: "City roads and expressway links to Islamabad and the motorway.",
     plan: "Most guests book Rawalpindi pickups for airport transfers or as the start of a trip to the hills or north.",

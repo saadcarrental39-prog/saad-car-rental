@@ -16,7 +16,8 @@ export const routeFor = (slug) => ROUTES.find((r) => r.status === "live" && r.to
 export const routePath = (r) => `/routes/${r.slug}`;
 // The best page for "Islamabad to <place>": route page where one exists, otherwise the destination page itself.
 export const tripPath = (p) => { const r = routeFor(p.slug); return r ? routePath(r) : placePath(p); };
-export const tripLabel = (p) => `Islamabad to ${p.short || p.name}`;
+// Islamabad is our base, so there is no "Islamabad to Islamabad" trip: those two cards get their own honest labels.
+export const tripLabel = (p) => (p.slug === "islamabad" ? "Airport pickup and city travel in Islamabad" : p.slug === "rawalpindi" ? "Rawalpindi to Islamabad Airport" : `Islamabad to ${p.short || p.name}`);
 export const nearby = (p) => (p.nearby || []).map(place).filter((x) => x && x.status === "live");
 export const servicesForPlace = (p) => {
   const base = ["premium-car-rental", "family-travel", "private-tours"];
