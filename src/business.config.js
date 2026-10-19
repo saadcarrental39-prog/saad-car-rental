@@ -46,7 +46,17 @@ export const BUSINESS = {
   years: 22, rating: "5.0", reviewCount: 218,
 
   // ---- social profiles (add real URLs; they are automatically added to schema `sameAs` and the footer) ----
-  socialProfiles: { facebook: null, instagram: null, tiktok: null, youtube: null, linkedin: null, x: null, pinterest: null },
+  socialProfiles: {
+    facebook: "https://www.facebook.com/profile.php?id=61595505688733",
+    instagram: "https://www.instagram.com/saadcarrental_/",
+    x: "https://x.com/Saadcarrental",
+    tiktok: "https://www.tiktok.com/@saad_carrental",
+    pinterest: "https://www.pinterest.com/saadcarrental/",
+    reddit: "https://www.reddit.com/user/saadcarrental/",
+    threads: "https://www.threads.com/@saadcarrental_",
+    youtube: "https://www.youtube.com/@SaadCarRental1",
+    linkedin: null,
+  },
 
   // ---- OFF-SITE PROFILES / CITATIONS (backlinks that point to this site) ----
   // Backlinks live on OTHER websites, so they cannot be "coded". What code CAN do is tell Google that those profiles are the same business:

@@ -83,3 +83,13 @@
 .sx-quote{margin:0 0 12px;padding:14px 16px;border-left:3px solid #16181b;background:#f6f6f4;border-radius:0 12px 12px 0}.sx-quote cite{display:block;font-size:.85rem;color:#62666c;margin-top:6px;font-style:normal}
 .sx-gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:10px 0}.sx-gal img{width:100%;height:auto;border-radius:14px}
 .sx-ur{direction:rtl;text-align:right;font-size:1.05rem;line-height:2}
+
+/* social icons (footer, contact, spot pages) */
+.soc{display:flex;flex-wrap:wrap;gap:.55rem;list-style:none;margin:.4rem 0;padding:0}
+.soc a{display:grid;place-items:center;width:2.5rem;height:2.5rem;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .15s}
+.soc a:hover,.soc a:focus-visible{transform:translateY(-2px)}
+/* spot galleries */
+.spot-gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.8rem;margin:1rem 0}
+.spot-gal figure{margin:0}
+.spot-gal img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;display:block;background:#e9e9e9}
+.spot-gal figcaption{font-size:.82rem;opacity:.75;margin-top:.3rem}

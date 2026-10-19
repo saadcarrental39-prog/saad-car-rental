@@ -1,3 +1,4 @@
+import SocialLinks from "../components/SocialLinks";
 import { BUSINESS } from "../business.config";
 import { COUNTRIES, DIAL, normPhone, phoneOk } from "../components/TripForm";
 import { useEffect, useState } from "react";
@@ -185,6 +186,8 @@ export default function Contact() {
             )}
           </div>
         </div>
+
+        <div className="ct-social"><p className="eyebrow">{t("Follow us")}</p><SocialLinks /></div>
 
         <div className="ct-map">
           <div className="ct-map__bar">

@@ -20,6 +20,7 @@ import { categories, category, vehiclesForPlace, servicesForPlace, servicesForVe
 import { Hero, Cta, Answer, Sec, Faq, Chips, Bullets, LinkCards, VehicleStrip, Steps, BOOKING_STEPS, Updated, DataTable, PriceGuide, Crumbs } from "./blocks";
 import { factRows, ratesOf, seatsOf, similarCars, rs } from "./data/vehicleFacts";
 import { GUIDES, GUIDES_HUB, guide, TERMS_ROWS } from "./data/articles";
+import { TourHubPage, TourSpotPage } from "./tourPages";
 
 const crumbsOf = (path) => (pageByPath(path) || { breadcrumbs: [] }).breadcrumbs;
 const placeCard = (p) => ({ to: placePath(p), title: p.name, text: p.highlights[0] });
@@ -462,6 +463,8 @@ function SeoBody({ page }) {
   if (k === "info") return <AiInfoPage />;
   if (k === "spot") return <SpotPage slug={page.slug} />;
   if (k === "pillar") return <PillarPage slug={page.slug} />;
+  if (k === "tourspots") return <TourHubPage />;
+  if (k === "tourspot") return <TourSpotPage slug={page.slug} />;
   if (k === "article") return page.slug === "index" ? <GuidesHubPage /> : <ArticlePage slug={page.slug} />;
   return null;
 }

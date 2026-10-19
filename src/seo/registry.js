@@ -20,6 +20,7 @@ import { VEHICLE_FIT, USE, TERRAIN } from "./data/vehicles";
 import { VEHICLE_SEO } from "./data/vehicleSeo";
 import { categories, category, photoOf, vehiclesForPlace, northernPlaces, placesIn, livePlacesList } from "./links";
 import { GUIDES, GUIDES_HUB } from "./data/articles";
+import { TOUR_HUB, TOUR_SPOTS } from "./data/tourSpots";
 import { graphFor, abs } from "./schema";
 import { vehicleFaqs } from "./data/vehicleFacts";
 
@@ -48,7 +49,7 @@ const home = { name: "Home", path: "/" };
 
 // ---------------------------------------------------------------- core pages (rendered by the existing app pages)
 add({ path: "/", kind: "app", title: `Car Rental in Islamabad With Driver | ${BRAND}`, h1: "Car Rental in Islamabad With Professional Driver", priority: 1, changefreq: "weekly",
-  description: fit(["Car rental in Islamabad with professional driver: Land Cruiser, Prado, Fortuner and more. Airport transfers, weddings, Murree, Hunza and Skardu trips.", CTA]),
+  description: fit(["Premium car rental with professional driver in Islamabad: airport transfers, family and business travel, weddings and trips to Murree, Hunza and Skardu.", CTA]),
   og: { a: "CAR RENTAL WITH DRIVER", b: "Islamabad, Pakistan", vehicle: "land-cruiser-v8" }, faqs: FAQS.slice(0, 8), breadcrumbs: [home],
   service: { type: "Car rental with driver", areas: ["Islamabad", "Rawalpindi", "Pakistan"] }, areaServed: PLACES.filter((p) => p.status === "live" && p.type === "location").map((p) => ({ "@type": "City", name: p.name })).slice(0, 20) });
 add({ path: "/cars", kind: "app", itemList: categories().map((c) => ({ name: c.title, path: `/cars/${c.slug}`, image: (photoOf(c) || {}).image })), title: "Our Fleet: Cars With Professional Driver", h1: "Our Fleet: Cars With Professional Driver", priority: 0.9, breadcrumbs: [home, { name: "Fleet", path: "/cars" }],
@@ -135,6 +136,18 @@ ROUTES.filter((r) => r.status === "live").forEach((r) => {
     breadcrumbs: [home, { name: "Routes", path: "/routes" }, { name: `Islamabad to ${p.name}`, path }],
     description: fit([`Book a car with professional driver from Islamabad or Rawalpindi to ${p.name}. ${TERRAIN[p.terrain].label[0].toUpperCase()}${TERRAIN[p.terrain].label.slice(1)} route.`, `${v.slice(0, 3).map((c) => VEH_SEO[c.slug] || c.title).join(", ")} available.`, CTA]),
     og: { a: `ISLAMABAD → ${nm(p).toUpperCase()}`, b: "Car with professional driver", vehicle: lead }, service: { type: "Intercity car rental with driver", areas: ["Islamabad", p.name] } });
+});
+
+// ---------------------------------------------------------------- Murree tourist spots (hub + one page per spot)
+add({ path: TOUR_HUB.path, kind: "tourspots", slug: "index", title: TOUR_HUB.title, h1: TOUR_HUB.h1, priority: 0.8, changefreq: "weekly", faqs: TOUR_HUB.faqs, updated: TOUR_HUB.updated,
+  breadcrumbs: [home, { name: "Murree Tourist Spots", path: TOUR_HUB.path }], description: fit([TOUR_HUB.description, CTA]), og: TOUR_HUB.og,
+  service: { type: "Car rental with driver", areas: ["Islamabad", "Murree"] } });
+TOUR_SPOTS.filter((x) => x.status === "live").forEach((x) => {
+  const path = `${TOUR_HUB.path}/${x.slug}`;
+  add({ path, kind: "tourspot", slug: x.slug, title: x.title, h1: x.h1, priority: 0.7, changefreq: "monthly", faqs: x.faqs, updated: TOUR_HUB.updated,
+    breadcrumbs: [home, { name: "Murree Tourist Spots", path: TOUR_HUB.path }, { name: x.short, path }], description: fit([x.intro, CTA]),
+    og: { a: x.short.toUpperCase(), b: "Murree · Car with driver from Islamabad", vehicle: "prado" }, service: { type: "Car rental with driver", areas: ["Islamabad", "Murree", x.short] },
+    attraction: { within: "Murree", name: x.name } });
 });
 
 // ---------------------------------------------------------------- audience pages (visitors from abroad, overseas Pakistanis)

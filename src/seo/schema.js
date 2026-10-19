@@ -35,7 +35,7 @@ export const imageNode = (url, caption) => clean({ "@type": "ImageObject", url: 
 export function graphFor(page) {
   const url = abs(page.path);
   const webPageType = { about: "AboutPage", contact: "ContactPage", hub: "CollectionPage", province: "CollectionPage" }[page.kind] || "WebPage";
-  const modified = page.updated || (["route", "destination", "guide", "article", "vehicle"].includes(page.kind) ? B.contentUpdated : undefined);
+  const modified = page.updated || (["route", "destination", "guide", "article", "vehicle", "tourspot", "tourspots"].includes(page.kind) ? B.contentUpdated : undefined);
   const image = imageNode(page.ogImage, page.ogAlt);
   const g = [];
   if (page.path === "/" || page.kind === "about" || page.kind === "contact") g.push(businessNode(page.areaServed || []));
@@ -43,6 +43,7 @@ export function graphFor(page) {
   g.push(clean({ "@type": webPageType, "@id": `${url}#webpage`, url, name: page.fullTitle, description: page.description, inLanguage: "en", isPartOf: { "@id": ID.site }, about: { "@id": ID.biz }, dateModified: modified, primaryImageOfPage: image, image, breadcrumb: page.breadcrumbs.length > 1 ? { "@id": `${url}#breadcrumb` } : undefined }));
   if (page.breadcrumbs.length > 1) g.push({ ...breadcrumbNode(page.breadcrumbs), "@id": `${url}#breadcrumb` });
   if (page.service) g.push(clean({ "@type": "Service", "@id": `${url}#service`, name: page.h1, serviceType: page.service.type, description: page.description, url, provider: providerRef(), image: abs(page.ogImage), areaServed: page.service.areas.map((a) => ({ "@type": a.type || "Place", name: a })), availableChannel: { "@type": "ServiceChannel", serviceUrl: abs(B.bookingUrl), servicePhone: { "@type": "ContactPoint", telephone: B.phone } } }));
+  if (page.attraction) g.push(clean({ "@type": "TouristAttraction", "@id": `${url}#attraction`, name: page.attraction.name, description: page.description, url, containedInPlace: { "@type": "Place", name: page.attraction.within }, touristType: ["Families", "Couples", "Friends and groups"] }));
   if (page.product) { const P = page.product; g.push(clean({ "@type": "Product", "@id": `${url}#product`, name: `${P.name} with professional driver`, alternateName: P.alias, brand: { "@type": "Brand", name: P.brand }, model: P.model, color: P.colors && P.colors.length ? P.colors.join(", ") : undefined, category: "Chauffeur-driven car rental", description: page.description, image: P.images && P.images.length ? P.images.map(abs) : abs(page.ogImage), url,
     offers: { "@type": "Offer", url, businessFunction: "http://purl.org/goodrelations/v1#LeaseOut", seller: { "@id": ID.biz }, areaServed: "Islamabad, Rawalpindi and Pakistan" } })); }   // no price on purpose: every trip is quoted
   if (page.kind === "article" && page.slug !== "index") g.push(clean({ "@type": "Article", "@id": `${url}#article`, headline: page.h1, description: page.description, mainEntityOfPage: { "@id": `${url}#webpage` }, image: abs(page.ogImage), datePublished: page.updated, dateModified: page.updated, inLanguage: "en", author: { "@id": ID.biz }, publisher: { "@id": ID.biz } }));

@@ -85,6 +85,7 @@ const groups = {
   "sitemap-locations.xml": idx.filter((p) => p.kind === "location" || p.kind === "province"),
   "sitemap-destinations.xml": idx.filter((p) => p.kind === "destination"),
   "sitemap-routes.xml": idx.filter((p) => p.kind === "route"),
+  "sitemap-murree.xml": idx.filter((p) => p.kind === "tourspots" || p.kind === "tourspot"),
 };
 const IMG = ' xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"';
 const imgTag = (u, t) => `<image:image><image:loc>${x(u)}</image:loc><image:title>${x(t)}</image:title></image:image>`;
