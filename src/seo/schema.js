@@ -4,7 +4,7 @@ import { BUSINESS as B } from "../business.config";
 
 export const abs = (p) => (/^https?:\/\//.test(p) ? p : `${B.website}${p === "/" ? "/" : p}`);
 const ID = { site: `${B.website}/#website`, biz: `${B.website}/#business` };
-const sameAs = () => Object.values(B.socialProfiles).filter(Boolean).concat(B.googleBusinessProfile ? [B.googleBusinessProfile] : []);
+const sameAs = () => [...new Set([...Object.values(B.socialProfiles), ...(B.profiles || [])].filter(Boolean).concat(B.googleBusinessProfile ? [B.googleBusinessProfile] : []))];   // social + off-site citation profiles (business.config.js) + Google Maps
 const DAY = { Mo: "Monday", Tu: "Tuesday", We: "Wednesday", Th: "Thursday", Fr: "Friday", Sa: "Saturday", Su: "Sunday" };   // schema.org wants full day names
 const clean = (o) => JSON.parse(JSON.stringify(o, (k, v) => (v === null || v === undefined || v === "" ? undefined : v)));
 

@@ -1,0 +1,25 @@
+NAP = Name, Address, Phone. Copy EXACTLY the same text on every site (no spelling changes, no extra words).
+
+Business name : SAAD CAR RENTAL SERVICES
+Address        : Office No 12, 3rd Floor, Shah Nawaz Plaza, G-11 Markaz, Islamabad 44000, Pakistan
+Phone          : +92 333 9850599   (display: 0333 9850599)
+WhatsApp       : https://wa.me/923339850599
+Website        : https://www.saadcarremtal.com/
+Category       : Car rental with driver / Chauffeur service / Car rental agency
+
+--- Short bio (under 160 characters) ---
+Islamabad car rental with professional driver: airport transfers, business and family travel, weddings and northern Pakistan trips.
+
+--- Long bio ---
+SAAD CAR RENTAL SERVICES is an Islamabad-based car rental with professional driver (chauffeur) service for airport transfers, business and family travel, weddings and intercity and northern-areas trips across Pakistan. Premium SUVs, sedans and a Coaster, every vehicle with an experienced driver. Foreign tourists and overseas Pakistanis can book in advance by call or WhatsApp.
+
+--- Page to link to (deep links are better than only the home page) ---
+Home            : https://www.saadcarremtal.com/
+Fleet           : https://www.saadcarremtal.com/cars
+Airport pickup  : https://www.saadcarremtal.com/airport-transfer/islamabad
+Out of Station  : https://www.saadcarremtal.com/out-of-station-car-rental
+Local (city)    : https://www.saadcarremtal.com/local-car-rental-islamabad
+Guides          : https://www.saadcarremtal.com/guides
+
+--- Anchor text ideas (mix them, do not use the same one everywhere) ---
+SAAD CAR RENTAL SERVICES | car rental with driver Islamabad | Islamabad airport pickup | rent a Land Cruiser with driver | saadcarremtal.com | click here

@@ -46,7 +46,19 @@ export const BUSINESS = {
   years: 22, rating: "5.0", reviewCount: 218,
 
   // ---- social profiles (add real URLs; they are automatically added to schema `sameAs` and the footer) ----
-  socialProfiles: { facebook: null, instagram: null, tiktok: null, youtube: null },
+  socialProfiles: { facebook: null, instagram: null, tiktok: null, youtube: null, linkedin: null, x: null, pinterest: null },
+
+  // ---- OFF-SITE PROFILES / CITATIONS (backlinks that point to this site) ----
+  // Backlinks live on OTHER websites, so they cannot be "coded". What code CAN do is tell Google that those profiles are the same business:
+  // every real URL you paste below goes into schema `sameAs` on the home / about / contact pages after the next build.
+  // Paste ONLY profiles that really exist and show the same name, address and phone (see seo-backlinks/NAP-AND-BIO.txt). Empty = nothing is output.
+  profiles: [
+    // "https://www.bingplaces.com/...",
+    // "https://www.yelp.com/biz/...",
+    // "https://www.linkedin.com/company/...",
+    // "https://www.foursquare.com/v/...",
+    // "https://www.brownbook.net/business/...",
+  ],
 
   // ---- freshness: the date shown as "Last updated" on guides, routes and destinations (change it when you review the content) ----
   contentUpdated: "2026-10-17",
