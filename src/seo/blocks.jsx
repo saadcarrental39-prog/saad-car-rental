@@ -66,7 +66,7 @@ export const VehicleStrip = ({ cats, ctxTo }) => (
     const ph = photoOf(c); const fit = (VEHICLE_FIT[c.slug] || []).slice(0, 3).map((u) => USE[u]).join(" · ");
     return (
       <li key={c.slug}><Link to={`/cars/${c.slug}`}>
-        {ph ? <img src={ph.image} {...imgSet(ph.image, "(max-width: 700px) 90vw, 360px")} alt={`${ph.color} ${ph.name} ${ph.trim} with professional driver`.replace(/\s+/g, " ")} width="805" height="510" loading="lazy" decoding="async" /> : <span className="sx-veh__ph">Real photos on request<br />Ask us on WhatsApp</span>}
+        {ph ? <img src={ph.image} {...imgSet(ph.image, "(max-width: 700px) 90vw, 360px")} alt={`${ph.color} ${ph.name} ${ph.trim} car rental in Islamabad with professional driver`.replace(/\s+/g, " ")} title={`${ph.name} ${ph.trim} car rental in Islamabad`.replace(/\s+/g, " ")} width="805" height="510" loading="lazy" decoding="async" /> : <span className="sx-veh__ph">Real photos on request<br />Ask us on WhatsApp</span>}
         <b>{c.title}</b><span>{VEHICLE_PITCH[c.slug] ? VEHICLE_PITCH[c.slug].replace(/^a /, "A ").replace(/^an /, "An ") : ""}</span><em>{fit}</em>
       </Link></li>
     );

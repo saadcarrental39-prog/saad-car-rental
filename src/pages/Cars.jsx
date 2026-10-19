@@ -25,7 +25,7 @@ function CarCard({ c }) {
     <article className="cp-card">
       <Link to={`/cars/${c.slug}`} className="cp-card__media" aria-label={`${c.title} ${t("View details")}`}>
         <span className="cp-chip">{t(TYPE[c.slug] || "Car")}</span>
-        {v ? <img key={v.id} src={v.image} {...imgSet(v.image, "(max-width: 900px) 92vw, 50vw")} alt={`${label(v)} with professional driver`} width="1200" height="760" loading="lazy" decoding="async" />
+        {v ? <img key={v.id} src={v.image} {...imgSet(v.image, "(max-width: 900px) 92vw, 50vw")} alt={`${label(v)} car rental in Islamabad with professional driver`} title={`${label(v)} car rental in Islamabad`} width="1200" height="760" loading="lazy" decoding="async" />
            : <span className="cp-soon"><b>{c.title}</b>{t("Real photos on request")}<br />{t("Ask us on WhatsApp")}</span>}
       </Link>
       <div className="cp-card__body">

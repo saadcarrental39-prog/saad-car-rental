@@ -48,7 +48,7 @@ const home = { name: "Home", path: "/" };
 
 // ---------------------------------------------------------------- core pages (rendered by the existing app pages)
 add({ path: "/", kind: "app", title: `Car Rental in Islamabad With Driver | ${BRAND}`, h1: "Car Rental in Islamabad With Professional Driver", priority: 1, changefreq: "weekly",
-  description: fit(["Premium car rental with professional driver in Islamabad: airport transfers, family and business travel, weddings and trips to Murree, Hunza and Skardu.", CTA]),
+  description: fit(["Car rental in Islamabad with professional driver: Land Cruiser, Prado, Fortuner and more. Airport transfers, weddings, Murree, Hunza and Skardu trips.", CTA]),
   og: { a: "CAR RENTAL WITH DRIVER", b: "Islamabad, Pakistan", vehicle: "land-cruiser-v8" }, faqs: FAQS.slice(0, 8), breadcrumbs: [home],
   service: { type: "Car rental with driver", areas: ["Islamabad", "Rawalpindi", "Pakistan"] }, areaServed: PLACES.filter((p) => p.status === "live" && p.type === "location").map((p) => ({ "@type": "City", name: p.name })).slice(0, 20) });
 add({ path: "/cars", kind: "app", itemList: categories().map((c) => ({ name: c.title, path: `/cars/${c.slug}`, image: (photoOf(c) || {}).image })), title: "Our Fleet: Cars With Professional Driver", h1: "Our Fleet: Cars With Professional Driver", priority: 0.9, breadcrumbs: [home, { name: "Fleet", path: "/cars" }],

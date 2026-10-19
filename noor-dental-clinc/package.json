@@ -1,0 +1,27 @@
+{
+  "name": "noor-dental-clinic",
+  "version": "1.1.0",
+  "description": "Noor Dental Clinic Management System - offline PWA",
+  "main": "server.js",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node database/seed.js",
+    "setup": "node scripts/setup-assets.js"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "adm-zip": "^0.5.16",
+    "bcryptjs": "^2.4.3",
+    "chart.js": "^4.4.7",
+    "chokidar": "^3.6.0",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
+    "pdfkit": "^0.15.2",
+    "@fontsource/inter": "^5.1.0",
+    "@fontsource/noto-nastaliq-urdu": "^5.1.0"
+  }
+}

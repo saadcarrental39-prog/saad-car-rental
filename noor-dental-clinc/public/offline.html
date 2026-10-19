@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Offline — Noor Dental Clinic</title>
+<link rel="icon" href="/favicon.ico"><meta name="theme-color" content="#2F9BE0">
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;text-align:center;color:#14181F;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:linear-gradient(135deg,#FFFFFF 0%,#EAF4FD 60%,#D3E8FB 100%)}
+.box{padding:36px;border-radius:22px;background:#F3F9FF;backdrop-filter:blur(14px);border:1px solid #D3E8FB;max-width:440px;box-shadow:0 8px 28px rgba(47,155,224,.12)}
+img{width:88px;border-radius:20px}h1{margin:14px 0 6px}p{opacity:.85}a{color:#2F9BE0;font-weight:600}
+</style></head><body><div class="box"><img src="/icons/logo.png" alt="Noor Dental Clinic"><h1>🔌 You are offline — App still works</h1>
+<p>Redirecting to the dashboard in <b id="s">3</b>s… If the clinic server is not running, start it with <b>start.bat</b>.</p>
+<p><a href="/dashboard.html">Open Dashboard now</a></p></div>
+<script>let n=3;const t=setInterval(()=>{n--;document.getElementById('s').textContent=n;if(n<=0){clearInterval(t);location.replace('/dashboard.html')}},1000)</script>
+</body></html>
