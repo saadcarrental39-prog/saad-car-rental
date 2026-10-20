@@ -157,7 +157,7 @@ console.log("prerender: .well-known/ai-catalog.json written");
 // AI search / assistant crawlers are named on purpose so that nobody has to guess: they may read the public site, never the private areas.
 const AI_BOTS = ["GPTBot", "ChatGPT-User", "OAI-SearchBot", "Claude-Web", "ClaudeBot", "anthropic-ai", "PerplexityBot", "Perplexity-User", "Google-Extended", "Bingbot", "Applebot", "Applebot-Extended", "cohere-ai", "Meta-ExternalAgent", "Meta-ExternalFetcher", "FacebookBot", "Bytespider"];
 const PRIVATE = `Disallow: /api/\nDisallow: /r/\nDisallow: ${ADMIN_PATH}\n`;
-writeFileSync(join(dist, "robots.txt"), `User-agent: *\nAllow: /\n${PRIVATE}\n# AI search and assistant crawlers (public pages only)\n` + AI_BOTS.map((b) => `User-agent: ${b}\nAllow: /\n${PRIVATE}`).join("\n") + `\nSitemap: ${site}/sitemap.xml\n`);
+writeFileSync(join(dist, "robots.txt"), `User-agent: *\nAllow: /\n${PRIVATE}\n# AI search and assistant crawlers (public pages only)\n` + AI_BOTS.map((b) => `User-agent: ${b}\nAllow: /\n${PRIVATE}`).join("\n") + `\nSitemap: ${site}/sitemap.xml\nSitemap: ${site}/api/spot-images.xml\n`);
 
 // ---- /llms-full.txt : the complete plain-text business description for AI assistants. Built from the page registry on every build, so it is never stale.
 {

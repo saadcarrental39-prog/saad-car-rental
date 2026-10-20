@@ -17,7 +17,6 @@ import { useSeo } from "./seo";
 import { PROVINCES } from "./seo/data/places";
 import { useI18n, LangSelect } from "./i18n";
 const Admin = lazy(() => import("./pages/Admin"));
-const SpotImagesPanel = lazy(() => import("./pages/SpotImagesPanel"));
 
 // If anything ever crashes, recover instead of showing a white screen.
 class Guard extends Component {
@@ -35,7 +34,6 @@ function ScrollTop() { const { pathname } = useLocation(); useEffect(() => { win
 export default function App() {
   const [open, setOpen] = useState(false); const { pathname } = useLocation(); const { t } = useI18n();
   useEffect(() => { setOpen(false); }, [pathname]);
-  if (pathname === `${ADMIN_PATH}/spot-images`) return <Suspense fallback={null}><SpotImagesPanel /></Suspense>;
   if (pathname === ADMIN_PATH || pathname.startsWith(`${ADMIN_PATH}/`)) return <Suspense fallback={null}><Admin /></Suspense>;
   return (
     <>

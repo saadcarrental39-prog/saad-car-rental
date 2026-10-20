@@ -130,6 +130,19 @@ export async function onRequestPost({ request, env }) {
     await kv.put("site:fleet", JSON.stringify(data));
     return json({ ok: true, data });
   }
+  if (b.action === "spots_load") { try { return json({ data: JSON.parse((await kv.get("site:spots")) || "{}") }); } catch { return json({ data: {} }); } }
+  if (b.action === "spots_save") {                                    // photos for the Murree tourist-spot pages (Spots tab)
+    const out = { v: 1, spots: {} }, src = b.data && typeof b.data === "object" && b.data.spots && typeof b.data.spots === "object" ? b.data.spots : {};
+    for (const [sl, list] of Object.entries(src).slice(0, 60)) {
+      if (!/^[a-z0-9-]{2,70}$/.test(sl) || !Array.isArray(list)) continue;
+      const imgs = list.slice(0, 12).map((i) => ({ url: String((i && i.url) || "").trim(), alt: s((i && i.alt) || "", 140), caption: s((i && i.caption) || "", 160) }))
+        .filter((i) => /^https:\/\/[^\s"'<>]{4,600}$/.test(i.url) || /^\/api\/img\/[a-f0-9]{16}$/.test(i.url));
+      if (imgs.length) out.spots[sl] = imgs;
+    }
+    const old = await kv.get("site:spots"); if (old) await kv.put("site:spots:prev", old);
+    await kv.put("site:spots", JSON.stringify(out));
+    return json({ ok: true, data: out });
+  }
   if (b.action === "upload") {
     const m = /^data:(image\/(?:webp|png|jpeg));base64,([A-Za-z0-9+\/=]+)$/.exec(String(b.image || ""));
     if (!m) return json({ error: "bad_image" }, 400);

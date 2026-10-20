@@ -12,7 +12,7 @@ export function headTags(h) {
       `<meta property="og:image" content="${esc(o.image)}" data-seo>`, `<meta property="og:image:secure_url" content="${esc(o.image)}" data-seo>`, `<meta property="og:image:type" content="${o.imageType}" data-seo>`,
       `<meta property="og:image:width" content="${o.imageWidth}" data-seo>`, `<meta property="og:image:height" content="${o.imageHeight}" data-seo>`, `<meta property="og:image:alt" content="${esc(o.imageAlt)}" data-seo>`,
       `<meta property="og:site_name" content="${esc(o.siteName)}" data-seo>`, `<meta property="og:locale" content="${o.locale}" data-seo>`,
-      `<meta name="twitter:card" content="summary_large_image" data-seo>`, `<meta name="twitter:title" content="${esc(o.title)}" data-seo>`, `<meta name="twitter:description" content="${esc(o.description)}" data-seo>`,
+      `<meta name="twitter:card" content="summary_large_image" data-seo>`, `<meta name="twitter:site" content="@Saadcarrental" data-seo>`, `<meta name="twitter:creator" content="@Saadcarrental" data-seo>`, `<meta name="twitter:title" content="${esc(o.title)}" data-seo>`, `<meta name="twitter:description" content="${esc(o.description)}" data-seo>`,
       `<meta name="twitter:image" content="${esc(o.image)}" data-seo>`, `<meta name="twitter:image:alt" content="${esc(o.imageAlt)}" data-seo>`);
   }
   if (h.jsonLd) t.push(`<script type="application/ld+json" data-seo>${json(h.jsonLd)}</script>`);

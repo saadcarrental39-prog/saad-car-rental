@@ -1,0 +1,4 @@
+Purani (ab bekaar) files, apne D:\saad se delete kar dein:
+  src\pages\SpotImagesPanel.jsx
+  public\spot-images.json
+Naya: PWA admin mein "Spots" tab, server: functions\api\spots.js, functions\api\spot-images.xml.js
