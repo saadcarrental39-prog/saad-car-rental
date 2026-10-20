@@ -1,4 +1,7 @@
-.ad-tabs{grid-template-columns:repeat(auto-fit,minmax(0,1fr))}
+/* bottom tab bar: ek hi line, left/right swipe (touch), active tab khud beech mein aa jata hai */
+.adm .ad-tabs{display:flex!important;grid-template-columns:none!important;flex-wrap:nowrap;justify-content:flex-start;gap:2px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;touch-action:pan-x;scrollbar-width:none;-ms-overflow-style:none}
+.adm .ad-tabs::-webkit-scrollbar{display:none}
+.adm .ad-tabs button{flex:0 0 calc(100% / 5.5);min-width:62px;scroll-snap-align:center;font-size:.64rem!important;letter-spacing:.02em}
 .ad-spot__row{display:grid;grid-template-columns:88px 1fr;gap:.7rem;margin:.8rem 0;align-items:start}
 .ad-spot__row>img{width:88px;height:66px;object-fit:cover;border-radius:10px;background:#ddd}
 .ad-spot__btns{display:flex;gap:.4rem;margin-top:.3rem}

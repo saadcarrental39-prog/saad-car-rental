@@ -354,6 +354,7 @@ function Panel({ tok, out, pwa }) {
   const st = useOrders(tok, out, tab);
   const insApi = useCallback((a, b) => api(a, b, tok), [tok]);
   const tabRef = useRef(tab); tabRef.current = tab;
+  useEffect(() => { const b = document.querySelector(".ad-tabs button.on"); if (b && b.scrollIntoView) b.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" }); }, [tab, !!ov]); // eslint-disable-line react-hooks/exhaustive-deps
   const refreshLeadN = useCallback(() => { if (tabRef.current === "leads") return; api("lead_count", {}, tok).then((r) => setLeadN(r.unseen || 0)).catch(() => {}); }, [tok]);   // red badge on the Clients tab
   useEffect(() => { refreshLeadN(); const t = setInterval(() => document.visibilityState === "visible" && refreshLeadN(), 30000); return () => clearInterval(t); }, [refreshLeadN]);
   useEffect(() => {
