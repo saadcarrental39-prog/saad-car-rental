@@ -12,6 +12,7 @@ export function track(name, params = {}) {
     (window.dataLayer = window.dataLayer || []).push({ event: name, ...p });
     if (typeof window.gtag === "function") window.gtag("event", name, p);
     beacon(name, params.item);
+    if (typeof window.clarity === "function") window.clarity("event", name);   // shows up as filters in Clarity (phone_click, whatsapp_click, booking_click ...)
   } catch { /* analytics must never break the site */ }
 }
 function attribution() {
@@ -61,12 +62,16 @@ const VIEW = { vehicle: "vehicle_view", service: "service_view", route: "route_v
 export const trackPageType = (kind, slug) => VIEW[kind] && track(VIEW[kind], { item: slug });
 
 export function initAnalytics() {
-  const { ga4, cfBeacon } = BUSINESS.analytics;
+  const { ga4, cfBeacon, clarity } = BUSINESS.analytics;
   const load = () => {
     if (ga4) {
       window.dataLayer = window.dataLayer || []; window.gtag = function () { window.dataLayer.push(arguments); };
       window.gtag("js", new Date()); window.gtag("config", ga4, { send_page_view: true });
       const s = document.createElement("script"); s.async = true; s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(ga4)}`; document.head.appendChild(s);
+    }
+    // Microsoft Clarity (heatmaps + session replays). Same consent rule as the others; never on the owner's admin app, receipts, or this device if "Apni visits ginein" is off.
+    if (clarity && !skip() && !/^\/(r\/|receipt)/.test(location.pathname)) {
+      (function (c, l, a, r, i, t, y) { c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); }; t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i; y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y); })(window, document, "clarity", "script", clarity);
     }
     if (cfBeacon) { const s = document.createElement("script"); s.defer = true; s.src = "https://static.cloudflareinsights.com/beacon.min.js"; s.setAttribute("data-cf-beacon", JSON.stringify({ token: cfBeacon })); document.head.appendChild(s); }
   };

@@ -52,7 +52,7 @@ export const LEGAL = [
         "We do not sell your personal data and we do not share it with other businesses for their own marketing. We share data only with services that help us run the website and your booking:",
       ], list: [
         "WhatsApp: when you press a WhatsApp button, your own WhatsApp opens with a prepared message. Nothing is sent until you press Send, and WhatsApp then handles the chat under its own policy.",
-        "Website analytics: we may use Google Analytics or Cloudflare Web Analytics to count visits. They receive anonymous usage figures under their own policies.",
+        "Website analytics: we may use Google Analytics, Microsoft Clarity or Cloudflare Web Analytics to count visits. They receive anonymous usage figures under their own policies. Microsoft Clarity also records anonymous screen interactions (taps, scrolling, clicks) so we can improve the website; typed text is masked.",
         "Hosting and security: our hosting provider (Cloudflare) delivers the pages and stores the information sent through our forms.",
         "Payment providers: the website does not take online payment today. If we add it, the payment provider will process your payment details under its own policy and we will update this page first.",
         "Authorities: when the law of Pakistan requires us to.",
@@ -78,7 +78,7 @@ export const LEGAL = [
     ],
     faqs: [
       f("Do you sell my phone number or personal details?", "No. We use your details to answer you and arrange your trip. We do not sell them and we do not give them to other businesses for marketing."),
-      f("Which outside services receive my data?", "WhatsApp handles the chat once you send a message, and analytics tools such as Google Analytics or Cloudflare may receive anonymous visit figures. Our hosting provider stores form submissions."),
+      f("Which outside services receive my data?", "WhatsApp handles the chat once you send a message, and analytics tools such as Google Analytics, Microsoft Clarity or Cloudflare may receive anonymous visit figures. Our hosting provider stores form submissions."),
       f("How do I see or correct the details you hold?", "Call or WhatsApp us, or use the contact page, and give the name or number you used. We will show you what we hold and correct anything that is wrong."),
     ],
   },
@@ -194,7 +194,7 @@ export const LEGAL = [
     lead: "This is the Saad Car Rental cookie policy. It lists what our website stores in your browser, why, which outside services may set cookies, and how you can turn them off.",
     summary: [
       "The website works with only the storage it needs: a visitor code, your form entries and your cookie choice.",
-      "Visit-statistics tools such as Google Analytics and Cloudflare Web Analytics load only if you accept.",
+      "Visit-statistics tools such as Google Analytics, Microsoft Clarity and Cloudflare Web Analytics load only if you accept.",
       "Cloudflare may set security cookies that keep the website safe and fast.",
       "You can block or delete cookies in your browser settings at any time.",
     ],
@@ -204,7 +204,7 @@ export const LEGAL = [
       ] },
       { h: "What this website stores", p: ["We use the following."], list: [
         "Essential storage: a random visitor code used to count visits without your name, the details you type into our booking form so they are not lost if you reload, and your cookie choice. The website needs these to work properly.",
-        "Analytics (only if you accept): tools such as Google Analytics or Cloudflare Web Analytics, which count visits and show which pages are useful. They may set cookies.",
+        "Analytics (only if you accept): tools such as Google Analytics, Microsoft Clarity or Cloudflare Web Analytics, which count visits, show which pages are useful and (Clarity) record anonymous screen interactions with typed text masked. They may set cookies.",
         "Security and performance: our hosting provider, Cloudflare, may set cookies to protect the website from attacks and to deliver pages quickly.",
         "Session storage: short-term storage that is cleared when you close the tab, used to remember small things such as the last review figure shown.",
       ] },

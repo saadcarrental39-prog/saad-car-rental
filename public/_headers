@@ -6,7 +6,7 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   Cross-Origin-Opener-Policy: same-origin-allow-popups
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://cloudflareinsights.com; frame-src https://www.google.com; object-src 'none'; base-uri 'self'; form-action 'self' https://wa.me https://api.whatsapp.com
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://static.cloudflareinsights.com https://www.clarity.ms https://scripts.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://cloudflareinsights.com https://*.clarity.ms https://c.bing.com; frame-src https://www.google.com; object-src 'none'; base-uri 'self'; form-action 'self' https://wa.me https://api.whatsapp.com
 
 # Hashed JS/CSS (the file name changes whenever the content changes): cached for 1 year. If a bad copy is ever saved under a name,
 # the self-heal script in index.html re-downloads the files with cache:"reload" and fixes it automatically.
