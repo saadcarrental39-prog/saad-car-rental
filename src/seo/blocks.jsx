@@ -93,7 +93,7 @@ export function PriceGuide({ name, rates = [] }) {
   const pr = B.pricing || {};
   const lines = [pr.localFromPerDay && ["Local (Islamabad / Rawalpindi)", `from ${rs(pr.localFromPerDay)} per day`], pr.outOfStationFromPerDay && ["Out of Station", `from ${rs(pr.outOfStationFromPerDay)} per day`], pr.airportFrom && ["Airport pickup or drop", `from ${rs(pr.airportFrom)}`]].filter(Boolean);
   return (<>
-    {rates.length > 0 && <p><b>Listed rent{name ? ` for the ${name}` : ""}: {rates.map(rs).join(" to ")} per day</b> with a professional driver.</p>}
+    {rates.length > 0 && <p><b>Local rent{name ? ` for the ${name}` : ""}: {rates.map(rs).join(" to ")} per day</b> with a professional driver. Out of Station trips are priced separately.</p>}
     {lines.length > 0 && <DataTable head={["Service", "Starting price"]} rows={lines} />}
     <p>The final quote depends on four things: whether the booking is <Link to="/local-car-rental-islamabad">Local</Link> or <Link to="/out-of-station-car-rental">Out of Station</Link>, the route and number of days, the vehicle, and any extras such as waiting time or an overnight driver stay. You always receive the quote before you travel.</p>
     <p>{pr.included ? <><b>Included:</b> {pr.included}. </> : null}{pr.notIncluded ? <><b>Not included:</b> {pr.notIncluded}. </> : null}{!pr.included && !pr.notIncluded ? "What is included and what is extra is written in your quote. " : null}<Link to="/guides/booking-terms-explained">Booking terms explained →</Link> · <Link to="/guides/car-rental-with-driver-islamabad-rates">How pricing works →</Link></p>

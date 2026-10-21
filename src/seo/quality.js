@@ -10,7 +10,7 @@ import { BUSINESS } from "../business.config";
 export const MIN_SCORE = 80;
 // Prices are allowed ONLY when they are the rent set in src/data/fleet.js (the owner's own per-day rate shown on the car card).
 // Any other "Rs 12345" figure still fails the build, so an invented or stale price cannot slip into a page.
-const OWN_PRICES = [...new Set([...baseFleet.flatMap((c) => c.vehicles.map((v) => v.price)), ...Object.values(BUSINESS.pricing || {}).filter((x) => typeof x === "number")].filter(Boolean))]
+const OWN_PRICES = [...new Set([...baseFleet.flatMap((c) => c.vehicles.flatMap((v) => [v.price, v.priceOut])), ...Object.values(BUSINESS.pricing || {}).filter((x) => typeof x === "number")].filter(Boolean))]
   .flatMap((n) => [String(n), n.toLocaleString("en-US"), n.toLocaleString("en-PK")]);
 const OWN = OWN_PRICES.length ? `(?!(?:${[...new Set(OWN_PRICES)].join("|")})\\b)` : "";
 export const FORBIDDEN = [new RegExp(`\\bRs\\.?\\s?${OWN}\\d`, "i"), /\bPKR\s?\d/i, /\$\s?\d/, /guarantee/i, /\bbest price\b/i, /\b#\s?1\b/, /\bcheapest\b/i, /\bto be confirmed\b/i, /\[BUSINESS CONFIRMATION/i];

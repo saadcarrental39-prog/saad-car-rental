@@ -133,13 +133,13 @@ function Photo({ tok, onUrl, label = "Photo chunein" }) {
 }
 
 function AddCar({ tok, cats, onAdd }) {
-  const [f, setF] = useState({ cat: cats[0].slug, newCat: "", name: "", trim: "", color: "", subtitle: "", price: "", theme: "white", image: "" }), [err, setErr] = useState("");
+  const [f, setF] = useState({ cat: cats[0].slug, newCat: "", name: "", trim: "", color: "", subtitle: "", price: "", priceOut: "", theme: "white", image: "" }), [err, setErr] = useState("");
   const u = (k) => (e) => setF({ ...f, [k]: e.target.value });
   const submit = (e) => {
     e.preventDefault(); if (!f.name.trim() || !f.color.trim()) return setErr("Gaari ka naam aur colour likhein.");
     let cat = f.cat, newCat = null;
     if (cat === "__new") { const t = f.newCat.trim(); if (!t) return setErr("Nayi category ka naam likhein."); let sl = t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "category", n = 2, base = sl; while (cats.some((c) => c.slug === sl)) sl = `${base}-${n++}`; cat = sl; newCat = { slug: sl, title: t }; }
-    onAdd({ id: `x-${Date.now().toString(36)}`, cat, name: f.name.trim(), trim: f.trim.trim(), color: f.color.trim(), subtitle: f.subtitle.trim() || "With Professional Driver", price: f.price ? Number(f.price) : null, theme: f.theme, image: f.image }, newCat);
+    onAdd({ id: `x-${Date.now().toString(36)}`, cat, name: f.name.trim(), trim: f.trim.trim(), color: f.color.trim(), subtitle: f.subtitle.trim() || "With Professional Driver", price: f.price ? Number(f.price) : null, priceOut: f.priceOut ? Number(f.priceOut) : null, theme: f.theme, image: f.image }, newCat);
   };
   return (<form className="ad-card ad-add" onSubmit={submit}><h2>Nayi gaari add karein</h2>
     <label className="ad-field"><span>Category</span><select value={f.cat} onChange={u("cat")}>{cats.map((c) => <option key={c.slug} value={c.slug}>{c.title}</option>)}<option value="__new">+ Nayi category…</option></select></label>
@@ -148,7 +148,8 @@ function AddCar({ tok, cats, onAdd }) {
     <div className="ad-two"><label className="ad-field"><span>Model / trim</span><input value={f.trim} onChange={u("trim")} placeholder="jaise Altis" /></label>
       <label className="ad-field"><span>Colour</span><input value={f.color} onChange={u("color")} placeholder="jaise Pearl White" required /></label></div>
     <label className="ad-field"><span>Type</span><input value={f.subtitle} onChange={u("subtitle")} placeholder="jaise Luxury SUV" /></label>
-    <label className="ad-field"><span>Price per day (Rs)</span><input inputMode="numeric" value={f.price} onChange={(e) => setF({ ...f, price: e.target.value.replace(/\D/g, "") })} placeholder="jaise 25000" /></label>
+    <label className="ad-field"><span>Local price per day (Rs)</span><input inputMode="numeric" value={f.price} onChange={(e) => setF({ ...f, price: e.target.value.replace(/\D/g, "") })} placeholder="jaise 25000" /></label>
+    <label className="ad-field"><span>Out of Station price per day (Rs)</span><input inputMode="numeric" value={f.priceOut} onChange={(e) => setF({ ...f, priceOut: e.target.value.replace(/\D/g, "") })} placeholder="jaise 35000" /></label>
     <label className="ad-field"><span>Card ka rang</span><select value={f.theme} onChange={u("theme")}>{[["white", "Safed"], ["black", "Kala"], ["grey", "Grey"], ["red", "Laal"], ["plum", "Plum"], ["blue", "Neela"]].map(([v, t]) => <option key={v} value={v}>{t}</option>)}</select></label>
     <Photo tok={tok} onUrl={(image) => setF((x) => ({ ...x, image }))} />{f.image && <img className="ad-prev" src={f.image} alt="" />}
     {!f.image && <small className="ad-note">Photo ke baghair gaari carousel mein nahi dikhegi.</small>}
@@ -156,12 +157,13 @@ function AddCar({ tok, cats, onAdd }) {
 }
 
 function Row({ v, ov, kind, tok, change, remove }) {
-  const val = (k) => ov?.[k] ?? v[k] ?? "", price = ov && "price" in ov ? ov.price : v.price, hidden = ov ? !!ov.hidden : !!v.hidden, img = ov?.image || v.image;
+  const val = (k) => ov?.[k] ?? v[k] ?? "", price = ov && "price" in ov ? ov.price : v.price, priceOut = ov && "priceOut" in ov ? ov.priceOut : v.priceOut, hidden = ov ? !!ov.hidden : !!v.hidden, img = ov?.image || v.image;
   return (<div className={`ad-row${hidden ? " is-off" : ""}`}>
     <div className="ad-thumb"><img src={img} alt="" loading="lazy" /></div>
     <div className="ad-info"><b>{val("name")} {val("trim")}</b><span><i style={{ background: swatch(val("color")) }} />{val("color")}</span></div>
     <label className="ad-switch" aria-label={`${val("name")} ${val("color")} website par dikhana`}><input type="checkbox" checked={!hidden} onChange={(e) => change({ hidden: !e.target.checked })} /><span /><em>{hidden ? "Hidden" : "Live"}</em></label>
-    <label className="ad-price"><small>Price / day</small><div><span>Rs</span><input inputMode="numeric" value={price ?? ""} placeholder="—" aria-label={`Price per day for ${val("name")} ${val("color")}`} onChange={(e) => { const d = e.target.value.replace(/\D/g, ""); change({ price: d ? Number(d) : null }); }} /></div></label>
+    <label className="ad-price"><small>Local / day</small><div><span>Rs</span><input inputMode="numeric" value={price ?? ""} placeholder="—" aria-label={`Local price per day for ${val("name")} ${val("color")}`} onChange={(e) => { const d = e.target.value.replace(/\D/g, ""); change({ price: d ? Number(d) : null }); }} /></div></label>
+    <label className="ad-price"><small>Out of Station / day</small><div><span>Rs</span><input inputMode="numeric" value={priceOut ?? ""} placeholder="—" aria-label={`Out of Station price per day for ${val("name")} ${val("color")}`} onChange={(e) => { const d = e.target.value.replace(/\D/g, ""); change({ priceOut: d ? Number(d) : null }); }} /></div></label>
     <details className="ad-more"><summary>Aur badlein</summary>
       <div className="ad-more__in">
         {[["name", "Naam"], ["trim", "Model / trim"], ["color", "Colour"], ["subtitle", "Type"], ["description", "Chhoti description"]].map(([k, t]) => <label className="ad-field" key={k}><span>{t}</span><input value={val(k)} onChange={(e) => change({ [k]: e.target.value })} /></label>)}

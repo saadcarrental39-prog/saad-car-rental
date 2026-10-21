@@ -15,7 +15,11 @@ export default function VehicleInfo({ v }) {
       <ul className="lc__chips">
         <li>{v.color}</li><li>With Professional Driver</li>
       </ul>
-      <p className="lc__price">{v.price ? <><b>Rs {Number(v.price).toLocaleString("en-PK")}</b><span> / day</span></> : <span>Quote on request</span>}</p>
+      <ul className="lc__rates" aria-label="Rent per day">
+        {[["Local", v.price], ["Out of Station", v.priceOut]].map(([label, p]) => (
+          <li key={label}><small>{label}</small>{p ? <><b>Rs {Number(p).toLocaleString("en-PK")}</b><span> / day</span></> : <span className="lc__ask">Quote on request</span>}</li>
+        ))}
+      </ul>
       <div className="lc__cta">
         <button type="button" className="lc__btn-primary" onClick={() => window.dispatchEvent(new CustomEvent("open-booking", { detail: v.id }))}>Book With Driver  <Arrow /></button>
         {!onOwnPage && <Link className="lc__btn-ghost" to={`/cars/${v.category}`}>Details</Link>}

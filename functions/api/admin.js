@@ -27,6 +27,7 @@ const THEMES = ["white", "black", "grey", "red", "plum", "blue"];
 function fields(o) {
   const r = {};
   if ("price" in o) r.price = price(o.price);
+  if ("priceOut" in o) r.priceOut = price(o.priceOut);
   if (o.hidden) r.hidden = true;
   for (const [k, n] of [["name", 60], ["trim", 30], ["color", 40], ["subtitle", 40], ["description", 200]]) if (s(o[k], n)) r[k] = s(o[k], n);
   if (img(o.image)) r.image = img(o.image);

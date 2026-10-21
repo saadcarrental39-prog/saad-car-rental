@@ -240,7 +240,7 @@ export function VehicleExtras({ slug }) {
   const c = category(slug); if (!c) return null; const path = `/cars/${slug}`; const pg = pageByPath(path);
   const fit = (VEHICLE_FIT[slug] || []).map((u) => USE[u]); const places = placesForVehicle(slug); const svc = servicesForVehicle(slug);
   const X = vehicleSeo(slug); const nm = (X && X.name) || c.title; const rates = ratesOf(c); const seats = seatsOf(c); const sim = similarCars(slug);
-  const short = `The ${nm} suits ${fit.slice(0, 3).join(", ").toLowerCase()} and similar trips. It comes with a professional driver${seats ? ` and typically seats ${seats.replace(/^Up to /i, "up to ")} passengers` : ""}. ${rates.length ? `The listed rent is ${rates.map((n) => `Rs ${Number(n).toLocaleString("en-PK")}`).join(" to ")} per day. ` : "We quote each trip before you travel. "}Call, WhatsApp or use Book Now to confirm your date.`;
+  const short = `The ${nm} suits ${fit.slice(0, 3).join(", ").toLowerCase()} and similar trips. It comes with a professional driver${seats ? ` and typically seats ${seats.replace(/^Up to /i, "up to ")} passengers` : ""}. ${rates.length ? `The Local rent is ${rates.map((n) => `Rs ${Number(n).toLocaleString("en-PK")}`).join(" to ")} per day. ` : "We quote each trip before you travel. "}Call, WhatsApp or use Book Now to confirm your date.`;
   return (<div className="sx-extra">
     <Sec id="short" title={`${nm} on rent in Islamabad: the short answer`}><Answer q={`Can I hire a ${nm} with a driver?`}>{short}</Answer></Sec>
     <Sec id="facts" title={`${nm}: quick facts`} tone="grey"><dl className="sx-facts">{factRows(c).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
@@ -434,7 +434,7 @@ export function ArticlePage({ slug }) {
       {sec.p && sec.p.map((t, j) => <p key={j}>{t}</p>)}
       {sec.list && <Bullets items={sec.list} />}
       {sec.fleetTable && <DataTable head={["Vehicle", "Seats (typical)", "Best for", "Roads"]} rows={categories().map((c) => [c.title, (seatsOf(c) || "Confirmed when you book").replace(/^Up to /i, "Up to "), (VEHICLE_FIT[c.slug] || []).slice(0, 3).map((u) => USE[u]).join(", "), factRows(c).find((r) => r[0] === "Roads")[1].replace(/ \(best kept to paved roads\)/, "")])} />}
-      {sec.rates && <>{listed.length > 0 ? <ul className="sx-list">{listed.map(([sl, v]) => <li key={v.id}><Link to={`/cars/${sl}`}>{`${v.name} ${v.trim}`.trim()}</Link>: <b>{rs(v.price)} per day</b> with a professional driver</li>)}</ul> : <p>Daily rents appear on a car page when they are listed.</p>}
+      {sec.rates && <>{listed.length > 0 ? <ul className="sx-list">{listed.map(([sl, v]) => <li key={v.id}><Link to={`/cars/${sl}`}>{`${v.name} ${v.trim}`.trim()}</Link>: <b>{rs(v.price)} per day (Local)</b> with a professional driver</li>)}</ul> : <p>Daily rents appear on a car page when they are listed.</p>}
         {(BUSINESS.pricing || {}).localFromPerDay && <p>Local service: from {rs(BUSINESS.pricing.localFromPerDay)} per day.{BUSINESS.pricing.outOfStationFromPerDay ? ` Out of Station: from ${rs(BUSINESS.pricing.outOfStationFromPerDay)} per day.` : ""}</p>}
         <p>Every other vehicle is quoted per trip, and the quote is always sent before you travel.</p></>}
       {sec.terms && <DataTable head={["Point", "How it is handled"]} rows={TERMS_ROWS} />}

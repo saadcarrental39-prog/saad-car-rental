@@ -12,7 +12,7 @@ const T = {
 const B = [{ rotate: 0, radius: "42% 58% 55% 45% / 45% 40% 60% 55%" }, { rotate: 18, radius: "58% 42% 40% 60% / 55% 55% 45% 45%" }, { rotate: -14, radius: "50% 50% 38% 62% / 42% 58% 42% 58%" }];
 const car = (category, id, o, i = 0) => ({ id, category, name: o.name, trim: o.trim || "", tag: o.tag || "", subtitle: o.subtitle || "With Professional Driver",
   color: o.color || "Colour on request", image: o.image || PH, placeholder: !o.image, description: o.description || "Available on request.",
-  theme: T[o.theme || "white"], blob: B[i % 3], price: o.price || null });
+  theme: T[o.theme || "white"], blob: B[i % 3], price: o.price || null, priceOut: o.priceOut || null });   // price = Local per day, priceOut = Out of Station per day (set from the admin app)
 
 const cats = [
   { slug: "premium-luxury-land-cruiser", title: "Premium Luxury Land Cruiser", seo: "Premium Luxury Land Cruiser rental with driver in Islamabad", description: "Premium Luxury Land Cruiser (2025 model, black) with a professional driver for VIP, executive, wedding and long-distance travel from Islamabad.",
@@ -67,6 +67,7 @@ const patch = (v, o) => {
   if (!o) return v; const n = { ...v };
   ["name", "trim", "color", "subtitle", "description"].forEach((k) => { if (o[k]) n[k] = o[k]; });
   if ("price" in o) n.price = o.price || null;
+  if ("priceOut" in o) n.priceOut = o.priceOut || null;
   if (o.image) { n.image = o.image; n.placeholder = false; }
   n.hidden = !!o.hidden; return n;
 };
@@ -76,7 +77,7 @@ export function applyOverrides(d) {
   (d.cats || []).forEach((c) => { if (!list.some((x) => x.slug === c.slug)) list.push({ slug: c.slug, title: c.title, seo: `${c.title} rental with driver in Islamabad`, description: c.description || `${c.title} with a professional driver.`, vehicles: [] }); });
   (d.added || []).forEach((a) => {
     const c = list.find((x) => x.slug === a.cat); if (!c) return;
-    c.vehicles.push(patch(car(a.cat, a.id, { name: a.name, trim: a.trim, tag: String(a.name).replace(/[^A-Za-z0-9]/g, "").slice(0, 2).toUpperCase(), color: a.color, image: a.image, subtitle: a.subtitle, description: a.description, theme: a.theme, price: a.price }, c.vehicles.length), { hidden: a.hidden }));
+    c.vehicles.push(patch(car(a.cat, a.id, { name: a.name, trim: a.trim, tag: String(a.name).replace(/[^A-Za-z0-9]/g, "").slice(0, 2).toUpperCase(), color: a.color, image: a.image, subtitle: a.subtitle, description: a.description, theme: a.theme, price: a.price, priceOut: a.priceOut }, c.vehicles.length), { hidden: a.hidden }));
   });
   const final = list.map((c) => ({ ...c, vehicles: c.vehicles.filter((v) => !v.hidden) })).filter((c) => c.vehicles.length);
   if (!final.length) return;                                   // never leave the site empty
