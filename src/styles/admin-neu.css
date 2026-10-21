@@ -54,7 +54,7 @@ html:has(.adm[data-theme="light"]){background:#e9ebef}html:has(.adm[data-theme="
 .adm .in-lv__toast{background:var(--nu-btn);color:var(--nu-btn-t)}
 .adm .ad-save{background:var(--nu-btn);color:var(--nu-btn-t);border-radius:22px;box-shadow:var(--nu-raise);bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 .adm .ad-save .ad-btn--light{background:var(--nu-btn-t);color:var(--nu-btn);box-shadow:none}
-.adm .ad-toast{background:var(--nu-bg);color:var(--ad-ink);border:0;box-shadow:var(--nu-raise);bottom:calc(158px + env(safe-area-inset-bottom,0px))}
+.adm .ad-toast{background:var(--nu-bg);color:var(--ad-ink);border:0;box-shadow:var(--nu-raise);bottom:auto;top:calc(10px + env(safe-area-inset-top,0px))}
 /* segmented tabs + filter pills */
 .adm .in-seg,.adm .in-tabs{background:var(--nu-bg);box-shadow:var(--nu-press);border-radius:99px}
 .adm .in-seg button.on,.adm .in-tabs button.on{background:var(--nu-bg);color:var(--ad-ink);box-shadow:var(--nu-raise-s)}

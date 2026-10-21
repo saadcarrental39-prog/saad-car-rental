@@ -81,6 +81,8 @@ function usePwa() {
   useEffect(() => {
     const add = (tag, attrs) => { const e = document.createElement(tag); Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v)); document.head.appendChild(e); return e; };
     const els = [add("link", { rel: "manifest", href: "/admin.webmanifest" }), add("link", { rel: "apple-touch-icon", href: "/icons/saad-apple-180.png" }), add("meta", { name: "theme-color", content: "#ffffff" }), add("meta", { name: "robots", content: "noindex,nofollow" }), add("meta", { name: "apple-mobile-web-app-capable", content: "yes" }), add("meta", { name: "mobile-web-app-capable", content: "yes" }), add("meta", { name: "apple-mobile-web-app-status-bar-style", content: "default" }), add("meta", { name: "apple-mobile-web-app-title", content: "SAAD Admin" })];
+    const vp = document.querySelector('meta[name="viewport"]'), vpOld = vp && vp.getAttribute("content");   // no auto-zoom on tap / no zoom-out dance inside the admin app
+    if (vp) vp.setAttribute("content", "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover");
     const old = document.title; document.title = "SAAD Admin";
     let reg = null; const onVis = () => { if (document.visibilityState === "visible" && reg) reg.update().catch(() => {}); };
     const had = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
@@ -91,7 +93,7 @@ function usePwa() {
     }
     document.addEventListener("visibilitychange", onVis);
     const h = (e) => { e.preventDefault(); setEv(e); }; addEventListener("beforeinstallprompt", h);
-    return () => { els.forEach((e) => e.remove()); document.title = old; removeEventListener("beforeinstallprompt", h); document.removeEventListener("visibilitychange", onVis); if ("serviceWorker" in navigator) navigator.serviceWorker.removeEventListener("controllerchange", onCtl); };
+    return () => { els.forEach((e) => e.remove()); if (vp && vpOld) vp.setAttribute("content", vpOld); document.title = old; removeEventListener("beforeinstallprompt", h); document.removeEventListener("visibilitychange", onVis); if ("serviceWorker" in navigator) navigator.serviceWorker.removeEventListener("controllerchange", onCtl); };
   }, []);
   const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -365,7 +367,7 @@ function Panel({ tok, out, pwa }) {
   }, [refreshLeadN]);
   const onLeadsSeen = useCallback(() => setLeadN(0), []);
   useEffect(load, []);
-  useEffect(() => { if (!msg) return; const t = setTimeout(() => setMsg(""), 4500); return () => clearTimeout(t); }, [msg]);
+  useEffect(() => { if (!msg) return; const t = setTimeout(() => setMsg(""), /^Save ho gaya/.test(msg) ? 1300 : 4000); return () => clearTimeout(t); }, [msg]);
   const edit = (fn) => { setOv((o) => { const n = structuredClone(o); fn(n); return n; }); setDirty(true); setMsg(""); };
   const cats = useMemo(() => ov ? [...baseFleet.map((c) => ({ slug: c.slug, title: c.title })), ...ov.cats.filter((c) => !baseFleet.some((b) => b.slug === c.slug))] : [], [ov]);
   const stats = useMemo(() => {
@@ -375,7 +377,7 @@ function Panel({ tok, out, pwa }) {
   }, [ov]);
   const save = async () => {
     setBusy(true); setMsg("");
-    try { const { data } = await api("save", { data: ov }, tok); setOv(norm(data)); applyOverrides(data); saveLocal(data); setDirty(false); setMsg("Save ho gaya. Website par ~30 second mein nazar aayega."); }
+    try { const { data } = await api("save", { data: ov }, tok); setOv(norm(data)); applyOverrides(data); saveLocal(data); setDirty(false); setMsg("Save ho gaya ✅"); }
     catch (e) { if (e.status === 401) out(); else setMsg(MSG[e.message] || "Save nahi hua. Dobara try karein."); } finally { setBusy(false); }
   };
   if (!ov) return (<div className="ad-load">{loadErr ? <><p>{loadErr}</p><button type="button" className="ad-btn" onClick={load}>Dobara try karein</button></> : <><span className="ad-spin" /><p>Load ho raha hai…</p></>}</div>);
