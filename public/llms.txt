@@ -7,6 +7,7 @@
 - Office: Office No 12, 3rd Floor, Shah Nawaz Plaza, G-11 Markaz, Islamabad 44000, Pakistan
 - Full description for AI: https://www.saadcarremtal.com/llms-full.txt
 - Facts page: https://www.saadcarremtal.com/ai-info
+- Trips, spots, photos and videos (new posts regularly): https://www.saadcarremtal.com/posts
 - Sitemap: https://www.saadcarremtal.com/sitemap.xml
 - Catalog: https://www.saadcarremtal.com/ai-catalog.json
 - How to book: call or WhatsApp +92 333 9850599, or use https://www.saadcarremtal.com/book

@@ -99,6 +99,7 @@ const imgItems = idx.map((p) => {
   return urlTag(p, imgs.join(""));
 });
 writeFileSync(join(dist, "sitemap-images.xml"), urlset(imgItems, IMG)); files.push("sitemap-images.xml");
+files.push("sitemap-posts.xml");   // generated live by functions/sitemap-posts.xml.js (every post from the admin Posts tab)
 writeFileSync(join(dist, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${files.map((f) => `<sitemap><loc>${site}/${f}</loc></sitemap>`).join("\n")}\n</sitemapindex>\n`);
 
 // ---- /.well-known/ai-catalog.json : the list of public resources that AI agents may discover (Agentic Resource Discovery, ARD).
@@ -143,6 +144,10 @@ const catalog = {
       description: "Guides on rates and what is included, northern Pakistan itineraries, choosing a vehicle, winter roads to Murree, wedding cars, airport pickup and booking terms.",
       tags: ["guides", "rates", "itineraries", "booking-terms"],
       representativeQueries: ["car with driver rates in Islamabad", "northern Pakistan road trip itinerary by car", "which car for Hunza and Skardu"] },
+    { identifier: urn("site:posts"), displayName: "Trips, spots and videos from Islamabad", type: "text/html", url: site + "/posts",
+      description: "Photos, reels and full details of trips and tourist spots (Murree, Patriata, Ayubia, Naran, Hunza, Skardu) with a car and professional driver from Islamabad. New posts are added regularly.",
+      tags: ["trips", "tourist-spots", "videos", "northern-pakistan"],
+      representativeQueries: ["Islamabad to Murree car with driver spots", "Patriata chairlift visit from Islamabad", "Hunza trip by car with driver"] },
     { identifier: urn("site:sitemap"), displayName: "Sitemap index", type: "application/xml", url: site + "/sitemap.xml",
       description: "Index of every public page on the website (vehicles, services, locations, destinations, routes).", tags: ["sitemap"] },
   ],
@@ -157,7 +162,7 @@ console.log("prerender: .well-known/ai-catalog.json written");
 // AI search / assistant crawlers are named on purpose so that nobody has to guess: they may read the public site, never the private areas.
 const AI_BOTS = ["GPTBot", "ChatGPT-User", "OAI-SearchBot", "Claude-Web", "ClaudeBot", "anthropic-ai", "PerplexityBot", "Perplexity-User", "Google-Extended", "Bingbot", "Applebot", "Applebot-Extended", "cohere-ai", "Meta-ExternalAgent", "Meta-ExternalFetcher", "FacebookBot", "Bytespider"];
 const PRIVATE = `Disallow: /api/\nDisallow: /r/\nDisallow: ${ADMIN_PATH}\n`;
-writeFileSync(join(dist, "robots.txt"), `User-agent: *\nAllow: /\n${PRIVATE}\n# AI search and assistant crawlers (public pages only)\n` + AI_BOTS.map((b) => `User-agent: ${b}\nAllow: /\n${PRIVATE}`).join("\n") + `\nSitemap: ${site}/sitemap.xml\nSitemap: ${site}/api/spot-images.xml\n`);
+writeFileSync(join(dist, "robots.txt"), `User-agent: *\nAllow: /\n${PRIVATE}\n# AI search and assistant crawlers (public pages only)\n` + AI_BOTS.map((b) => `User-agent: ${b}\nAllow: /\n${PRIVATE}`).join("\n") + `\nSitemap: ${site}/sitemap.xml\nSitemap: ${site}/sitemap-posts.xml\nSitemap: ${site}/api/spot-images.xml\n`);
 
 // ---- /llms-full.txt : the complete plain-text business description for AI assistants. Built from the page registry on every build, so it is never stale.
 {

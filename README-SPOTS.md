@@ -1,3 +1,5 @@
+> NOTE: admin app ka "Spots" tab hata kar uski jagah "Posts" tab aa gaya hai (README-POSTS.md). Is file ke purane admin steps ab lagu nahi.
+
 # Murree spot pages + photos
 
 Pages (after build): /murree-tourist-spots and one page per spot (Patriata, Mall Road, Kashmir Point, Pindi Point, Bhurban, Ayubia).

@@ -1,4 +1,6 @@
-Purani (ab bekaar) files, apne D:\saad se delete kar dein:
+Purani (ab bekaar) files, apne D:\saad se delete kar dein (zip extract karne ke baad):
+  src\pages\AdminSpots.jsx                      (Spots tab hat gaya, uski jagah Posts tab)
   src\pages\SpotImagesPanel.jsx
   public\spot-images.json
-Naya: PWA admin mein "Spots" tab, server: functions\api\spots.js, functions\api\spot-images.xml.js
+  public\assets\assets pics everything\         (30 MB videos / pictures, website mein kahin use nahi hote: deploy aur git bhaari karte hain)
+Murree spot pages ki purani photos (/api/spots) chalti rehti hain; naya kaam Posts tab se karein.

@@ -45,7 +45,7 @@ for (const { p, h, title, desc, h1s_ } of rows) {
   // links: every internal link must point at a real page
   const links = [...h.matchAll(/<a [^>]*href="([^"]+)"/g)].map((m) => m[1]);
   const internal = links.filter((u) => u.startsWith("/") && !u.startsWith("//"));
-  internal.forEach((u) => { const q = u.split(/[?#]/)[0].replace(/\/$/, "") || "/"; if (!known.has(q) && !staticOk(q)) fail(`${p.path}: broken internal link ${u}`); });
+  internal.forEach((u) => { const q = u.split(/[?#]/)[0].replace(/\/$/, "") || "/"; if (!known.has(q) && !staticOk(q) && !/^\/posts(\/|$)/.test(q)) fail(`${p.path}: broken internal link ${u}`); });
   const body = text(h.replace(/<head>[\s\S]*?<\/head>/, ""));
   const forbidden = FORBIDDEN.filter((re) => re.test(body)).map(String);
   const maxSim = Math.max(0, ...rows.filter((o) => o.p.kind === p.kind && o.p.path !== p.path).map((o) => jac(sh[p.path], sh[o.p.path])));

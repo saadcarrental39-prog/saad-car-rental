@@ -8,7 +8,7 @@
 //   6. any other host (xxxx.pages.dev)  -> X-Robots-Tag: noindex, so a preview copy can never compete with the real site
 // The list of real pages is written at build time to /known-paths.json by scripts/prerender.mjs.
 const ADMIN = "/saad-owner-7k3x9";
-const PASS = [/^\/api\//, /^\/r\//, /^\/receipt$/, /^\/\.well-known\//, new RegExp(`^${ADMIN}(/|$)`)];   // handled by their own functions / the admin app
+const PASS = [/^\/api\//, /^\/r\//, /^\/posts(\/|$)/, /^\/receipt$/, /^\/\.well-known\//, new RegExp(`^${ADMIN}(/|$)`)];   // handled by their own functions / the admin app
 // old addresses (same list as public/_redirects, repeated here so the order of the two features never matters)
 const LEGACY = { "/terms-and-conditions": "/terms-of-service", "/cancellation-policy": "/refund-policy", "/cars/mercedes-luxury": "/cars", "/cars/g-vegan": "/cars/mercedes-g-wagon", "/cars/g-wagon": "/cars/mercedes-g-wagon", "/cars/g-wagen": "/cars/mercedes-g-wagon", "/cars/mercedes-g-class": "/cars/mercedes-g-wagon", "/cars/lexus": "/cars/lexus-lx-570", "/cars/lexus-lx570": "/cars/lexus-lx-570", "/cars/lx-570": "/cars/lexus-lx-570", "/cars/lx570": "/cars/lexus-lx-570", "/cars/fortuner": "/cars/toyota-fortuner", "/cars/audi-a6": "/cars/audi", "/cars/audi-car": "/cars/audi", "/cars/land-cruiser-tz": "/cars/premium-luxury-land-cruiser", "/cars/premium-land-cruiser": "/cars/premium-luxury-land-cruiser", "/cars/land-cruiser-2025": "/cars/premium-luxury-land-cruiser", "/cars/land-cruiser-v8-2018": "/cars/land-cruiser-v8", "/cars/land-cruiser-2018": "/cars/land-cruiser-v8" };
 const FALLBACK_HOST = "www.saadcarremtal.com";

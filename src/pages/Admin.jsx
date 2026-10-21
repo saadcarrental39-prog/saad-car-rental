@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { baseFleet, applyOverrides } from "../data/fleet";
 import { saveLocal } from "../fleetSync";
 import { ADMIN_PATH } from "../config";
-import AdminSpots, { IPin } from "./AdminSpots";
+import AdminPosts, { IPost } from "./AdminPosts";
 import "../styles/admin.css";
 import "../styles/admin-theme.css";
 import Insights from "../components/Insights";
@@ -348,7 +348,7 @@ function ReviewsCard({ tok }) {
 
 function Panel({ tok, out, pwa }) {
   const { theme } = useContext(ThemeCtx), logo = theme === "dark" ? LOGO_DARK : LOGO;
-  const [ov, setOv] = useState(null), [dirty, setDirty] = useState(false), [msg, setMsg] = useState(""), [loadErr, setLoadErr] = useState(""), [busy, setBusy] = useState(false), [tab, setTab] = useState(() => { const t = new URLSearchParams(location.search).get("tab"); return t === "fleet" || t === "orders" || t === "leads" ? t : "home"; }), [q, setQ] = useState(""), [formKey, setFormKey] = useState(0); const [leadN, setLeadN] = useState(0);
+  const [ov, setOv] = useState(null), [dirty, setDirty] = useState(false), [msg, setMsg] = useState(""), [loadErr, setLoadErr] = useState(""), [busy, setBusy] = useState(false), [tab, setTab] = useState(() => { const t = new URLSearchParams(location.search).get("tab"); return t === "fleet" || t === "orders" || t === "leads" || t === "posts" ? t : "home"; }), [q, setQ] = useState(""), [formKey, setFormKey] = useState(0); const [leadN, setLeadN] = useState(0);
   const norm = (d) => ({ vehicles: {}, added: [], cats: [], ...(d || {}) });
   const load = () => { setLoadErr(""); api("load", {}, tok).then((r) => setOv(norm(r.data))).catch((e) => (e.status === 401 ? out() : setLoadErr(MSG[e.message] || "Data load nahi hua. Internet check karein."))); };
   const st = useOrders(tok, out, tab);
@@ -358,7 +358,7 @@ function Panel({ tok, out, pwa }) {
   const refreshLeadN = useCallback(() => { if (tabRef.current === "leads") return; api("lead_count", {}, tok).then((r) => setLeadN(r.unseen || 0)).catch(() => {}); }, [tok]);   // red badge on the Clients tab
   useEffect(() => { refreshLeadN(); const t = setInterval(() => document.visibilityState === "visible" && refreshLeadN(), 30000); return () => clearInterval(t); }, [refreshLeadN]);
   useEffect(() => {
-    const m = (e) => { const t = e.data?.type; if (t === "open-orders") setTab("orders"); else if (t === "open-tab" && ["orders", "leads", "fleet", "home"].includes(e.data.tab)) setTab(e.data.tab); else if (t === "new-lead") refreshLeadN(); };
+    const m = (e) => { const t = e.data?.type; if (t === "open-orders") setTab("orders"); else if (t === "open-tab" && ["orders", "leads", "fleet", "home", "posts"].includes(e.data.tab)) setTab(e.data.tab); else if (t === "new-lead") refreshLeadN(); };
     navigator.serviceWorker?.addEventListener("message", m); return () => navigator.serviceWorker?.removeEventListener("message", m);
   }, [refreshLeadN]);
   const onLeadsSeen = useCallback(() => setLeadN(0), []);
@@ -378,7 +378,7 @@ function Panel({ tok, out, pwa }) {
   };
   if (!ov) return (<div className="ad-load">{loadErr ? <><p>{loadErr}</p><button type="button" className="ad-btn" onClick={load}>Dobara try karein</button></> : <><span className="ad-spin" /><p>Load ho raha hai…</p></>}</div>);
   const match = (c, v) => !q.trim() || `${v.name} ${v.trim || ""} ${v.color || ""} ${c.title}`.toLowerCase().includes(q.trim().toLowerCase());
-  const tabs = [["home", "Dashboard", IChart], ["activity", "Activity", IPulse], ["orders", "Orders", IBell], ["leads", "Clients", IPeople], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["spots", "Spots", IPin], ["me", "Account", IUser]];
+  const tabs = [["home", "Dashboard", IChart], ["activity", "Activity", IPulse], ["orders", "Orders", IBell], ["leads", "Clients", IPeople], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["posts", "Posts", IPost], ["me", "Account", IUser]];
   return (<>
     <header className="ad-top"><img src={logo} alt="SAAD CAR" width="900" height="284" /><div className="ad-top__r"><ThemeToggle /><span className="ad-pill">Admin</span></div></header>
     <main className="ad-main">
@@ -395,7 +395,7 @@ function Panel({ tok, out, pwa }) {
             {base.map((v) => <Row key={v.id} v={v} ov={ov.vehicles[v.id]} kind="base" tok={tok} change={(p) => edit((n) => { n.vehicles[v.id] = { ...n.vehicles[v.id], ...p }; })} />)}
             {added.map((a) => <Row key={a.id} v={{ ...a, image: a.image || "/assets/placeholder-vehicle.svg" }} ov={null} kind="add" tok={tok} change={(p) => edit((n) => { Object.assign(n.added.find((x) => x.id === a.id), p); })} remove={() => edit((n) => { n.added = n.added.filter((x) => x.id !== a.id); })} />)}</section>); })}
       </>}
-      {tab === "spots" && <AdminSpots tok={tok} api={api} Photo={Photo} out={out} />}
+      {tab === "posts" && <AdminPosts tok={tok} api={api} out={out} />}
       {tab === "add" && <AddCar key={formKey} tok={tok} cats={cats} onAdd={(item, nc) => { edit((n) => { if (nc) n.cats.push(nc); n.added.push(item); }); setFormKey((k) => k + 1); setTab("fleet"); setMsg("Gaari add ho gayi. Neeche Save dabana na bhoolein."); }} />}
       {tab === "me" && <>
         <section className="ad-card ad-me"><img src={logo} alt="SAAD CAR" width="900" height="284" /><b>SAAD CAR RENTAL SERVICES</b><span>Owner admin</span></section>
@@ -406,7 +406,7 @@ function Panel({ tok, out, pwa }) {
         <p className="ad-ver">Version: {new Date(Number(__BUILD_ID__)).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}<br />Naya update aane par app khud update ho jati hai.</p>
       </>}
     </main>
-    {(dirty || busy) && tab !== "orders" && tab !== "home" && tab !== "leads" && tab !== "spots" && <div className="ad-save" role="status"><span>Badlaav save nahi hue</span><button type="button" className="ad-btn ad-btn--light" disabled={busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div>}
+    {(dirty || busy) && tab !== "orders" && tab !== "home" && tab !== "leads" && tab !== "posts" && <div className="ad-save" role="status"><span>Badlaav save nahi hue</span><button type="button" className="ad-btn ad-btn--light" disabled={busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div>}
     {msg && <div className="ad-toast" role="status">{msg}</div>}
     <nav className="ad-tabs" aria-label="Admin">{tabs.map(([k, t, Ic]) => <button key={k} type="button" className={tab === k ? "on" : ""} aria-current={tab === k ? "page" : undefined} onClick={() => setTab(k)}><span className="ad-ic"><Ic />{k === "orders" && st.unread > 0 && <i className="ad-count">{st.unread > 99 ? "99+" : st.unread}</i>}{k === "leads" && leadN > 0 && tab !== "leads" && <i className="ad-count">{leadN > 99 ? "99+" : leadN}</i>}</span>{t}</button>)}</nav>
   </>);

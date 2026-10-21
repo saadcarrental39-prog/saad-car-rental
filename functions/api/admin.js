@@ -8,6 +8,7 @@ import { leadsAdmin } from "../_lib/leads.js";
 import { hasSb } from "../_lib/sb.js";
 import * as SB from "../_lib/sbstats.js";
 import * as SBL from "../_lib/sbleads.js";
+import { listPosts, getPost, savePost, deletePost, pingIndexNow, SITE } from "../_lib/posts.js";
 const enc = new TextEncoder();
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 const same = (a, b) => { a = String(a); b = String(b); let d = a.length ^ b.length; for (let i = 0; i < Math.max(a.length, b.length); i++) d |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0); return d === 0; };
@@ -53,7 +54,7 @@ async function orderCounts(kv, range) {
     return { cur: between(from, today), prev: between(addDays(pTo, -(n - 1)), pTo), today: between(today, today), week: between(addDays(today, -6), today), month: between(addDays(today, -29), today) };
   } catch { return null; }
 }
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost({ request, env, waitUntil }) {
   if (!env.ADMIN_USER || !env.ADMIN_PASS) return json({ error: "admin_not_configured" }, 503);
   const kv = env.SITEDATA || env.RECEIPTS; if (!kv) return json({ error: "no_storage" }, 503);
   if (Number(request.headers.get("content-length") || 0) > 1.7e6) return json({ error: "too_big" }, 413);
@@ -143,6 +144,15 @@ export async function onRequestPost({ request, env }) {
     await kv.put("site:spots", JSON.stringify(out));
     return json({ ok: true, data: out });
   }
+  if (b.action === "posts_list") { try { return json({ posts: await listPosts(kv, { drafts: true }) }); } catch { return json({ posts: [] }); } }   // Posts tab: every post incl. drafts / scheduled
+  if (b.action === "posts_get") { const p = await getPost(kv, String(b.slug || ""), true); return p ? json({ post: p }) : json({ error: "not_found" }, 404); }
+  if (b.action === "posts_save") {                                  // Posts tab: create / edit one post. It is live on /posts/<slug> as soon as status is published and the date has come.
+    const r = await savePost(kv, b.post, b.old); if (r.error) return json(r, 400);
+    const live = r.post.status === "published" && r.post.date <= new Date(Date.now() + 5 * 3600e3).toISOString().slice(0, 10);
+    if (live && waitUntil) waitUntil(pingIndexNow(env, [`${SITE}/posts/${r.post.slug}`, `${SITE}/posts`, `${SITE}/sitemap-posts.xml`]));   // Bing / Yandex hear about it at once
+    return json({ ok: true, post: r.post, dropped: r.dropped, url: `${SITE}/posts/${r.post.slug}`, live });
+  }
+  if (b.action === "posts_delete") { const ok = await deletePost(kv, String(b.slug || "")); return ok ? json({ ok: true }) : json({ error: "not_found" }, 404); }
   if (b.action === "upload") {
     const m = /^data:(image\/(?:webp|png|jpeg));base64,([A-Za-z0-9+\/=]+)$/.exec(String(b.image || ""));
     if (!m) return json({ error: "bad_image" }, 400);
