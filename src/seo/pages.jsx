@@ -1,3 +1,4 @@
+import { routeFaqs } from "./data/routeFaqs";
 // SEO page components. Every page is built from the data files in src/seo/data, so no page is hand-copied from another.
 // They contain no browser-only code: the build renders them to plain HTML for crawlers (see scripts/prerender.mjs).
 import { Link } from "react-router-dom";
@@ -75,13 +76,7 @@ export function DestinationPage({ slug }) {
 export function RoutePage({ slug }) {
   const r = ROUTES.find((x) => x.slug === slug); const p = place(r.to); const path = `/routes/${r.slug}`; const veh = vehiclesForPlace(p); const near = nearby(p);
   const T = TERRAIN[p.terrain];
-  const faqs = [
-    { q: `Can I hire a car with driver from Islamabad to ${p.name}?`, a: `Yes. We provide a car with professional driver from Islamabad or Rawalpindi to ${p.name}, one-way, as a round trip or as part of a multi-day booking.` },
-    { q: `How much does the Islamabad to ${p.name} trip cost?`, a: `The price depends on the vehicle, the number of days and your requirements, so we quote each trip. Call ${SITE.phoneDisplay} or WhatsApp us for today's quote.` },
-    { q: `Can you pick me up from Rawalpindi for the ${p.name} trip?`, a: `Yes. Pickup is arranged from Islamabad or Rawalpindi. Tell us the address when you book.` },
-    { q: `Can the driver wait for me in ${p.name}?`, a: `Yes. Tell us how long you need the driver in ${p.name} and we plan the booking around it.` },
-    { q: `Which vehicle should I choose for ${p.name}?`, a: `${T.advice} Tell us your group size and luggage and we will confirm the best choice for your date.` },
-  ];
+  const faqs = routeFaqs(p);
   return (<>
     <Hero eyebrow={`Route · ${T.label.replace(/-/g, " ")}`} h1={pageByPath(path).h1} lead={`Islamabad to ${p.name} with a professional driver. ${p.plan}`} crumbs={crumbsOf(path)}><Updated /></Hero>
     <Sec id="answer" title={`Islamabad to ${p.name}: the short answer`}><Answer q={`Do you provide a car with driver from Islamabad to ${p.name}?`}>{`Yes. SAAD CAR RENTAL SERVICES provides a car with professional driver from Islamabad or Rawalpindi to ${p.name}. Tell us your date, pickup address and passengers by WhatsApp or phone and we confirm the vehicle and quote.`}</Answer></Sec>

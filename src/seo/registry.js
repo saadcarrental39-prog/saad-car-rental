@@ -23,6 +23,8 @@ import { GUIDES, GUIDES_HUB } from "./data/articles";
 import { TOUR_HUB, TOUR_SPOTS } from "./data/tourSpots";
 import { graphFor, abs } from "./schema";
 import { vehicleFaqs } from "./data/vehicleFacts";
+import { routeFaqs } from "./data/routeFaqs";
+import { imagesOf, boostFaqs, boostTags } from "./data/pageMeta";
 
 const BRAND = B.shortName;
 // Keep text inside search-result limits: join sentences until the limit is reached.
@@ -40,6 +42,9 @@ function add(p) {
   rec.ogImage = `/images/og/${rec.ogKey}.jpg`;
   rec.ogAlt = `${p.h1} - ${B.businessName}`;
   rec.canonical = abs(path);
+  // page photos (pageImages.json) + the extra FAQs and #tags from pageBoost.js: the FAQ schema always matches what is visible on the page
+  rec.pageImages = imagesOf(path); rec.tags = boostTags(path);
+  const have = new Set(rec.faqs.map((f) => f.q)); rec.faqs = [...rec.faqs, ...boostFaqs(path).filter((f) => !have.has(f.q))];
   rec.robots = rec.indexable ? "index, follow, max-image-preview:large" : "noindex, follow";
   rec.breadcrumbs = p.breadcrumbs || [{ name: "Home", path: "/" }];
   pages.push(rec);
@@ -117,13 +122,13 @@ PLACES.filter((p) => p.status === "live").forEach((p) => {
   const lead = (vehiclesForPlace(p).find((c) => photoOf(c)) || { slug: "prado" }).slug;
   const prov = PROVINCES[p.province] ? PROVINCES[p.province].name : "";
   if (p.type === "destination") {
-    add({ path, kind: "destination", slug: p.slug, title: `Islamabad to ${nm(p)} Car With Driver`, h1: `Islamabad to ${p.name} Car With Driver`, priority: 0.7, faqs: p.faqs,
+    add({ path, kind: "destination", slug: p.slug, title: `Islamabad to ${nm(p)} Car With Driver`, h1: `Islamabad to ${p.name} Car With Driver`, priority: 0.7, faqs: [...p.faqs, { q: `How do I get a quote for a trip to ${nm(p)}?`, a: `Call ${B.phoneDisplay}, WhatsApp us or use the Book Now form with your dates, number of passengers and luggage. We reply with a quote for the whole trip.` }],
       breadcrumbs: [home, { name: "Destinations", path: "/destinations" }, { name: p.name, path }],
       description: fit([`Car with professional driver from Islamabad to ${p.name}${p.area ? ` (${p.area})` : ""}: ${lc(p.highlights[0])}.`, `${names} available.`, CTA]),
       og: { a: `ISLAMABAD → ${nm(p).toUpperCase()}`, b: "Car with professional driver", vehicle: lead }, service: { type: "Chauffeur-driven trip", areas: ["Islamabad", p.name] } });
   } else {
     const title = p.slug === "islamabad" ? "Islamabad Car Rental: City, Airport & Sector Pickups" : `${nm(p)} Car Rental With Driver`;
-    add({ path, kind: "location", slug: p.slug, title, h1: p.slug === "islamabad" ? "Car Rental in Islamabad: Pickups Across the City" : `Car Rental in ${p.name} With Driver`, priority: p.slug === "islamabad" ? 0.9 : 0.7, faqs: p.faqs,
+    add({ path, kind: "location", slug: p.slug, title, h1: p.slug === "islamabad" ? "Car Rental in Islamabad: Pickups Across the City" : `Car Rental in ${p.name} With Driver`, priority: p.slug === "islamabad" ? 0.9 : 0.7, faqs: [...p.faqs, { q: `How do I get a quote for ${p.name}?`, a: `Call ${B.phoneDisplay}, WhatsApp us, or use the Book Now form with your pickup, destination, date and number of passengers. We reply with a quote.` }],
       breadcrumbs: [home, { name: "Locations", path: "/locations" }, ...(PROVINCES[p.province]?.own && PROVINCES[p.province].status === "live" ? [{ name: prov, path: `/locations/${PROVINCES[p.province].slug}` }] : []), { name: p.name, path }],
       description: fit([p.slug === "islamabad" ? "Car rental with professional driver in Islamabad: airport transfers, city trips, family, business and wedding travel." : `Car with professional driver for travel to and from ${p.name}, based in Islamabad: ${lc(p.highlights[0])}.`, names ? `${names} available.` : "", CTA]),
       og: { a: p.slug === "islamabad" ? "ISLAMABAD" : p.name.toUpperCase(), b: p.slug === "islamabad" ? "Car rental with professional driver" : "Car with driver · based in Islamabad", vehicle: lead }, service: { type: "Car rental with driver", areas: ["Islamabad", p.name] } });
@@ -132,7 +137,7 @@ PLACES.filter((p) => p.status === "live").forEach((p) => {
 ROUTES.filter((r) => r.status === "live").forEach((r) => {
   const p = place(r.to); const path = `/routes/${r.slug}`;
   const v = vehiclesForPlace(p).filter((c) => photoOf(c)); const lead = (v[0] || { slug: "prado" }).slug;
-  add({ path, kind: "route", slug: r.slug, title: `Islamabad to ${nm(p)} Car With Driver`, h1: `Islamabad to ${p.name} Car With Driver`, priority: 0.8,
+  add({ path, kind: "route", slug: r.slug, faqs: routeFaqs(p), title: `Islamabad to ${nm(p)} Car With Driver`, h1: `Islamabad to ${p.name} Car With Driver`, priority: 0.8,
     breadcrumbs: [home, { name: "Routes", path: "/routes" }, { name: `Islamabad to ${p.name}`, path }],
     description: fit([`Book a car with professional driver from Islamabad or Rawalpindi to ${p.name}. ${TERRAIN[p.terrain].label[0].toUpperCase()}${TERRAIN[p.terrain].label.slice(1)} route.`, `${v.slice(0, 3).map((c) => VEH_SEO[c.slug] || c.title).join(", ")} available.`, CTA]),
     og: { a: `ISLAMABAD → ${nm(p).toUpperCase()}`, b: "Car with professional driver", vehicle: lead }, service: { type: "Intercity car rental with driver", areas: ["Islamabad", p.name] } });
@@ -201,7 +206,7 @@ SPOTS.forEach((x) => {
 // ---------------------------------------------------------------- province / region hubs and national hubs
 Object.entries(PROVINCES).filter(([, pv]) => pv.own && pv.status === "live").forEach(([key, pv]) => {
   const list = placesIn(key);
-  add({ path: `/locations/${pv.slug}`, kind: "province", slug: key, title: `Car Rental With Driver in ${pv.name}`, h1: `Car Rental With Driver in ${pv.name}`, priority: 0.8,
+  add({ path: `/locations/${pv.slug}`, kind: "province", slug: key, faqs: FAQS.slice(8, 12), title: `Car Rental With Driver in ${pv.name}`, h1: `Car Rental With Driver in ${pv.name}`, priority: 0.8,
     breadcrumbs: [home, { name: "Locations", path: "/locations" }, { name: pv.name, path: `/locations/${pv.slug}` }],
     description: fit([`Chauffeur-driven travel to and from ${pv.name}: ${list.slice(0, 4).map((p) => p.name).join(", ")} and more, from our Islamabad base.`, CTA]),
     og: { a: pv.name.toUpperCase(), b: "Car with driver · from Islamabad", vehicle: "prado" }, service: { type: "Car rental with driver", areas: [pv.name] } });

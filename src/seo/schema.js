@@ -36,11 +36,13 @@ export function graphFor(page) {
   const url = abs(page.path);
   const webPageType = { about: "AboutPage", contact: "ContactPage", hub: "CollectionPage", province: "CollectionPage" }[page.kind] || "WebPage";
   const modified = page.updated || (["route", "destination", "guide", "article", "vehicle", "tourspot", "tourspots"].includes(page.kind) ? B.contentUpdated : undefined);
-  const image = imageNode(page.ogImage, page.ogAlt);
+  const pics = (page.pageImages || []).map((im) => clean({ "@type": "ImageObject", "@id": `${abs(im.url)}#img`, url: abs(im.url), contentUrl: abs(im.url), width: im.w, height: im.h, name: im.alt, caption: im.cap, representativeOfPage: im === page.pageImages[0] ? true : undefined, creator: { "@id": ID.biz } }));
+  const image = pics[0] || imageNode(page.ogImage, page.ogAlt);
   const g = [];
   if (page.path === "/" || page.kind === "about" || page.kind === "contact") g.push(businessNode(page.areaServed || []));
   if (page.path === "/") g.push(websiteNode());
-  g.push(clean({ "@type": webPageType, "@id": `${url}#webpage`, url, name: page.fullTitle, description: page.description, inLanguage: "en", isPartOf: { "@id": ID.site }, about: { "@id": ID.biz }, dateModified: modified, primaryImageOfPage: image, image, breadcrumb: page.breadcrumbs.length > 1 ? { "@id": `${url}#breadcrumb` } : undefined }));
+  g.push(clean({ "@type": webPageType, "@id": `${url}#webpage`, url, name: page.fullTitle, description: page.description, inLanguage: "en", isPartOf: { "@id": ID.site }, about: { "@id": ID.biz }, dateModified: modified, primaryImageOfPage: image, image: pics.length ? [...pics.map((n) => ({ "@id": n["@id"] })), imageNode(page.ogImage, page.ogAlt)] : image, keywords: page.tags && page.tags.length ? page.tags.join(", ") : undefined, breadcrumb: page.breadcrumbs.length > 1 ? { "@id": `${url}#breadcrumb` } : undefined }));
+  pics.slice(1).forEach((n) => g.push(n));
   if (page.breadcrumbs.length > 1) g.push({ ...breadcrumbNode(page.breadcrumbs), "@id": `${url}#breadcrumb` });
   if (page.service) g.push(clean({ "@type": "Service", "@id": `${url}#service`, name: page.h1, serviceType: page.service.type, description: page.description, url, provider: providerRef(), image: abs(page.ogImage), areaServed: page.service.areas.map((a) => ({ "@type": a.type || "Place", name: a })), availableChannel: { "@type": "ServiceChannel", serviceUrl: abs(B.bookingUrl), servicePhone: { "@type": "ContactPoint", telephone: B.phone } } }));
   if (page.attraction) g.push(clean({ "@type": "TouristAttraction", "@id": `${url}#attraction`, name: page.attraction.name, description: page.description, url, containedInPlace: { "@type": "Place", name: page.attraction.within }, touristType: ["Families", "Couples", "Friends and groups"] }));

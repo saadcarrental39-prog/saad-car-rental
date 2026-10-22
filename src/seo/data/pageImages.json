@@ -1,0 +1,54 @@
+{
+  "/routes/islamabad-to-murree": {"og":"murree-3","ogTitle":"Islamabad to Murree Car With Driver","images":[
+    {"key":"murree-3","alt":"White Toyota Land Cruiser V8 on a pine-lined mountain road beside a blue river, typical of the hill drives from Islamabad","cap":"Hill roads are smooth in dry weather; your driver knows the bends and the safe stopping points."},
+    {"key":"murree-patriata","alt":"White Land Cruiser with a driver near the Patriata chairlift in the Murree hills","cap":"Patriata (New Murree) and its chairlift are a favourite stop on the Murree day trip."},
+    {"key":"murree","alt":"Red-roofed hotels beside a green river in a Murree and Galyat valley","cap":"Valley villages and riverside hotels along the hill routes."},
+    {"key":"murree-2","alt":"Wooden camping pods in snow among pine trees in the Murree hills","cap":"In winter the hills turn to snow: ask us about road conditions before you leave."}]},
+  "/routes": {"og":"murree-patriata","ogTitle":"Routes From Islamabad With a Professional Driver","images":[
+    {"key":"murree-patriata","alt":"White Land Cruiser with driver on the Murree hill road with chairlift cabins above","cap":"Islamabad to Murree and Patriata."},
+    {"key":"gilgit-baltistan","alt":"Baltit Fort gate in Hunza with snow peak behind, Gilgit-Baltistan","cap":"Northern routes to Hunza, Gilgit and Skardu."},
+    {"key":"lahore","alt":"Minar-e-Pakistan in Lahore at sunset","cap":"Intercity route to Lahore by motorway."},
+    {"key":"kpk","alt":"Mountain fort wall and winding road in northern Pakistan","cap":"Mountain roads of the north."}]},
+  "/routes/islamabad-to-skardu": {"og":"gilgit-baltistan","ogTitle":"Islamabad to Skardu Car With Driver","images":[
+    {"key":"gilgit-baltistan","alt":"Baltit Fort gate in Hunza framing a snow-covered peak on the northern route from Islamabad","cap":"The northern route passes the Hunza valley and its forts before the road to Skardu."},
+    {"key":"kpk","alt":"Winding mountain road and fort walls in the Karakoram foothills","cap":"Long mountain days: a rested professional driver matters."}]},
+  "/routes/islamabad-to-lahore": {"og":"lahore","ogTitle":"Islamabad to Lahore Car With Driver","images":[
+    {"key":"lahore","alt":"Minar-e-Pakistan in Lahore with visitors on carpets at sunset","cap":"Minar-e-Pakistan, one of the first stops for visitors arriving in Lahore."},
+    {"key":"punjab","alt":"Badshahi Mosque and the old city of Lahore from above at sunset","cap":"Badshahi Mosque and the old city, a short drive from the Lahore landmarks."}]},
+  "/islamabad/safa-gold-mall": {"og":"safa-gold-mall","ogTitle":"Car With Driver to Safa Gold Mall","images":[
+    {"key":"safa-gold-mall","alt":"Safa Gold Mall in F-7 Islamabad seen from above with gold glass facade and the Margalla hills behind","cap":"Safa Gold Mall, F-7 Markaz, Islamabad."}]},
+  "/islamabad/islamabad-marriott-hotel": {"og":"mariot-hotel","ogTitle":"Car With Driver to Islamabad Marriott Hotel","images":[
+    {"key":"mariot-hotel","alt":"Islamabad Marriott Hotel and gardens with the Margalla hills behind","cap":"Islamabad Marriott Hotel below the Margalla hills."}]},
+  "/islamabad/f6-super-market": {"og":"f6-super-market","ogTitle":"Car With Driver to F-6 Super Market","images":[
+    {"key":"f6-super-market","alt":"F-6 Super Market in Islamabad","cap":"F-6 Super Market, Islamabad."}]},
+  "/islamabad/pakistan-monument": {"og":"pakistan-monument","ogTitle":"Car With Driver to Pakistan Monument","images":[
+    {"key":"pakistan-monument","alt":"Pakistan Monument in Islamabad with visitors gathered on its plaza","cap":"The Pakistan Monument, Shakarparian, Islamabad."},
+    {"key":"islamabad","alt":"Aerial view of Faisal Mosque and the Margalla hills in Islamabad at sunset","cap":"Faisal Mosque and the Margalla hills: a classic pairing with the monument."}]},
+  "/cars/prado": {"og":"white-prado","ogTitle":"Prado Rental in Islamabad With Driver","images":[
+    {"key":"white-prado","alt":"White Toyota Prado SUV on a mountain road in Pakistan","cap":"Prado in white: family trips and northern roads."},
+    {"key":"black-prado","alt":"Black Toyota Prado SUV parked outside a modern house","cap":"Prado in black: business and city use."}]},
+  "/cars/honda-civic": {"og":"honda-civic","ogTitle":"Honda Civic Rental in Islamabad With Driver","images":[
+    {"key":"honda-civic","alt":"Honda Civic RS Turbo sedan on a highway at sunset with a city behind","cap":"Honda Civic RS: smart city and motorway travel."}]},
+  "/cars/toyota-grande": {"og":"toyota-grande","ogTitle":"Toyota Corolla Grande Rental With Driver","images":[
+    {"key":"toyota-grande","alt":"Toyota Corolla Grande sedan with professional driver in Islamabad","cap":"Toyota Corolla Grande."}]},
+  "/visit-pakistan": {"og":"group-tourism","ogTitle":"Tourist Car Rental With Driver in Pakistan","images":[
+    {"key":"group-tourism","alt":"Tourists and local guides gathered with a white Land Cruiser at the Pakistan Monument in Islamabad","cap":"Visitors from abroad are welcome: one driver, one car, the whole trip planned with you."},
+    {"key":"gilgit-baltistan","alt":"Baltit Fort in Hunza with snow peak in the distance","cap":"Hunza and the north are the highlight of most visits."},
+    {"key":"kpk","alt":"Winding mountain road and watchtowers in northern Pakistan","cap":"Mountain roads are driven daily by our experienced drivers."}]},
+  "/overseas-pakistanis": {"og":"islamabad","ogTitle":"Car With Driver for Overseas Pakistanis","images":[
+    {"key":"islamabad","alt":"Faisal Mosque in Islamabad with the Margalla hills at sunset","cap":"Welcome home: airport pickup and family travel in Islamabad."},
+    {"key":"punjab","alt":"Badshahi Mosque in Lahore at sunset","cap":"Family trips to Lahore and across Punjab."},
+    {"key":"lahore","alt":"Minar-e-Pakistan in Lahore at sunset","cap":"Lahore day trips from Islamabad."}]},
+  "/locations/punjab": {"og":"punjab","ogTitle":"Car Rental With Driver in Punjab","images":[
+    {"key":"punjab","alt":"Badshahi Mosque and the old city of Lahore in Punjab at sunset","cap":"Badshahi Mosque, Lahore, Punjab."},
+    {"key":"lahore","alt":"Minar-e-Pakistan in Lahore","cap":"Minar-e-Pakistan, Lahore."}]},
+  "/locations/lahore": {"og":"lahore","ogTitle":"Lahore Car Rental With Driver","images":[
+    {"key":"lahore","alt":"Minar-e-Pakistan in Lahore with fountains and visitors at sunset","cap":"Minar-e-Pakistan, Lahore."},
+    {"key":"punjab","alt":"Badshahi Mosque and Lahore old city from above","cap":"Badshahi Mosque and the old city."}]},
+  "/locations/gilgit-baltistan": {"og":"gilgit-baltistan","ogTitle":"Car Rental With Driver in Gilgit-Baltistan","images":[
+    {"key":"gilgit-baltistan","alt":"Baltit Fort gate in Hunza, Gilgit-Baltistan, framing a snow peak","cap":"Baltit Fort, Hunza, Gilgit-Baltistan."}]},
+  "/locations/khyber-pakhtunkhwa": {"og":"kpk","ogTitle":"Car Rental With Driver in Khyber Pakhtunkhwa","images":[
+    {"key":"kpk","alt":"Mountain road, forts and snow peaks in northern Khyber Pakhtunkhwa","cap":"Mountain roads and forts of the north."}]},
+  "/services/group-transportation": {"og":"group-tourism","ogTitle":"Coaster and Group Transportation With Driver","images":[
+    {"key":"group-tourism","alt":"A tour group of visitors posing with a white SUV at Pakistan Monument, Islamabad","cap":"Group and tour travel arranged with a professional driver."}]}
+}

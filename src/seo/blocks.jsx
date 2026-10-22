@@ -1,5 +1,7 @@
 // Small, SSR-safe building blocks for the SEO pages (no browser APIs: they are rendered to static HTML at build time).
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { imagesOf, Pic } from "./media";
+import { PageBoost } from "./boost";
 import { SITE, telHref, waHref } from "../config";
 import { photoOf } from "./links";
 import { VEHICLE_PITCH, VEHICLE_FIT, USE } from "./data/vehicles";
@@ -12,15 +14,21 @@ export const Crumbs = ({ items }) => { const t = useT(); return items.length < 2
   <nav className="sx-crumbs" aria-label={t("Breadcrumb")}><ol>{items.map((c, i) => <li key={c.path}>{i < items.length - 1 ? <Link to={c.path}>{t(c.name)}</Link> : <span aria-current="page">{t(c.name)}</span>}</li>)}</ol></nav>
 ); };
 
-export const Hero = ({ eyebrow, h1, lead, crumbs, children }) => (
-  <section className="sx-hero"><div className="sx-in">
-    {crumbs && <Crumbs items={crumbs} />}
-    {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-    <h1>{h1}</h1>
-    {lead && <p className="sx-lead">{lead}</p>}
-    {children}
-  </div></section>
-);
+export const Hero = ({ eyebrow, h1, lead, crumbs, children }) => {
+  const im = imagesOf(useLocation().pathname)[0];
+  return (
+    <section className={`sx-hero${im ? " sx-hero--img" : ""}`}><div className={`sx-in${im ? " sx-hero__grid" : ""}`}>
+      <div className="sx-hero__text">
+        {crumbs && <Crumbs items={crumbs} />}
+        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+        <h1>{h1}</h1>
+        {lead && <p className="sx-lead">{lead}</p>}
+        {children}
+      </div>
+      {im && <Pic im={im} eager sizes="(max-width: 900px) 92vw, 520px" className="px-fig px-fig--hero" />}
+    </div></section>
+  );
+};
 
 // "Call now / WhatsApp now / Get a quote" (Call and WhatsApp use the number from business.config.js)
 export function Cta({ ctx, from, to, title = "Get today's availability and quote", text = "Tell us your pickup, destination, date and vehicle preference. We reply with a quote, never a fake instant price.", car, svc }) {
@@ -29,6 +37,7 @@ export function Cta({ ctx, from, to, title = "Get today's availability and quote
   const q = [from && `from=${encodeURIComponent(from)}`, to && `to=${encodeURIComponent(to)}`, car && `car=${encodeURIComponent(car)}`, svc && `svc=${svc}`].filter(Boolean).join("&");
   const chat = waHref(msg);
   return (
+    <><PageBoost />
     <section className="sx-cta" aria-label={t("Contact and booking")}><div className="sx-in">
       <div><h2>{t(title)}</h2><p>{t(text)}</p></div>
       <div className="sx-cta__row">
@@ -36,7 +45,7 @@ export function Cta({ ctx, from, to, title = "Get today's availability and quote
         {chat && <a className="sx-btn sx-btn--wa" href={chat} target="_blank" rel="noopener noreferrer">{t("WhatsApp now")}</a>}
         <Link className="sx-btn sx-btn--quote" to={`/book${q ? `?${q}` : ""}`}>{t("Get a quote")}</Link>
       </div>
-    </div></section>
+    </div></section></>
   );
 }
 

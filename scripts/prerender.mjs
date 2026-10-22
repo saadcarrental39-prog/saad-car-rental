@@ -95,6 +95,7 @@ for (const [name, list] of Object.entries(groups)) { if (!list.length) continue;
 const imgItems = idx.map((p) => {
   const imgs = [];
   if (p.kind === "vehicle") { const c = baseFleet.find((c) => c.slug === p.slug); (c ? c.vehicles : []).filter((v) => !v.placeholder).forEach((v) => imgs.push(imgTag(site + v.image, `${v.color} ${v.name} ${v.trim} with professional driver`.replace(/\s+/g, " ")))); }
+  (p.pageImages || []).forEach((im) => imgs.push(imgTag(site + im.url, im.alt)));
   imgs.push(imgTag(site + p.ogImage, p.h1));
   return urlTag(p, imgs.join(""));
 });
