@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { SITE, telHref, waHref } from "../config";
 import { BOOST, OFFERS } from "./data/pageBoost";
 import { Pic } from "./media";
-import { imagesOf, norm, boostFaqs } from "./data/pageMeta";
+import { imagesOf, norm, boostFaqs, thumbOf } from "./data/pageMeta";
 
 const Sec = ({ id, title, tone, children }) => (<section className={`sx-sec${tone ? ` sx-sec--${tone}` : ""}`} aria-labelledby={id}><div className="sx-in"><h2 id={id}>{title}</h2>{children}</div></section>);
 
@@ -30,7 +30,7 @@ export function PageBoost() {
       </Sec>
       {!vehicle && faqs.length > 0 && <Sec id="px-faq" title="More questions customers ask" tone="grey"><div className="sx-faq">{faqs.map((f) => <details key={f.q}><summary>{f.q}</summary><p>{f.a}</p></details>)}</div></Sec>}
       <Sec id="px-links" title="Keep planning" tone={!vehicle && faqs.length ? undefined : "grey"}>
-        <ul className="sx-cards">{b.links.map((l) => <li key={l.to}><Link to={l.to}><b>{l.title}</b><span>{l.text}</span><em aria-hidden="true">→</em></Link></li>)}</ul>
+        <ul className="sx-cards">{b.links.map((l) => { const th = thumbOf(l.to); return <li key={l.to}><Link to={l.to}>{th && <img className="px-thumb" src={th} alt="" width="480" height="252" loading="lazy" decoding="async" />}<b>{l.title}</b><span>{l.text}</span><em aria-hidden="true">→</em></Link></li>; })}</ul>
         <ul className="px-tags" aria-label="Topics">{b.tags.map((t) => <li key={t}>#{t}</li>)}</ul>
       </Sec>
     </div>

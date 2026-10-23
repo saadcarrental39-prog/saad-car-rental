@@ -1,6 +1,7 @@
 // Small, SSR-safe building blocks for the SEO pages (no browser APIs: they are rendered to static HTML at build time).
 import { Link, useLocation } from "react-router-dom";
 import { imagesOf, Pic } from "./media";
+import { thumbOf } from "./data/pageMeta";
 import { PageBoost } from "./boost";
 import { SITE, telHref, waHref } from "../config";
 import { photoOf } from "./links";
@@ -67,7 +68,7 @@ export const Chips = ({ items }) => <ul className="sx-chips">{items.map((x) => <
 export const Bullets = ({ items }) => <ul className="sx-list">{items.map((x) => <li key={x}>{x}</li>)}</ul>;
 
 export const LinkCards = ({ items }) => (
-  <ul className="sx-cards">{items.map((i) => <li key={i.to}><Link to={i.to}><b>{i.title}</b>{i.text && <span>{i.text}</span>}<em aria-hidden="true">→</em></Link></li>)}</ul>
+  <ul className="sx-cards">{items.map((i) => { const th = thumbOf(i.to); return <li key={i.to}><Link to={i.to}>{th && <img className="px-thumb" src={th} alt="" width="480" height="252" loading="lazy" decoding="async" />}<b>{i.title}</b>{i.text && <span>{i.text}</span>}<em aria-hidden="true">→</em></Link></li>; })}</ul>
 );
 
 export const VehicleStrip = ({ cats, ctxTo }) => (

@@ -114,3 +114,5 @@
 .px-tags{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:26px 0 0}.px-tags li{padding:6px 12px;border-radius:99px;background:#f0efe9;color:#4a4f56;font-size:.78rem;font-weight:600}
 .sx-sec--grey .px-why li,.sx-sec--grey .px-ask li{background:#fff}
 @media(max-width:900px){.sx-hero__grid{grid-template-columns:1fr}.px-fig--hero{max-width:640px}.px-fig--hero::before{display:none}.px-gal--2{grid-template-columns:1fr}}
+.px-thumb{display:block;height:auto;align-self:start;justify-self:start;width:calc(100% + 58px);max-width:none;margin:-18px -40px 8px -18px;aspect-ratio:480/252;object-fit:cover;border-radius:18px 18px 0 0;background:#e9e8e2}
+.sx-cards a{align-content:start}

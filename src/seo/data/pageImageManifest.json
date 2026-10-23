@@ -7,12 +7,94 @@
    1248
   ]
  },
+ "astore-valley": {
+  "w": 681,
+  "h": 451,
+  "sizes": [
+   681
+  ]
+ },
+ "attabad-lake": {
+  "w": 547,
+  "h": 365,
+  "sizes": [
+   547
+  ]
+ },
+ "babusar-top": {
+  "w": 686,
+  "h": 349,
+  "sizes": [
+   686
+  ]
+ },
  "black-prado": {
   "w": 1280,
   "h": 698,
   "sizes": [
    640,
    1280
+  ]
+ },
+ "blue-area": {
+  "w": 766,
+  "h": 400,
+  "sizes": [
+   640,
+   766
+  ]
+ },
+ "centaurus-mall": {
+  "w": 960,
+  "h": 590,
+  "sizes": [
+   640,
+   960
+  ]
+ },
+ "daman-e-koh": {
+  "w": 551,
+  "h": 362,
+  "sizes": [
+   551
+  ]
+ },
+ "f6-super-market": {
+  "w": 762,
+  "h": 343,
+  "sizes": [
+   640,
+   762
+  ]
+ },
+ "fairy-meadows": {
+  "w": 559,
+  "h": 357,
+  "sizes": [
+   559
+  ]
+ },
+ "faisal-mosque": {
+  "w": 800,
+  "h": 550,
+  "sizes": [
+   640,
+   800
+  ]
+ },
+ "fatima-jinnah-park": {
+  "w": 547,
+  "h": 365,
+  "sizes": [
+   547
+  ]
+ },
+ "giga-mall": {
+  "w": 1050,
+  "h": 718,
+  "sizes": [
+   640,
+   1050
   ]
  },
  "gilgit-baltistan": {
@@ -47,12 +129,47 @@
    1248
   ]
  },
+ "jinnah-super-market": {
+  "w": 556,
+  "h": 359,
+  "sizes": [
+   556
+  ]
+ },
+ "kalam-valley": {
+  "w": 549,
+  "h": 364,
+  "sizes": [
+   549
+  ]
+ },
  "lahore": {
   "w": 1248,
   "h": 863,
   "sizes": [
    640,
    1248
+  ]
+ },
+ "lok-virsa-museum": {
+  "w": 738,
+  "h": 321,
+  "sizes": [
+   738
+  ]
+ },
+ "margalla-hills-trails": {
+  "w": 600,
+  "h": 339,
+  "sizes": [
+   600
+  ]
+ },
+ "marghazar-zoo": {
+  "w": 713,
+  "h": 429,
+  "sizes": [
+   713
   ]
  },
  "mariot-hotel": {
@@ -102,6 +219,13 @@
    1248
   ]
  },
+ "pir-sohawa": {
+  "w": 549,
+  "h": 364,
+  "sizes": [
+   549
+  ]
+ },
  "punjab": {
   "w": 1248,
   "h": 863,
@@ -110,12 +234,33 @@
    1248
   ]
  },
+ "rawal-lake-view-point": {
+  "w": 738,
+  "h": 414,
+  "sizes": [
+   738
+  ]
+ },
  "safa-gold-mall": {
   "w": 1280,
   "h": 714,
   "sizes": [
    640,
    1280
+  ]
+ },
+ "saidpur-village": {
+  "w": 678,
+  "h": 452,
+  "sizes": [
+   678
+  ]
+ },
+ "serena-hotel-islamabad": {
+  "w": 679,
+  "h": 451,
+  "sizes": [
+   679
   ]
  },
  "white-prado": {
