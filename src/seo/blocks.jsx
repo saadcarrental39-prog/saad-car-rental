@@ -44,7 +44,7 @@ export function Cta({ ctx, from, to, title = "Get today's availability and quote
       <div className="sx-cta__row">
         {telHref && <a className="sx-btn sx-btn--call" href={telHref}>{t("Call now")} · {SITE.phoneDisplay}</a>}
         {chat && <a className="sx-btn sx-btn--wa" href={chat} target="_blank" rel="noopener noreferrer">{t("WhatsApp now")}</a>}
-        <Link className="sx-btn sx-btn--quote" to={`/book${q ? `?${q}` : ""}`}>{t("Get a quote")}</Link>
+        <Link className="sx-btn sx-btn--quote" to={`/book${q ? `?${q}` : ""}`} rel={q ? "nofollow" : undefined}>{t("Get a quote")}</Link>
       </div>
     </div></section></>
   );

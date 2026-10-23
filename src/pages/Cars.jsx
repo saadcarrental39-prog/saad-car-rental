@@ -41,7 +41,7 @@ function CarCard({ c }) {
           </div>
         )}
         <div className="cp-actions">
-          <Link className="cp-btn cp-btn--dark" to={`/book?car=${(v || first).id}`}>{t("Book now")}</Link>
+          <Link className="cp-btn cp-btn--dark" to={`/book?car=${(v || first).id}`} rel="nofollow">{t("Book now")}</Link>
           <Link className="cp-btn" to={`/cars/${c.slug}`}>{t("View details")}</Link>
         </div>
       </div>

@@ -19,7 +19,7 @@ export function CarPage() {
   if (!c) return <Navigate to="/cars" replace />;
   const pg = pageByPath(`/cars/${c.slug}`); const X = vehicleSeo(c.slug);
   return <div className="pad">{pg && <Crumbs items={pg.breadcrumbs} />}<h1>{(X && X.name) || c.title} {t("on rent in Islamabad with professional driver")}</h1><p className="lead">{c.description}</p><VehicleCarousel key={c.slug} vehicles={c.vehicles} label={`${c.title} carousel`} />
-    <p className="row"><Link className="btn btn--dark" to={`/book?car=${c.vehicles[0].id}`}>{t("Book Now")}</Link></p>
+    <p className="row"><Link className="btn btn--dark" to={`/book?car=${c.vehicles[0].id}`} rel="nofollow">{t("Book Now")}</Link></p>
     <nav className="chips" aria-label={t("Other vehicles")}>{fleet.filter((x) => x.slug !== c.slug).map((x) => <Link key={x.slug} to={`/cars/${x.slug}`}>{x.title}</Link>)}</nav><VehicleExtras slug={c.slug} /></div>;
 }
 export function Services() {

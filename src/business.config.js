@@ -17,7 +17,7 @@ export const BUSINESS = {
   businessDescription: "SAAD CAR RENTAL SERVICES is an Islamabad-based car rental with professional driver (chauffeur) service for airport transfers, business and family travel, weddings and intercity and northern-areas trips across Pakistan.",
 
   // ---- website (ONE canonical host; set VITE_SITE_URL to change it, never type the domain anywhere else) ----
-  website: (env.VITE_SITE_URL || "https://www.saadcarremtal.com").replace(/\/+$/, ""),
+  website: (/^https?:\/\/[^/]*\.pages\.dev/i.test(env.VITE_SITE_URL || "") ? "" : env.VITE_SITE_URL || "https://www.saadcarremtal.com").replace(/\/+$/, "") || "https://www.saadcarremtal.com",   // a preview address (xxx.pages.dev) is never used as the site address
 
   // ---- contact ----
   phone: env.VITE_PHONE_NUMBER || "+923339850599",

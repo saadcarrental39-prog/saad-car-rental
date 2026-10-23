@@ -239,6 +239,14 @@ add({ path: "/faq", kind: "faq", slug: "faq", title: "FAQ: Car Rental With Drive
   og: { a: "FAQ", b: "Car rental with professional driver", vehicle: "prado" }, faqs: FAQS });
 
 export const PAGES = pages;
+// Share-image lookup for booking links such as /book?car=prado-black or /book?to=Faisal Mosque (functions/_middleware.js reads og-map.json)
+export const BOOK_OG_MAP = (() => {
+  const cars = {}, places = {}, og = (pg) => pg.ogImage;
+  categories().forEach((c) => { const pg = pages.find((x) => x.path === `/cars/${c.slug}`); if (pg) (c.vehicles || []).forEach((v) => { cars[v.id] = og(pg); }); });
+  const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  ["spot", "destination", "location", "province", "route"].forEach((k) => pages.filter((x) => x.kind === k && x.slug).forEach((pg) => { if (!places[slug(pg.slug)]) places[slug(pg.slug)] = og(pg); }));
+  return { cars, places };
+})();
 export const pageByPath = (path) => { const p = path.length > 1 ? path.replace(/\/+$/, "") : path; return pages.find((x) => x.path === p); };
 export const sitemapPages = () => pages.filter((p) => p.indexable);
 export const headFor = (page) => ({
