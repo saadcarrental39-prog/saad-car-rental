@@ -2,6 +2,7 @@
 // Saves the booking + receipt PNG in KV so it shows in the owner's Admin app (Orders tab), then pushes a phone notification.
 // Storage: KV binding SITEDATA (or the existing RECEIPTS binding). Same binding the admin app already uses.
 import { pushAll } from "../_lib/push.js";
+import { addOrder, getOrders } from "../_lib/orderidx.js";
 const MAX_PNG = 1.5 * 1024 * 1024, TTL = 60 * 60 * 24 * 120; // orders are kept 120 days
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 const isPng = (b) => b.length > 8 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47;
@@ -35,7 +36,8 @@ export async function onRequestPost({ request, env, waitUntil }) {
     ]);
   } catch { return json({ ok: false, error: "storage" }, 502); }
 
-  const unread = (await kv.list({ prefix: "ord:", limit: 1000 })).keys.filter((k) => !k.metadata?.seen).length;
+  await addOrder(kv, meta);                                                                  // keep the Admin app's order list (index) current
+  let unread = 1; try { unread = Math.max(1, (await getOrders(kv)).filter((m) => !m.seen).length); } catch { /* the count is only a bonus */ }
   const job = pushAll(kv, { title: "🚘 New Booking Order", body: `${o.name} · ${o.car}\n📍 ${o.pickup} → ${o.drop}\n📅 ${o.date} ⏰ ${o.time}`, count: unread, id }, new URL(request.url).origin);
   if (waitUntil) waitUntil(job); else await job;
   return json({ ok: true, id });

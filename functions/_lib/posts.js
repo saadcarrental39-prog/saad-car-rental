@@ -2,6 +2,7 @@
 // moment the owner presses Save in the admin app: no build, no deploy. Google gets complete HTML (title, meta, H1, text, images, video, JSON-LD).
 import { BUSINESS as B } from "../../src/business.config.js";
 import { cleanPost, parseVideo, slugify } from "./postcore.js";
+import { SEED_POSTS } from "./seedposts.js";
 
 export const SITE = B.website;
 const KEY = "post:";
@@ -18,7 +19,23 @@ const meta = (p) => {
 };
 const fromMeta = (m) => ({ slug: m.s, title: m.t, date: m.d, updated: m.u || m.d, status: m.st, image: m.i || "", category: m.c || "", location: m.l || "", description: m.ds || "" });
 
+
+// The three starter posts (seedposts.js) are copied into KV once. A flag key stops it from ever running again,
+// so a post that the owner edits, unpublishes or deletes in the Admin app stays exactly as the owner left it.
+let seeded = false;
+async function ensureSeed(kv) {
+  if (seeded) return;
+  try {
+    if (await kv.get("seed:posts:v1")) { seeded = true; return; }
+    for (const raw of SEED_POSTS) {
+      const { post } = cleanPost(raw, todayPK()); if (!post.slug || (await kv.get(KEY + post.slug))) continue;
+      post.created = post.updated = post.date; await kv.put(KEY + post.slug, JSON.stringify(post), { metadata: meta(post) });
+    }
+    await kv.put("seed:posts:v1", "1"); seeded = true;
+  } catch { /* never block the site: it tries again on the next visit */ }
+}
 export async function listPosts(kv, { drafts = false } = {}) {
+  await ensureSeed(kv);
   const out = []; let cursor;
   for (let n = 0; n < 5; n++) {
     const l = await kv.list({ prefix: KEY, limit: 1000, cursor });
@@ -30,6 +47,7 @@ export async function listPosts(kv, { drafts = false } = {}) {
 }
 export async function getPost(kv, slug, fresh = false) {   // fresh = admin reads (no 60 s edge cache)
   if (!/^[a-z0-9-]{1,80}$/.test(slug || "")) return null;
+  await ensureSeed(kv);
   try { return JSON.parse((await (fresh ? kv.get(KEY + slug) : kv.get(KEY + slug, { cacheTtl: 60 }))) || "null"); } catch { return null; }
 }
 export const isLive = (p) => !!p && p.status === "published" && p.date <= todayPK();
@@ -152,6 +170,7 @@ export function renderPost(p, related) {
       author: { "@type": "Organization", name: B.businessName, url: SITE + "/" }, publisher: { "@id": `${SITE}/#business` },
       keywords: [p.keyword, ...p.tags].filter(Boolean).join(", "), articleSection: p.category, wordCount: (p.body + " " + p.summary).split(/\s+/).length,
       about: p.location ? { "@type": "Place", name: p.location } : undefined, contentLocation: p.location ? { "@type": "Place", name: p.location } : undefined, isAccessibleForFree: true },
+    ...p.images.slice(0, 12).map((im, i) => ({ "@type": "ImageObject", "@id": `${u}#img${i + 1}`, contentUrl: im.url, url: im.url, name: im.alt, caption: im.caption || im.alt, description: im.alt, representativeOfPage: i === 0, creditText: B.businessName, creator: { "@type": "Organization", name: B.businessName }, copyrightNotice: B.businessName, acquireLicensePage: u, contentLocation: p.location ? { "@type": "Place", name: p.location } : undefined })),
     { "@type": "BreadcrumbList", itemListElement: [["Home", SITE + "/"], ["Trips & Spots", SITE + "/posts"], [p.title, u]].map(([n, i], k) => ({ "@type": "ListItem", position: k + 1, name: n, item: i })) },
     { "@type": "FAQPage", mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
     ...p.videos.map((v, i) => { const pv = parseVideo(v.url); const th = (pv && pv.thumb) || (img0 && img0.url); if (!pv || !th) return null;

@@ -208,12 +208,12 @@ function useOrders(tok, out, tab) {
     } catch (e) {
       if (e.status === 401) { out(); return; }
       // say WHY it did not load (it used to show the loading circle forever) and try once more by itself
-      setErr(!e.status ? "Internet ya server jawab nahi de raha. Internet check karein." : e.status === 503 ? "Cloudflare mein KV storage (SITEDATA) bind nahi hai (503)." : e.status === 429 ? "Bahut zyada requests (429). Thori der baad try karein." : `Server error (${e.status}${e.message ? ": " + e.message : ""}). Cloudflare Pages > Functions logs dekhein.`);
+      setErr(!e.status ? "Internet ya server jawab nahi de raha. Internet check karein." : e.status === 503 ? "Cloudflare mein KV storage (SITEDATA) bind nahi hai (503)." : e.status === 429 ? "Bahut zyada requests (429). Thori der baad try karein." : `Server error (${e.status}${e.message ? ": " + e.message : ""}${e.detail ? " - " + e.detail : ""}). Cloudflare Pages > Functions logs dekhein.`);
       if (!retried.current) { retried.current = true; setTimeout(refresh, 3000); }
     }
   };
   useEffect(() => {
-    refresh(); const t = setInterval(() => document.visibilityState === "visible" && refresh(), 12000);
+    refresh(); const t = setInterval(() => document.visibilityState === "visible" && refresh(), 30000);
     const vis = () => document.visibilityState === "visible" && refresh();
     const msg = (e) => { if (e.data?.type === "new-order") refresh(); };
     document.addEventListener("visibilitychange", vis); navigator.serviceWorker?.addEventListener("message", msg);
