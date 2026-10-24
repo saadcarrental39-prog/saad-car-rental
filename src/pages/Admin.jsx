@@ -32,7 +32,7 @@ const SW = [["white", "#f2f2f0"], ["black", "#17171a"], ["grey", "#8b94a0"], ["g
 const swatch = (n = "") => (SW.find(([k]) => String(n).toLowerCase().includes(k)) || [0, "#b4b8be"])[1];
 
 async function api(action, body = {}, token) {
-  const r = await fetch("/api/admin", { method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ action, ...body }) });
+  const r = await fetch("/api/admin", { signal: typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(25000) : undefined, method: "POST", headers: { "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) }, body: JSON.stringify({ action, ...body }) });
   let j = {}; try { j = await r.json(); } catch { /* not json */ }
   if (!r.ok) throw Object.assign(new Error(j.error || "error"), { status: r.status, detail: j.detail });
   return j;
@@ -184,8 +184,8 @@ const waNum = (p) => { let d = String(p || "").replace(/\D/g, ""); if (d.startsW
 const ago = (ts) => { const m = Math.max(0, Math.round((Date.now() - ts) / 60000)); return m < 1 ? "abhi" : m < 60 ? `${m} min pehle` : m < 1440 ? `${Math.round(m / 60)} ghante pehle` : new Date(ts).toLocaleDateString("en-GB", { day: "numeric", month: "short" }); };
 
 function useOrders(tok, out, tab) {
-  const [orders, setOrders] = useState(null), [fresh, setFresh] = useState(() => new Set()), [blocked, setBlocked] = useState(false), [banner, setBanner] = useState("");
-  const known = useRef(null), el = useRef(null), ringState = useRef({ stop: false }), pending = useRef(false), tabRef = useRef(tab);
+  const [orders, setOrders] = useState(null), [fresh, setFresh] = useState(() => new Set()), [blocked, setBlocked] = useState(false), [banner, setBanner] = useState(""), [err, setErr] = useState("");
+  const retried = useRef(false), known = useRef(null), el = useRef(null), ringState = useRef({ stop: false }), pending = useRef(false), tabRef = useRef(tab);
   tabRef.current = tab;
   const audio = () => { if (!el.current) { el.current = new Audio(TONE); el.current.preload = "auto"; el.current.volume = 1; } return el.current; };
   const stopRing = () => { ringState.current.stop = true; pending.current = false; const a = el.current; if (a) { a.onended = null; a.pause(); } };
@@ -204,8 +204,13 @@ function useOrders(tok, out, tab) {
       const list = (await api("orders", {}, tok)).orders || [], unseen = list.filter((o) => !o.seen);
       if (known.current === null) { known.current = new Set(list.map((o) => o.id)); setFresh(new Set(unseen.map((o) => o.id))); if (unseen.length && tabRef.current !== "orders") { setBanner(`🔔 ${unseen.length} naya booking order`); ring(2); } }
       else { const add = list.filter((o) => !known.current.has(o.id)); add.forEach((o) => known.current.add(o.id)); if (add.length) { setFresh((f) => new Set([...f, ...add.map((o) => o.id)])); setBanner(`🔔 ${add.length} naya booking order`); ring(3); } }
-      setOrders(list);
-    } catch (e) { if (e.status === 401) out(); }
+      setOrders(list); setErr("");
+    } catch (e) {
+      if (e.status === 401) { out(); return; }
+      // say WHY it did not load (it used to show the loading circle forever) and try once more by itself
+      setErr(!e.status ? "Internet ya server jawab nahi de raha. Internet check karein." : e.status === 503 ? "Cloudflare mein KV storage (SITEDATA) bind nahi hai (503)." : e.status === 429 ? "Bahut zyada requests (429). Thori der baad try karein." : `Server error (${e.status}${e.message ? ": " + e.message : ""}). Cloudflare Pages > Functions logs dekhein.`);
+      if (!retried.current) { retried.current = true; setTimeout(refresh, 3000); }
+    }
   };
   useEffect(() => {
     refresh(); const t = setInterval(() => document.visibilityState === "visible" && refresh(), 12000);
@@ -226,7 +231,7 @@ function useOrders(tok, out, tab) {
     document.title = unread ? `(${unread}) SAAD Admin` : "SAAD Admin";
   }, [unread]);
   const del = async (id) => { await api("order_del", { id }, tok); setOrders((os) => os.filter((o) => o.id !== id)); };
-  return { orders, unread, fresh, blocked, banner, setBanner, ring, del, refresh };
+  return { orders, unread, fresh, blocked, banner, setBanner, ring, del, refresh, err };
 }
 
 function PushCard({ tok, ring, pwa }) {
@@ -254,9 +259,9 @@ function PushCard({ tok, ring, pwa }) {
 }
 
 function Orders({ tok, st, pwa }) {
-  const { orders, fresh, blocked, ring, del } = st, [view, setView] = useState(""), [busy, setBusy] = useState("");
+  const { orders, fresh, blocked, ring, del, err, refresh } = st, [view, setView] = useState(""), [busy, setBusy] = useState("");
   const src = (id) => `/api/admin?img=${id}&t=${encodeURIComponent(tok)}`;
-  if (!orders) return <div className="ad-load" style={{ minHeight: "40svh" }}><span className="ad-spin" /><p>Orders load ho rahe hain…</p></div>;
+  if (!orders) return <div className="ad-load" style={{ minHeight: "40svh" }}>{err ? <><p>Orders load nahi hue.</p><p className="ad-note">{err}</p><button type="button" className="ad-btn" onClick={refresh}>Dobara try karein</button></> : <><span className="ad-spin" /><p>Orders load ho rahe hain…</p></>}</div>;
   return (<>
     <PushCard tok={tok} ring={ring} pwa={pwa} />
     {blocked && <button type="button" className="ad-btn ad-btn--ghost ad-btn--lg" onClick={() => ring(2)}>🔊 Tone ke liye yahan tap karein</button>}
