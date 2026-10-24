@@ -8,6 +8,7 @@ import { initFleet } from "./fleetSync";
 import "./styles/automotive-carousel.css";
 import "./styles/site.css";
 import "./styles/seo.css";
+import "./styles/gallery.css";
 import { initAnalytics } from "./analytics";
 function Root() { // remounts once if the owner changed prices since this visitor's last visit
   const [k, setK] = useState(0);

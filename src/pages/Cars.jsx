@@ -5,6 +5,7 @@ import { fleet } from "../data/fleet";
 import { useSeo } from "../seo";
 import { imgSet } from "../imgset";
 import { useT } from "../i18n";
+import { GalleryStrip } from "../components/CarGallery";
 
 // Which filter tab each category belongs to (add a new category slug here when you add a car in fleet.js).
 const TYPE = { "land-cruiser-v8": "SUV", "premium-luxury-land-cruiser": "SUV", prado: "SUV", "range-rover": "SUV", "lexus-lx-570": "SUV", "mercedes-g-wagon": "SUV", "toyota-fortuner": "SUV", audi: "Sedan", revo: "Pickup", "honda-civic": "Sedan", "toyota-grande": "Sedan", coaster: "Van / Coaster" };
@@ -40,6 +41,7 @@ function CarCard({ c }) {
             <span>{v ? v.color : ""}</span>
           </div>
         )}
+        <GalleryStrip slug={c.slug} />
         <div className="cp-actions">
           <Link className="cp-btn cp-btn--dark" to={`/book?car=${(v || first).id}`} rel="nofollow">{t("Book now")}</Link>
           <Link className="cp-btn" to={`/cars/${c.slug}`}>{t("View details")}</Link>

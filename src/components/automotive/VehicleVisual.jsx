@@ -1,6 +1,7 @@
 // All cars live in the DOM at once; the carousel hook moves them along a wheel arc.
 // Visibility of each car is managed imperatively by the hook (React never touches it after mount).
 import { imgSet, tinySrc, CAROUSEL_SIZES } from "../../imgset";
+import SwipeHint from "../SwipeHint";
 export default function VehicleVisual({ vehicles, index }) {
   const active = vehicles[index];
   return (
@@ -21,6 +22,7 @@ export default function VehicleVisual({ vehicles, index }) {
           </div>
         ))}
       </div>
+      {vehicles.length > 1 && <SwipeHint />}
     </div>
   );
 }

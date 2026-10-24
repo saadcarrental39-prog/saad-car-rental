@@ -4,6 +4,7 @@ import { SITE, waHref } from "../config";
 import { allVehicles } from "../data/fleet";
 import { DETAILS, DEFAULT_DETAIL } from "../data/details";
 import { useEsc } from "./reviews/data";
+import { GalleryStrip } from "./CarGallery";
 // Opens from the "Details" button on every car card. Each car shows its own details.
 export default function VehicleDetails() {
   const [id, setId] = useState(null);
@@ -16,7 +17,7 @@ export default function VehicleDetails() {
   return (<div className="vd" onMouseDown={(e) => e.target === e.currentTarget && setId(null)}>
     <div className="vd__box" role="dialog" aria-modal="true" aria-labelledby="vd-t">
       <button type="button" className="mdl__x" onClick={() => setId(null)} aria-label="Close details">×</button>
-      <div className="vd__img"><img src={v.image} alt={`${v.color} ${name}`} /></div>
+      <div className="vd__img"><img src={v.image} alt={`${v.color} ${name}`} /><GalleryStrip slug={v.category} /></div>
       <div className="vd__body">
         <p className="vd__sub">{v.subtitle}</p><h2 id="vd-t">{v.name}{v.trim && <em> {v.trim}</em>}</h2>
         <p className="vd__long">{x.long}</p>

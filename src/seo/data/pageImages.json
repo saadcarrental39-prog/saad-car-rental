@@ -490,5 +490,28 @@
     "cap": "Astore Valley."
    }
   ]
+ },
+ "/cars/premium-luxury-land-cruiser": {
+  "og": "",
+  "images": [
+   {
+    "key": "plc-dashboard",
+    "alt": "Cream leather front cabin and dashboard of the Premium Luxury Land Cruiser with touchscreen, panoramic sunroof and wood-trim centre console",
+    "cap": "Front cabin: cream leather, touchscreen and sunroof.",
+    "gal": true
+   },
+   {
+    "key": "plc-rear-seats",
+    "alt": "Rear passenger seats of the Premium Luxury Land Cruiser in cream leather with headrest entertainment screens",
+    "cap": "Rear seats with screens in the headrests, where your passengers sit.",
+    "gal": true
+   },
+   {
+    "key": "plc-side",
+    "alt": "Black Premium Luxury Land Cruiser seen from the side with alloy wheels and roof rails",
+    "cap": "Side view of the black Premium Luxury Land Cruiser.",
+    "gal": true
+   }
+  ]
  }
 }

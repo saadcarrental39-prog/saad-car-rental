@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 // Small, SSR-safe building blocks for the SEO pages (no browser APIs: they are rendered to static HTML at build time).
 import { Link, useLocation } from "react-router-dom";
 import { imagesOf, Pic } from "./media";
 import { thumbOf } from "./data/pageMeta";
+import { fleet } from "../data/fleet";
 import { PageBoost } from "./boost";
 import { SITE, telHref, waHref } from "../config";
 import { photoOf } from "./links";
@@ -71,17 +73,26 @@ export const LinkCards = ({ items }) => (
   <ul className="sx-cards">{items.map((i) => { const th = thumbOf(i.to); return <li key={i.to}><Link to={i.to}>{th && <img className="px-thumb" src={th} alt="" width="480" height="252" loading="lazy" decoding="async" />}<b>{i.title}</b>{i.text && <span>{i.text}</span>}<em aria-hidden="true">→</em></Link></li>; })}</ul>
 );
 
-export const VehicleStrip = ({ cats, ctxTo }) => (
-  <ul className="sx-veh">{cats.map((c) => {
-    const ph = photoOf(c); const fit = (VEHICLE_FIT[c.slug] || []).slice(0, 3).map((u) => USE[u]).join(" · ");
-    return (
-      <li key={c.slug}><Link to={`/cars/${c.slug}`}>
-        {ph ? <img src={ph.image} {...imgSet(ph.image, "(max-width: 700px) 90vw, 360px")} alt={`${ph.color} ${ph.name} ${ph.trim} with professional driver`.replace(/\s+/g, " ")} width="805" height="510" loading="lazy" decoding="async" /> : <span className="sx-veh__ph">Real photos on request<br />Ask us on WhatsApp</span>}
-        <b>{c.title}</b><span>{VEHICLE_PITCH[c.slug] ? VEHICLE_PITCH[c.slug].replace(/^a /, "A ").replace(/^an /, "An ") : ""}</span><em>{fit}</em>
-      </Link></li>
-    );
-  })}</ul>
-);
+// Photos saved from the admin app (for example the Coaster) are only known in the browser, so they are read from the live fleet after the page opens.
+// The first paint (and what Google reads) is always the built-in photo, so nothing flickers or mismatches.
+function useLivePhoto(slug) {
+  const [ph, setPh] = useState(null);
+  useEffect(() => {
+    const read = () => { const c = fleet.find((x) => x.slug === slug); setPh((c && c.vehicles.find((v) => !v.placeholder)) || null); };
+    read(); addEventListener("fleet-updated", read); return () => removeEventListener("fleet-updated", read);
+  }, [slug]);
+  return ph;
+}
+function VehicleStripItem({ c }) {
+  const live = useLivePhoto(c.slug); const ph = live || photoOf(c); const fit = (VEHICLE_FIT[c.slug] || []).slice(0, 3).map((u) => USE[u]).join(" · ");
+  return (
+    <li><Link to={`/cars/${c.slug}`}>
+      {ph ? <img key={ph.image} src={ph.image} {...imgSet(ph.image, "(max-width: 700px) 90vw, 360px")} alt={`${ph.color} ${ph.name} ${ph.trim} with professional driver`.replace(/\s+/g, " ")} width="805" height="510" loading="lazy" decoding="async" /> : <span className="sx-veh__ph">Real photos on request<br />Ask us on WhatsApp</span>}
+      <b>{c.title}</b><span>{VEHICLE_PITCH[c.slug] ? VEHICLE_PITCH[c.slug].replace(/^a /, "A ").replace(/^an /, "An ") : ""}</span><em>{fit}</em>
+    </Link></li>
+  );
+}
+export const VehicleStrip = ({ cats }) => <ul className="sx-veh">{cats.map((c) => <VehicleStripItem key={c.slug} c={c} />)}</ul>;
 
 export const Steps = ({ items }) => { const t = useT(); return <ol className="sx-steps">{items.map((s) => <li key={s[0]}><b>{t(s[0])}</b><span>{t(s[1])}</span></li>)}</ol>; };
 export const BOOKING_STEPS = [
