@@ -16,7 +16,7 @@ const SWATCH = [["white", "#f2f2f0"], ["black", "#17171a"], ["grey", "#8b94a0"],
 const swatch = (name = "") => (SWATCH.find(([k]) => name.toLowerCase().includes(k)) || [0, "#9aa0a8"])[1];
 const label = (v) => `${v.color} ${v.name} ${v.trim}`.replace(/\s+/g, " ").trim();
 
-function CarCard({ c }) {
+function CarCard({ c, first: isFirst }) {
   const t = useT();
   const [i, setI] = useState(0);
   const photos = c.vehicles.filter((v) => !v.placeholder);
@@ -26,7 +26,7 @@ function CarCard({ c }) {
     <article className="cp-card">
       <Link to={`/cars/${c.slug}`} className="cp-card__media" aria-label={`${c.title} ${t("View details")}`}>
         <span className="cp-chip">{t(TYPE[c.slug] || "Car")}</span>
-        {v ? <img key={v.id} src={v.image} {...imgSet(v.image, "(max-width: 900px) 92vw, 50vw")} alt={`${label(v)} with professional driver`} width="1200" height="760" loading="lazy" decoding="async" />
+        {v ? <img key={v.id} src={v.image} {...imgSet(v.image, "(max-width: 900px) 92vw, 50vw")} alt={`${label(v)} with professional driver`} width="1200" height="760" loading={isFirst ? "eager" : "lazy"} decoding="async" />
            : <span className="cp-soon"><b>{c.title}</b>{t("Real photos on request")}<br />{t("Ask us on WhatsApp")}</span>}
       </Link>
       <div className="cp-card__body">
@@ -71,7 +71,7 @@ export default function Cars() {
         <div className="cp-tabs" role="tablist" aria-label={t("Vehicle type")}>
           {tabs.map((tb) => <button key={tb} role="tab" type="button" aria-selected={tab === tb} className={tab === tb ? "on" : ""} onClick={() => setTab(tb)}>{t(tb)}</button>)}
         </div>
-        <div className="cp-grid">{list.map((c) => <CarCard key={c.slug} c={c} />)}</div>
+        <div className="cp-grid">{list.map((c, i) => <CarCard key={c.slug} c={c} first={i < 2} />)}</div>
         <div className="cp-cta">
           <div><h2>{t("Not sure which car suits you?")}</h2><p>{t("Tell us your trip and we will recommend the right vehicle.")}</p></div>
           <div className="cp-cta__row">

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 // Small, SSR-safe building blocks for the SEO pages (no browser APIs: they are rendered to static HTML at build time).
 import { Link, useLocation } from "react-router-dom";
-import { imagesOf, Pic } from "./media";
+import { heroImagesOf, Pic } from "./media";
 import { thumbOf } from "./data/pageMeta";
 import { fleet } from "../data/fleet";
 import { PageBoost } from "./boost";
@@ -18,7 +18,7 @@ export const Crumbs = ({ items }) => { const t = useT(); return items.length < 2
 ); };
 
 export const Hero = ({ eyebrow, h1, lead, crumbs, children }) => {
-  const im = imagesOf(useLocation().pathname)[0];
+  const im = heroImagesOf(useLocation().pathname)[0];
   return (
     <section className={`sx-hero${im ? " sx-hero--img" : ""}`}><div className={`sx-in${im ? " sx-hero__grid" : ""}`}>
       <div className="sx-hero__text">

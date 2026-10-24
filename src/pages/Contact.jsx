@@ -1,3 +1,4 @@
+import { PageHeroFigure } from "../seo/media";
 import SocialLinks from "../components/SocialLinks";
 import { BUSINESS } from "../business.config";
 import { COUNTRIES, DIAL, normPhone, phoneOk } from "../components/TripForm";
@@ -100,6 +101,7 @@ export default function Contact() {
           </ul>
         </div>
       </section>
+      <div className="pad"><PageHeroFigure /></div>
 
       <section className="ct-wrap">
         <div className="ct-grid">

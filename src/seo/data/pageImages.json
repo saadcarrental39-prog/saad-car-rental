@@ -52,9 +52,14 @@
   ]
  },
  "/routes/islamabad-to-skardu": {
-  "og": "gilgit-baltistan",
+  "og": "shigar-valley",
   "ogTitle": "Islamabad to Skardu Car With Driver",
   "images": [
+   {
+    "key": "shigar-valley",
+    "alt": "Braided Indus river channels and a rocky mountain in the Shigar valley near Skardu",
+    "cap": "Shigar valley, near Skardu."
+   },
    {
     "key": "gilgit-baltistan",
     "alt": "Baltit Fort gate in Hunza framing a snow-covered peak on the northern route from Islamabad",
@@ -511,6 +516,246 @@
     "alt": "Black Premium Luxury Land Cruiser seen from the side with alloy wheels and roof rails",
     "cap": "Side view of the black Premium Luxury Land Cruiser.",
     "gal": true
+   }
+  ]
+ },
+ "/destinations/neelum-valley": {
+  "og": "neelum-valley-prado",
+  "ogTitle": "Islamabad to Neelum Valley Car With Driver",
+  "images": [
+   {
+    "key": "neelum-valley-prado",
+    "alt": "White Toyota Prado parked on a mountain road above the Neelum river with snow peaks and pine forest behind",
+    "cap": "Neelum Valley, Azad Kashmir: Prado with a professional driver."
+   }
+  ]
+ },
+ "/destinations/shogran": {
+  "og": "shogran",
+  "ogTitle": "Islamabad to Shogran Car With Driver",
+  "images": [
+   {
+    "key": "shogran",
+    "alt": "Green meadow with grazing sheep and pine trees in morning mist at Shogran",
+    "cap": "Shogran meadows in the Kaghan hills."
+   }
+  ]
+ },
+ "/destinations/shigar-valley": {
+  "og": "shigar-valley",
+  "ogTitle": "Islamabad to Shigar Valley Car With Driver",
+  "images": [
+   {
+    "key": "shigar-valley",
+    "alt": "Braided Indus river channels and a rocky mountain in the Shigar valley, Baltistan",
+    "cap": "Shigar valley near Skardu."
+   }
+  ]
+ },
+ "/destinations/naltar-valley": {
+  "og": "naltar-valley",
+  "ogTitle": "Islamabad to Naltar Valley Car With Driver",
+  "images": [
+   {
+    "key": "naltar-valley",
+    "alt": "Calm lake reflecting autumn trees and mountains in Naltar valley",
+    "cap": "Naltar lake in autumn."
+   }
+  ]
+ },
+ "/destinations/malam-jabba": {
+  "og": "malam-jabba",
+  "ogTitle": "Islamabad to Malam Jabba Car With Driver",
+  "images": [
+   {
+    "key": "malam-jabba",
+    "alt": "Snow-covered hills and red-roofed houses at Malam Jabba in Swat",
+    "cap": "Malam Jabba in winter."
+   }
+  ]
+ },
+ "/destinations/kumrat-valley": {
+  "og": "kumrat-valley",
+  "ogTitle": "Islamabad to Kumrat Valley Car With Driver",
+  "images": [
+   {
+    "key": "kumrat-valley",
+    "alt": "Turquoise river and forested mountains in Kumrat valley, Upper Dir",
+    "cap": "Kumrat valley, Upper Dir."
+   }
+  ]
+ },
+ "/destinations/khunjerab-pass": {
+  "og": "khunjerab-pass",
+  "ogTitle": "Islamabad to Khunjerab Pass Car With Driver",
+  "images": [
+   {
+    "key": "khunjerab-pass",
+    "alt": "Road leading to the Khunjerab Pass border gate with snow mountains behind",
+    "cap": "The road to Khunjerab Pass."
+   }
+  ]
+ },
+ "/locations/naran": {
+  "og": "naran-toyota-corolla",
+  "ogTitle": "Naran Car Rental With Driver",
+  "images": [
+   {
+    "key": "naran-toyota-corolla",
+    "alt": "White Toyota Corolla on a mountain road above a river valley with snow peaks, typical of the Naran and Kaghan route",
+    "cap": "Mountain roads on the way to Naran and Kaghan."
+   }
+  ]
+ },
+ "/routes/islamabad-to-naran": {
+  "og": "naran-toyota-corolla",
+  "ogTitle": "Islamabad to Naran Car With Driver",
+  "images": [
+   {
+    "key": "naran-toyota-corolla",
+    "alt": "White Toyota Corolla on a mountain road above a river valley with snow peaks, typical of the Naran and Kaghan route",
+    "cap": "Mountain roads on the way to Naran and Kaghan."
+   }
+  ]
+ },
+ "/locations/swat": {
+  "og": "malam-jabba",
+  "ogTitle": "Swat Car Rental With Driver",
+  "images": [
+   {
+    "key": "malam-jabba",
+    "alt": "Snow-covered hills and houses at Malam Jabba in Swat",
+    "cap": "Malam Jabba in Swat."
+   },
+   {
+    "key": "kalam-valley",
+    "alt": "River and snow-capped mountains in Kalam valley, Swat",
+    "cap": "Kalam valley."
+   }
+  ]
+ },
+ "/routes/islamabad-to-swat": {
+  "og": "malam-jabba",
+  "ogTitle": "Islamabad to Swat Car With Driver",
+  "images": [
+   {
+    "key": "malam-jabba",
+    "alt": "Snow-covered hills and houses at Malam Jabba in Swat",
+    "cap": "Malam Jabba in Swat."
+   },
+   {
+    "key": "kalam-valley",
+    "alt": "River and snow-capped mountains in Kalam valley, Swat",
+    "cap": "Kalam valley."
+   }
+  ]
+ },
+ "/locations/skardu": {
+  "og": "shigar-valley",
+  "ogTitle": "Skardu Car Rental With Driver",
+  "images": [
+   {
+    "key": "shigar-valley",
+    "alt": "Braided Indus river channels and a rocky mountain in the Shigar valley near Skardu",
+    "cap": "Shigar valley, near Skardu."
+   }
+  ]
+ },
+ "/locations/azad-kashmir": {
+  "og": "neelum-valley-prado",
+  "ogTitle": "Azad Kashmir Car Rental With Driver",
+  "images": [
+   {
+    "key": "neelum-valley-prado",
+    "alt": "White Toyota Prado parked on a mountain road above the Neelum river",
+    "cap": "Neelum Valley, Azad Kashmir."
+   }
+  ]
+ },
+ "/locations/muzaffarabad": {
+  "og": "neelum-valley-prado",
+  "ogTitle": "Muzaffarabad Car Rental With Driver",
+  "images": [
+   {
+    "key": "neelum-valley-prado",
+    "alt": "White Toyota Prado parked on a mountain road above the Neelum river",
+    "cap": "Neelum Valley, Azad Kashmir."
+   }
+  ]
+ },
+ "/routes/islamabad-to-muzaffarabad": {
+  "og": "neelum-valley-prado",
+  "ogTitle": "Islamabad to Muzaffarabad Car With Driver",
+  "images": [
+   {
+    "key": "neelum-valley-prado",
+    "alt": "White Toyota Prado parked on a mountain road above the Neelum river",
+    "cap": "Neelum Valley, Azad Kashmir."
+   }
+  ]
+ },
+ "/guides/islamabad-to-skardu-by-road-guide": {
+  "og": "shigar-valley",
+  "ogTitle": "Islamabad to Skardu by Road: Guide",
+  "images": [
+   {
+    "key": "shigar-valley",
+    "alt": "Braided Indus river channels and a rocky mountain in the Shigar valley near Skardu",
+    "cap": "Shigar valley, near Skardu."
+   }
+  ]
+ },
+ "/guides/islamabad-to-deosai-national-park-guide": {
+  "og": "shigar-valley",
+  "ogTitle": "Islamabad to Deosai National Park",
+  "images": [
+   {
+    "key": "shigar-valley",
+    "alt": "Braided Indus river channels and a rocky mountain in the Shigar valley, the Baltistan landscape near Deosai and Skardu",
+    "cap": "Baltistan landscape near Skardu and Deosai."
+   }
+  ]
+ },
+ "/guides/islamabad-to-kumrat-valley-guide": {
+  "og": "kumrat-valley",
+  "ogTitle": "Islamabad to Kumrat Valley Guide",
+  "images": [
+   {
+    "key": "kumrat-valley",
+    "alt": "Turquoise river and forested mountains in Kumrat valley, Upper Dir",
+    "cap": "Kumrat valley, Upper Dir."
+   }
+  ]
+ },
+ "/guides/islamabad-to-naran-kaghan-guide": {
+  "og": "naran-toyota-corolla",
+  "ogTitle": "Islamabad to Naran and Kaghan Guide",
+  "images": [
+   {
+    "key": "naran-toyota-corolla",
+    "alt": "White Toyota Corolla on a mountain road above a river valley with snow peaks",
+    "cap": "Mountain roads on the way to Naran and Kaghan."
+   },
+   {
+    "key": "shogran",
+    "alt": "Green meadow with grazing sheep and pine trees in morning mist at Shogran",
+    "cap": "Shogran meadows."
+   }
+  ]
+ },
+ "/guides/islamabad-to-swat-kalam-guide": {
+  "og": "malam-jabba",
+  "ogTitle": "Islamabad to Swat and Kalam Guide",
+  "images": [
+   {
+    "key": "malam-jabba",
+    "alt": "Snow-covered hills and red-roofed houses at Malam Jabba in Swat",
+    "cap": "Malam Jabba in Swat."
+   },
+   {
+    "key": "kalam-valley",
+    "alt": "River and snow-capped mountains in Kalam valley, Swat",
+    "cap": "Kalam valley."
    }
   ]
  }

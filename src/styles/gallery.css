@@ -37,3 +37,5 @@
 .pv__x{position:absolute;top:12px;right:14px;width:44px;height:44px;border-radius:50%;border:0;font-size:1.8rem;line-height:1;background:rgba(255,255,255,.14);color:#fff;cursor:pointer}
 .pv__nav{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:0;font-size:2rem;line-height:1;background:rgba(255,255,255,.14);color:#fff;cursor:pointer}.pv__nav--l{left:12px}.pv__nav--r{right:12px}
 @keyframes pvIn{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}
+
+.px-fig--page{max-width:980px;margin:0 auto 26px}.px-fig--page img{width:100%;height:auto;aspect-ratio:16/7;object-fit:cover;border-radius:22px;box-shadow:0 24px 44px -28px rgba(0,0,0,.55)}.px-fig--page figcaption{margin-top:8px;font-size:.82rem;color:#62666c}

@@ -10,7 +10,8 @@ export const GUIDES_HUB = {
   og: { a: "CAR RENTAL GUIDES", b: "Rates · Routes · Cars · Weddings · Airport", vehicle: "prado" },
 };
 
-export const GUIDES = [
+import { NORTH_GUIDES } from "./guidesNorth";
+const BASE_GUIDES = [
   {
     slug: "car-rental-with-driver-islamabad-rates", updated: "2026-10-17",
     title: "Car With Driver in Islamabad: Rates Guide", h1: "Car Rental With Driver in Islamabad: Daily Rates and What Is Included",
@@ -151,3 +152,5 @@ export const TERMS_ROWS = [
   ["Day and distance limits", "Local and Out of Station rules, stated in the quote"],
   ["What we need from you", "Name, phone, pickup, destination, date, passengers and luggage"],
 ];
+
+export const GUIDES = [...BASE_GUIDES, ...NORTH_GUIDES];

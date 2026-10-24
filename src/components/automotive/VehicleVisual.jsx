@@ -13,7 +13,7 @@ export default function VehicleVisual({ vehicles, index }) {
             <div className="lc__counter" data-counter>
               <div className="lc__float">
                 <img src={v.image} {...imgSet(v.image, CAROUSEL_SIZES)} alt={`${v.color} ${v.name} ${v.trim}`.trim()} width="805" height="510"
-                     loading="lazy" decoding="async" draggable="false" />
+                     loading={i === 0 ? "eager" : "lazy"} {...(i === 0 ? { fetchpriority: "high" } : {})} decoding="async" draggable="false" />
                 {/* glossy light sweep, masked to the car's silhouette so it only touches the paint */}
                 <i className="lc__shine" aria-hidden="true" style={{ "--img": `url(${tinySrc(v.image)})` }} />
               </div>

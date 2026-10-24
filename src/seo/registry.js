@@ -24,7 +24,7 @@ import { TOUR_HUB, TOUR_SPOTS } from "./data/tourSpots";
 import { graphFor, abs } from "./schema";
 import { vehicleFaqs } from "./data/vehicleFacts";
 import { routeFaqs } from "./data/routeFaqs";
-import { imagesOf, boostFaqs, boostTags } from "./data/pageMeta";
+import { imagesOf, heroImagesOf, boostFaqs, boostTags } from "./data/pageMeta";
 
 const BRAND = B.shortName;
 // Keep text inside search-result limits: join sentences until the limit is reached.
@@ -43,9 +43,9 @@ function add(p) {
   rec.ogAlt = `${p.h1} - ${B.businessName}`;
   rec.canonical = abs(path);
   // page photos (pageImages.json) + the extra FAQs and #tags from pageBoost.js: the FAQ schema always matches what is visible on the page
-  rec.pageImages = imagesOf(path); rec.tags = boostTags(path);
+  rec.pageImages = rec.indexable ? heroImagesOf(path) : imagesOf(path); rec.tags = boostTags(path);
   const have = new Set(rec.faqs.map((f) => f.q)); rec.faqs = [...rec.faqs, ...boostFaqs(path).filter((f) => !have.has(f.q))];
-  rec.robots = rec.indexable ? "index, follow, max-image-preview:large" : "noindex, follow";
+  rec.robots = rec.indexable ? "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" : "noindex, follow";
   rec.breadcrumbs = p.breadcrumbs || [{ name: "Home", path: "/" }];
   pages.push(rec);
   return rec;

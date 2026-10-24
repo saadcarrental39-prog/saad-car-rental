@@ -143,6 +143,20 @@
    549
   ]
  },
+ "khunjerab-pass": {
+  "w": 738,
+  "h": 414,
+  "sizes": [
+   738
+  ]
+ },
+ "kumrat-valley": {
+  "w": 638,
+  "h": 480,
+  "sizes": [
+   638
+  ]
+ },
  "lahore": {
   "w": 1248,
   "h": 863,
@@ -154,6 +168,13 @@
  "lok-virsa-museum": {
   "w": 738,
   "h": 321,
+  "sizes": [
+   738
+  ]
+ },
+ "malam-jabba": {
+  "w": 738,
+  "h": 414,
   "sizes": [
    738
   ]
@@ -209,6 +230,29 @@
   "sizes": [
    640,
    1024
+  ]
+ },
+ "naltar-valley": {
+  "w": 547,
+  "h": 365,
+  "sizes": [
+   547
+  ]
+ },
+ "naran-toyota-corolla": {
+  "w": 1280,
+  "h": 698,
+  "sizes": [
+   640,
+   1280
+  ]
+ },
+ "neelum-valley-prado": {
+  "w": 1280,
+  "h": 698,
+  "sizes": [
+   640,
+   1280
   ]
  },
  "pakistan-monument": {
@@ -285,6 +329,20 @@
   "h": 451,
   "sizes": [
    679
+  ]
+ },
+ "shigar-valley": {
+  "w": 598,
+  "h": 360,
+  "sizes": [
+   598
+  ]
+ },
+ "shogran": {
+  "w": 450,
+  "h": 300,
+  "sizes": [
+   450
   ]
  },
  "white-prado": {
