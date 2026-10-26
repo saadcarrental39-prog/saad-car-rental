@@ -83,16 +83,16 @@ function useLivePhoto(slug) {
   }, [slug]);
   return ph;
 }
-function VehicleStripItem({ c }) {
+function VehicleStripItem({ c, book }) {
   const live = useLivePhoto(c.slug); const ph = live || photoOf(c); const fit = (VEHICLE_FIT[c.slug] || []).slice(0, 3).map((u) => USE[u]).join(" · ");
   return (
     <li><Link to={`/cars/${c.slug}`}>
       {ph ? <img key={ph.image} src={ph.image} {...imgSet(ph.image, "(max-width: 700px) 90vw, 360px")} alt={`${ph.color} ${ph.name} ${ph.trim} with professional driver`.replace(/\s+/g, " ")} width="805" height="510" loading="lazy" decoding="async" /> : <span className="sx-veh__ph">Real photos on request<br />Ask us on WhatsApp</span>}
       <b>{c.title}</b><span>{VEHICLE_PITCH[c.slug] ? VEHICLE_PITCH[c.slug].replace(/^a /, "A ").replace(/^an /, "An ") : ""}</span><em>{fit}</em>
-    </Link></li>
+    </Link>{book && <Link className="sx-btn sx-btn--quote sx-veh__book" rel="nofollow" to={`/book?car=${c.vehicles[0].id}&svc=out&from=Islamabad&to=${encodeURIComponent(book)}`}>Book {c.title} with driver</Link>}</li>
   );
 }
-export const VehicleStrip = ({ cats }) => <ul className="sx-veh">{cats.map((c) => <VehicleStripItem key={c.slug} c={c} />)}</ul>;
+export const VehicleStrip = ({ cats, book }) => <ul className="sx-veh">{cats.map((c) => <VehicleStripItem key={c.slug} c={c} book={book} />)}</ul>;
 
 export const Steps = ({ items }) => { const t = useT(); return <ol className="sx-steps">{items.map((s) => <li key={s[0]}><b>{t(s[0])}</b><span>{t(s[1])}</span></li>)}</ol>; };
 export const BOOKING_STEPS = [

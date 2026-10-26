@@ -23,7 +23,7 @@ export const businessNode = (areas = []) => clean({
   knowsAbout: ["Car rental with driver", "Chauffeur service", "Airport transfers", "Intercity travel in Pakistan", "Northern areas of Pakistan"],
 });
 
-export const websiteNode = () => clean({ "@type": "WebSite", "@id": ID.site, url: abs("/"), name: B.shortName, alternateName: B.alternateNames, inLanguage: "en", publisher: { "@id": ID.biz } });
+export const websiteNode = () => clean({ "@type": "WebSite", "@id": ID.site, url: abs("/"), name: B.shortName, alternateName: B.alternateNames, inLanguage: "en", publisher: { "@id": ID.biz }, potentialAction: { "@type": "SearchAction", target: { "@type": "EntryPoint", urlTemplate: abs("/search?q={search_term_string}") }, "query-input": "required name=search_term_string" } });
 
 export const breadcrumbNode = (crumbs) => ({ "@type": "BreadcrumbList", itemListElement: crumbs.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.name, item: abs(c.path) })) });
 

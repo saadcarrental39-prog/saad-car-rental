@@ -1,3 +1,5 @@
+/* images keep their own proportions: the width/height attributes only reserve space (stops tall, stretched pictures on phones) */
+:where(img[width][height]){height:auto}
 body{display:block;padding:0;background:#fff;color:#16181b;font-family:Manrope,system-ui,sans-serif;overflow-x:hidden}
 .skip{position:absolute;left:-999px}.skip:focus{left:8px;top:8px;background:#fff;padding:8px;z-index:99}
 :focus-visible{outline:2px solid #16181b;outline-offset:3px}

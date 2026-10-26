@@ -116,3 +116,4 @@
 @media(max-width:900px){.sx-hero__grid{grid-template-columns:1fr}.px-fig--hero{max-width:640px}.px-fig--hero::before{display:none}.px-gal--2{grid-template-columns:1fr}}
 .px-thumb{display:block;height:auto;align-self:start;justify-self:start;width:calc(100% + 58px);max-width:none;margin:-18px -40px 8px -18px;aspect-ratio:480/252;object-fit:cover;border-radius:18px 18px 0 0;background:#e9e8e2}
 .sx-cards a{align-content:start}
+.sx-veh li{display:flex;flex-direction:column;gap:10px}.sx-veh li>a:first-child{flex:1;height:auto}.sx-veh li>a.sx-veh__book{height:auto;display:block;text-align:center;padding:12px 14px;border:0;border-radius:999px;background:#16181b;color:#fff;font-weight:700;font-size:.88rem;text-decoration:none}.sx-veh li>a.sx-veh__book:hover{background:#2c2f34}

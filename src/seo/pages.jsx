@@ -437,6 +437,7 @@ export function ArticlePage({ slug }) {
       {sec.terms && <DataTable head={["Point", "How it is handled"]} rows={TERMS_ROWS} />}
       {sec.links && <p>{sec.links.map(([to, t], j) => <span key={to}>{j > 0 ? " · " : ""}<Link to={to}>{t} →</Link></span>)}</p>}
     </Sec>))}
+    {a.vehicles && a.vehicles.length > 0 && <Sec id="cars" title={`Choose your car for ${a.bookTo} and book directly`}><p>Every car comes with a professional driver. Press Book to open the booking form with the car and the trip already filled in.</p><VehicleStrip cats={a.vehicles.map((v) => category(v)).filter(Boolean)} book={a.bookTo} /></Sec>}
     <Faq items={a.faqs} />
     <Sec id="related" title="Related pages" tone="grey"><LinkCards items={rel} /></Sec>
     <Cta ctx={a.h1} title="Tell us your plan, get a quote" text="Call, WhatsApp or send the booking form with your pickup, destination and dates." />

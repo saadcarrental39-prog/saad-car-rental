@@ -11,6 +11,7 @@ export const GUIDES_HUB = {
 };
 
 import { NORTH_GUIDES } from "./guidesNorth";
+import { CITY_GUIDES } from "./guidesCities";
 const BASE_GUIDES = [
   {
     slug: "car-rental-with-driver-islamabad-rates", updated: "2026-10-17",
@@ -153,4 +154,4 @@ export const TERMS_ROWS = [
   ["What we need from you", "Name, phone, pickup, destination, date, passengers and luggage"],
 ];
 
-export const GUIDES = [...BASE_GUIDES, ...NORTH_GUIDES];
+export const GUIDES = [...BASE_GUIDES, ...NORTH_GUIDES, ...CITY_GUIDES];

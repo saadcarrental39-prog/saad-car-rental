@@ -69,6 +69,8 @@ add({ path: "/about", kind: "about", title: "About Us: Chauffeur Car Rental in I
 add({ path: "/contact", kind: "contact", title: "Contact Us: Car Rental With Driver in Islamabad", h1: "Contact SAAD CAR RENTAL SERVICES", priority: 0.8, breadcrumbs: [home, { name: "Contact", path: "/contact" }],
   description: fit([`Contact ${B.businessName} at G-11 Markaz, Islamabad. Call ${B.phoneDisplay}, WhatsApp or send an enquiry and our team will reply quickly.`]),
   og: { a: "CONTACT US", b: `Call / WhatsApp ${B.phoneDisplay}`, vehicle: "prado" } });
+add({ path: "/search", kind: "app", title: "Search", h1: "Search", indexable: false, priority: 0.2, breadcrumbs: [home, { name: "Search", path: "/search" }],
+  description: "Search cars, cities, routes, places and guides.", og: { a: "SEARCH", b: "Cars, cities, routes and guides", vehicle: "prado" } });
 add({ path: "/book", kind: "app", title: "Book a Car With Driver", h1: "Book Now", indexable: false, priority: 0.3, breadcrumbs: [home, { name: "Book Now", path: "/book" }],
   description: "Book a premium car with professional driver in Islamabad. No account needed.", og: { a: "BOOK NOW", b: "Car with professional driver", vehicle: "prado" } });
 
@@ -240,6 +242,26 @@ add({ path: "/faq", kind: "faq", slug: "faq", title: "FAQ: Car Rental With Drive
 
 export const PAGES = pages;
 // Share-image lookup for booking links such as /book?car=prado-black or /book?to=Faisal Mosque (functions/_middleware.js reads og-map.json)
+// Search index of the website (written to /search-index.json at build time): one entry per indexable page, with a direct booking link where it makes sense.
+export const SEARCH_INDEX = (() => {
+  const cut = (s, n) => { s = String(s || "").replace(/\s+/g, " ").trim(); return s.length > n ? s.slice(0, n - 1).replace(/[\s,;:.-]+\S*$/, "") + "…" : s; };
+  const words = (s) => String(s || "").replace(/[-_/]+/g, " ");
+  const place = (pg) => { const m = /^\/(?:routes\/islamabad-to-|locations\/|destinations\/)(.+)$/.exec(pg.path); return m ? m[1].split("-").map((w) => w[0].toUpperCase() + w.slice(1)).join(" ") : null; };
+  const out = [];
+  pages.filter((p) => p.indexable && !/^\/(privacy-policy|terms-of-service|refund-policy|cookie-policy|accessibility|disclaimer)$/.test(p.path)).forEach((pg) => {
+    const p = pg.path; const seg = p.split("/").filter(Boolean);
+    let k = "Pages", b = null, extra = "";
+    if (p === "/cars" || p.startsWith("/cars/")) { k = "Cars"; const c = categories().find((x) => p === `/cars/${x.slug}`); if (c) { b = `/book?car=${c.vehicles[0].id}`; extra = c.vehicles.map((v) => `${v.name} ${v.color} ${v.trim}`).join(" ") + " car rental with driver chauffeur suv sedan"; } }
+    else if (seg[0] === "services") { k = "Services"; extra = "service chauffeur hire"; }
+    else if (seg[0] === "routes") { k = "Routes"; const n = place(pg); if (n) b = `/book?svc=out&from=Islamabad&to=${encodeURIComponent(n)}`; extra = "route trip tour road journey from islamabad"; }
+    else if (seg[0] === "locations" && seg[1]) { k = "Cities"; const n = place(pg); if (n) b = `/book?svc=out&from=Islamabad&to=${encodeURIComponent(n)}`; extra = "city rental car with driver"; }
+    else if (seg[0] === "destinations" || seg[0] === "islamabad" || seg[0] === "murree-tourist-spots") { k = "Places"; const n = place(pg); if (n) b = `/book?svc=out&from=Islamabad&to=${encodeURIComponent(n)}`; else if (seg[0] === "islamabad") b = `/book?svc=local&to=${encodeURIComponent(pg.h1.replace(/^.*?(?:to|for) /i, "").replace(/ (?:car|with).*$/i, ""))}`; extra = "tourist spot place visit picnic hotel mall"; }
+    else if (seg[0] === "guides") { k = "Guides"; const g = GUIDES.find((x) => p === `/guides/${x.slug}`); if (g && g.bookTo) b = `/book?svc=out&from=Islamabad&to=${encodeURIComponent(g.bookTo)}`; extra = "guide trip plan itinerary hotels spots"; }
+    out.push({ t: cut(pg.title, 70), u: p, k, d: cut(pg.description, 115), w: `${words(p)} ${extra} ${(pg.tags || []).join(" ")}`.trim(), ...(b ? { b } : {}) });
+  });
+  return out;
+})();
+
 export const BOOK_OG_MAP = (() => {
   const cars = {}, places = {}, og = (pg) => pg.ogImage;
   categories().forEach((c) => { const pg = pages.find((x) => x.path === `/cars/${c.slug}`); if (pg) (c.vehicles || []).forEach((v) => { cars[v.id] = og(pg); }); });

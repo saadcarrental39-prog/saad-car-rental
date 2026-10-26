@@ -1,3 +1,4 @@
+import { SearchButton, SearchPage } from "./components/SiteSearch";
 import { Component, Suspense, lazy, useEffect, useState } from "react";
 import { Routes, Route, Link, NavLink, useLocation } from "react-router-dom";
 import { SITE, ADMIN_PATH, telHref, waHref } from "./config";
@@ -41,6 +42,7 @@ export default function App() {
       <a className="skip" href="#main">{t("Skip to content")}</a>
       <header className="hdr"><Link to="/" className="logo"><img className="logo__img" src="/assets/brand/saadcar-logo-dark.svg" alt="SAAD CAR" width="3840" height="1228" /> <span>RENTAL SERVICES</span></Link>
         <nav aria-label={t("Main")}>{[["/", "Home"], ["/cars", "Cars"], ["/services", "Services"], ["/northern-areas", "Northern Areas"], ["/routes", "Routes"], ["/about", "About"], ["/contact", "Contact"]].map(([to, tt]) => <NavLink key={to} to={to} end={to === "/"}>{t(tt)}</NavLink>)}<a href="/posts" className="nav-posts">Trips</a></nav>
+        <SearchButton />
         <LangSelect className="lang--hdr" />
         <Link to="/book" className="btn btn--dark">{t("Book Now")}</Link>
         <button className="burger" aria-expanded={open} aria-controls="menu" aria-label={t("Menu")} onClick={() => setOpen(!open)}>{open ? "✕" : "☰"}</button></header>
@@ -49,13 +51,13 @@ export default function App() {
       <RecentBookings />
       <CookieNotice />
       <main id="main"><Guard key={pathname}>
-        <Routes><Route path="/" element={<Home />} /><Route path="/cars" element={<Cars />} /><Route path="/cars/:slug" element={<CarPage />} />
+        <Routes><Route path="/" element={<Home />} /><Route path="/search" element={<SearchPage />} /><Route path="/cars" element={<Cars />} /><Route path="/cars/:slug" element={<CarPage />} />
           <Route path="/services" element={<Services />} /><Route path="/about" element={<About />} /><Route path="/contact" element={<Contact />} /><Route path="/book" element={<Book />} /><Route path="*" element={<CatchAll />} /></Routes>
       </Guard></main>
       <footer className="ftr"><div><strong className="ftr__brand"><img src="/assets/brand/saadcar-logo-light.svg" alt="SAAD CAR" width="3840" height="1228" loading="lazy" /> <span>RENTAL SERVICES</span></strong><p>{t(SITE.tagline)}</p></div><address>{SITE.address.map((l) => <span key={l}>{l}<br /></span>)}<a href={SITE.maps} target="_blank" rel="noopener noreferrer">{t("Google Maps")}</a></address>
         <nav aria-label="Footer"><Link to="/">{t("Home")}</Link>{["cars", "services", "about", "contact", "book"].map((p) => <Link key={p} to={`/${p}`}>{t(p[0].toUpperCase() + p.slice(1))}</Link>)}</nav>
         <nav aria-label={t("Explore")}><a href="/posts">Trips &amp; Spots</a><Link to="/routes">{t("Routes")}</Link><Link to="/northern-areas">{t("Northern Areas")}</Link><Link to="/airport-transfer/islamabad">{t("Airport Transfer")}</Link><Link to="/local-car-rental-islamabad">{t("Local · Islamabad")}</Link><Link to="/out-of-station-car-rental">{t("Out of Station")}</Link><Link to="/guides">{t("Guides")}</Link><Link to="/services/premium-car-rental">{t("Premium Car Rental")}</Link><Link to="/cars/premium-luxury-land-cruiser">{t("Premium Land Cruiser")}</Link><Link to="/faq">{t("FAQ")}</Link></nav>
-        <nav aria-label="Legal"><Link to="/privacy-policy">{t("Privacy Policy")}</Link><Link to="/terms-of-service">{t("Terms of Service")}</Link><Link to="/refund-policy">{t("Refund Policy")}</Link><Link to="/cookie-policy">{t("Cookie Policy")}</Link><Link to="/contact-consent">{t("Contact Consent")}</Link><Link to="/data-deletion">{t("Data Deletion")}</Link><Link to="/ai-info">{t("AI Info")}</Link></nav>
+        <nav aria-label="Legal"><Link to="/privacy-policy">{t("Privacy Policy")}</Link><Link to="/terms-of-service">{t("Terms of Service")}</Link><Link to="/refund-policy">{t("Refund Policy")}</Link><Link to="/cookie-policy">{t("Cookie Policy")}</Link><Link to="/search">{t("Search")}</Link><Link to="/contact-consent">{t("Contact Consent")}</Link><Link to="/data-deletion">{t("Data Deletion")}</Link><Link to="/ai-info">{t("AI Info")}</Link></nav>
         <nav aria-label="Fleet">{fleet.filter((c) => ["land-cruiser-v8", "prado", "toyota-fortuner", "coaster"].includes(c.slug)).map((c) => <Link key={c.slug} to={`/cars/${c.slug}`}>{c.title}</Link>)}</nav>
         <nav aria-label="Social"><SocialLinks className="soc--ftr" /></nav>
         <LangSelect className="lang--ftr" /><small>© {new Date().getFullYear()} {SITE.name} · build {typeof __BUILD_ID__ !== "undefined" ? __BUILD_ID__.slice(-6) : "dev"}</small></footer>
