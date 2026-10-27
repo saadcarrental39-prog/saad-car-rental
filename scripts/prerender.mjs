@@ -24,7 +24,7 @@ await build({
   plugins: [{ name: "no-glob", setup(b) { b.onLoad({ filter: /src[\\/]data[\\/]services\.js$/ }, (a) => ({ contents: readFileSync(a.path, "utf8").replace(/import\.meta\.glob\([^)]*\)/g, "{}"), loader: "js" })); } }],
 });
 const mod = await import(pathToFileURL(join(work, "entry.mjs")).href);
-const { PAGES, BOOK_OG_MAP, SEARCH_INDEX, render, BUSINESS, ADMIN_PATH, baseFleet, imgSet, HERO_SIZES, notFoundHead, headHtml } = mod;
+const { PAGES, BOOK_OG_MAP, SEARCH_INDEX, GUIDE_POSTS, render, BUSINESS, ADMIN_PATH, baseFleet, imgSet, HERO_SIZES, notFoundHead, headHtml } = mod;
 
 // ---- quiet the harmless React "useLayoutEffect does nothing on the server" warning
 const err = console.error; console.error = (...a) => { if (!/useLayoutEffect|fetchpriority/.test(String(a[0]))) err(...a); };
@@ -75,6 +75,7 @@ const urlset = (items, ns = "") => `<?xml version="1.0" encoding="UTF-8"?>\n<url
   writeFileSync(join(dist, "known-paths.json"), JSON.stringify(PAGES.map((p) => p.path)));
   writeFileSync(join(dist, "og-map.json"), JSON.stringify(BOOK_OG_MAP));
   writeFileSync(join(dist, "search-index.json"), JSON.stringify(SEARCH_INDEX));
+  writeFileSync(join(dist, "guide-posts.json"), JSON.stringify(GUIDE_POSTS));
 }
 
 const urlTag = (p, extra = "") => `<url><loc>${x(site + (p.path === "/" ? "/" : p.path))}</loc><lastmod>${(p.updated || BUSINESS.contentUpdated)}</lastmod>${extra}</url>`;   // lastmod = the content review date in business.config.js (stable between deploys)

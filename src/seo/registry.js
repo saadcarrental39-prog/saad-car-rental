@@ -262,6 +262,12 @@ export const SEARCH_INDEX = (() => {
   return out;
 })();
 
+// The trip guides built into the website: listed on /posts ("Trips") and in the admin Posts tab through /guide-posts.json
+export const GUIDE_POSTS = GUIDES.filter((g) => g.bookTo).map((g) => {
+  const pg = pages.find((x) => x.path === `/guides/${g.slug}`); const im = ((pg && pg.pageImages) || [])[0];
+  return { slug: g.slug, href: `/guides/${g.slug}`, title: g.title, description: g.description, date: g.updated, updated: g.updated, status: "published", category: "Trip guides", location: g.bookTo, image: im ? (im.srcSet ? `/assets/pages/${im.key}-640.webp` : im.url) : "" };
+});
+
 export const BOOK_OG_MAP = (() => {
   const cars = {}, places = {}, og = (pg) => pg.ogImage;
   categories().forEach((c) => { const pg = pages.find((x) => x.path === `/cars/${c.slug}`); if (pg) (c.vehicles || []).forEach((v) => { cars[v.id] = og(pg); }); });

@@ -182,7 +182,7 @@ ${related.length ? `<h2>More trips and spots</h2><div class="cards">${related.ma
   return shell({ title, desc: p.description, canonical: u, image: ogImg, jsonld: ld, body, active: "/posts", script: vids.length ? PLAY : "",
     extraHead: `<meta property="article:published_time" content="${p.date}"><meta property="article:modified_time" content="${p.updated || p.date}"><meta property="article:section" content="${esc(p.category)}">${p.tags.map((t) => `<meta property="article:tag" content="${esc(t)}">`).join("")}${p.keyword || p.tags.length ? `<meta name="keywords" content="${esc([p.keyword, ...p.tags].filter(Boolean).join(", "))}">` : ""}` });
 }
-const card = (p) => `<a class="card" href="/posts/${esc(p.slug)}">${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.title)}" width="640" height="400" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : `<div class="ph"></div>`}<div><small>${esc(p.category)}${p.location ? " · " + esc(p.location) : ""} · ${esc(dateLong(p.date))}</small><b>${esc(p.title)}</b>${p.description ? `<p>${esc(p.description)}</p>` : ""}</div></a>`;
+const card = (p) => `<a class="card" href="${esc(p.href || "/posts/" + p.slug)}">${p.image ? `<img src="${esc(p.image)}" alt="${esc(p.title)}" width="640" height="400" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : `<div class="ph"></div>`}<div><small>${esc(p.category)}${p.location ? " · " + esc(p.location) : ""} · ${esc(dateLong(p.date))}</small><b>${esc(p.title)}</b>${p.description ? `<p>${esc(p.description)}</p>` : ""}</div></a>`;
 
 // ---------------------------------------------------------------- list page /posts
 export function renderIndex(all, { cat = "", page = 1 } = {}) {
@@ -194,7 +194,7 @@ export function renderIndex(all, { cat = "", page = 1 } = {}) {
   const ld = { "@context": "https://schema.org", "@graph": [orgNode(),
     { "@type": "CollectionPage", "@id": `${SITE}/posts#page`, url: SITE + "/posts", name: "Trips, Spots and Videos from Islamabad", description: desc, isPartOf: { "@id": `${SITE}/#website` }, inLanguage: "en" },
     { "@type": "BreadcrumbList", itemListElement: [["Home", SITE + "/"], ["Trips & Spots", SITE + "/posts"]].map(([n, i], k) => ({ "@type": "ListItem", position: k + 1, name: n, item: i })) },
-    { "@type": "ItemList", itemListElement: shown.map((p, i) => ({ "@type": "ListItem", position: (page - 1) * per + i + 1, url: url(p.slug), name: p.title })) }] };
+    { "@type": "ItemList", itemListElement: shown.map((p, i) => ({ "@type": "ListItem", position: (page - 1) * per + i + 1, url: p.href ? SITE + p.href : url(p.slug), name: p.title })) }] };
   const body = `<p class="crumb"><a href="/">Home</a> › Trips &amp; Spots</p><h1>Trips, Spots &amp; Videos from Islamabad</h1>
 <p>Every page below has the photos, reels and full details of a trip: which spots to visit, what to see, how a driver plans the day. Pick your spots (Murree, Patriata, Ayubia chairlift, Naran, Hunza, Skardu and more), then call or WhatsApp us to book your car with a professional driver.</p>
 ${cats.length > 1 ? `<div class="chips"><a href="/posts"${!cat ? ' class="on"' : ""}>All</a>${cats.map((c) => `<a href="/posts?cat=${encodeURIComponent(c)}"${c === cat ? ' class="on"' : ""}>${esc(c)}</a>`).join("")}</div>` : ""}

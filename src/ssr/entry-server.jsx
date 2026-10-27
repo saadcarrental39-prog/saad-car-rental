@@ -14,7 +14,7 @@ export function render(path) {
   const html = renderToString(<I18nProvider initial="en-US"><MemoryRouter initialEntries={[path]}><App /></MemoryRouter></I18nProvider>);
   return { html, head: page ? headHtml(headFor(page)) : "", page };
 }
-export { PAGES, pageByPath, headFor, notFoundHead, BOOK_OG_MAP, SEARCH_INDEX } from "../seo/registry";
+export { PAGES, pageByPath, headFor, notFoundHead, BOOK_OG_MAP, SEARCH_INDEX, GUIDE_POSTS } from "../seo/registry";
 export { BUSINESS, needsConfirmation } from "../business.config";
 export { PLACES, PROVINCES, PUNJAB_DISTRICTS, place } from "../seo/data/places";
 export { ROUTES, DRAFT_ROUTES } from "../seo/data/routes";

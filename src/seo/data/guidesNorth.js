@@ -4,7 +4,7 @@ const f = (q, a) => ({ q, a });
 const UP = "2026-10-24";
 const ABOUT = "SAAD CAR RENTAL SERVICES is based in G-11 Markaz, Islamabad, and provides every vehicle with an experienced professional driver, for visitors from abroad, overseas Pakistanis, families and groups.";
 
-export const NORTH_GUIDES = [
+const RAW = [
   {
     slug: "islamabad-to-skardu-by-road-guide", updated: UP,
     title: "Islamabad to Skardu by Road: Car With Driver Guide", h1: "Islamabad to Skardu by Car With Driver: Route, Days, Season and Stops",
@@ -133,3 +133,13 @@ export const NORTH_GUIDES = [
     related: ["/routes/islamabad-to-swat", "/locations/swat", "/destinations/malam-jabba", "/guides/islamabad-to-kumrat-valley-guide", "/cars/prado"],
   },
 ];
+
+// every guide shows cars with a direct Book button, and is listed on the Trips page
+const PLACE = {
+  "islamabad-to-skardu-by-road-guide": ["Skardu", ["prado", "land-cruiser-v8", "toyota-fortuner", "coaster"]],
+  "islamabad-to-deosai-national-park-guide": ["Deosai", ["land-cruiser-v8", "prado", "toyota-fortuner", "revo"]],
+  "islamabad-to-kumrat-valley-guide": ["Kumrat Valley", ["prado", "toyota-fortuner", "land-cruiser-v8", "revo"]],
+  "islamabad-to-naran-kaghan-guide": ["Naran", ["prado", "toyota-fortuner", "land-cruiser-v8", "coaster"]],
+  "islamabad-to-swat-kalam-guide": ["Swat", ["prado", "toyota-fortuner", "land-cruiser-v8", "coaster"]],
+};
+export const NORTH_GUIDES = RAW.map((g) => ({ ...g, bookTo: PLACE[g.slug][0], vehicles: PLACE[g.slug][1] }));

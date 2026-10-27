@@ -21,6 +21,8 @@ const toRaw = (f) => ({ title: f.title, slug: f.slug, keyword: f.keyword, descri
 const state = (p) => (p.status !== "published" ? "Draft" : p.date > today() ? "Scheduled" : "Live");
 
 export default function AdminPosts({ tok, api, out }) {
+  const [guides, setGuides] = useState([]);
+  useEffect(() => { fetch("/guide-posts.json").then((r) => r.json()).then((j) => setGuides(Array.isArray(j) ? j : [])).catch(() => {}); }, []);
   const [list, setList] = useState(null), [err, setErr] = useState(""), [edit, setEdit] = useState(null), [msg, setMsg] = useState(""), [busy, setBusy] = useState(false), [res, setRes] = useState(null);
   const load = () => api("posts_list", {}, tok).then((r) => setList(r.posts || [])).catch((e) => (e.status === 401 ? out() : setErr("Load nahi hua. Internet check karein.")));
   useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -45,6 +47,13 @@ export default function AdminPosts({ tok, api, out }) {
         <div className="ad-spot__btns"><button type="button" className="ad-btn ad-btn--ghost" onClick={() => open(p.slug)}>Edit</button><a className="ad-btn ad-btn--ghost" href={`/posts/${p.slug}`} target="_blank" rel="noopener noreferrer">Dekhein</a></div></div>
     </section>))}
     {!list.length && <section className="ad-card"><p className="ad-note">Abhi koi post nahi. Pehli post banayein: “+ Nayi post”.</p></section>}
+    {guides.length > 0 && <section className="ad-card"><h2>Website ki ready Trip Guides<small>{guides.length}</small></h2>
+      <p className="ad-note">Ye {guides.length} guides website ke saath bani hain aur LIVE hain. Ye “Trips” page par bhi nazar aati hain. Inhein badalna ho to developer se kehein; nayi posts aap upar “+ Nayi post” se bana sakte hain.</p></section>}
+    {guides.map((p) => (<section className="ad-card ad-post" key={p.slug}>
+      {p.image ? <img src={p.image} alt="" loading="lazy" /> : <div className="ad-post__ph" />}
+      <div><h3>{p.title}</h3><p className="ad-note"><b className="ad-pill ad-pill--live">Live</b> {p.date}{p.location ? ` · ${p.location}` : ""}</p>
+        <div className="ad-spot__btns"><a className="ad-btn ad-btn--ghost" href={p.href} target="_blank" rel="noopener noreferrer">Dekhein</a></div></div>
+    </section>))}
   </>);
 }
 
