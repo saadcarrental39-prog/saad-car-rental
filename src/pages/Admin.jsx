@@ -3,6 +3,7 @@ import { baseFleet, applyOverrides } from "../data/fleet";
 import { saveLocal } from "../fleetSync";
 import { ADMIN_PATH } from "../config";
 import AdminPosts, { IPost } from "./AdminPosts";
+import AdminReviews, { IStar } from "./AdminReviews";
 import "../styles/admin.css";
 import "../styles/admin-theme.css";
 import Insights from "../components/Insights";
@@ -208,12 +209,12 @@ function useOrders(tok, out, tab) {
     } catch (e) {
       if (e.status === 401) { out(); return; }
       // say WHY it did not load (it used to show the loading circle forever) and try once more by itself
-      setErr(!e.status ? "Internet ya server jawab nahi de raha. Internet check karein." : e.status === 503 ? "Cloudflare mein KV storage (SITEDATA) bind nahi hai (503)." : e.status === 429 ? "Bahut zyada requests (429). Thori der baad try karein." : `Server error (${e.status}${e.message ? ": " + e.message : ""}${e.detail ? " - " + e.detail : ""}). Cloudflare Pages > Functions logs dekhein.`);
+      setErr(!e.status ? "Internet ya server jawab nahi de raha. Internet check karein." : e.status === 503 ? "Cloudflare mein KV storage (SITEDATA) bind nahi hai (503)." : e.status === 429 ? "Bahut zyada requests (429). Thori der baad try karein." : `Server error (${e.status}${e.message ? ": " + e.message : ""}). Cloudflare Pages > Functions logs dekhein.`);
       if (!retried.current) { retried.current = true; setTimeout(refresh, 3000); }
     }
   };
   useEffect(() => {
-    refresh(); const t = setInterval(() => document.visibilityState === "visible" && refresh(), 30000);
+    refresh(); const t = setInterval(() => document.visibilityState === "visible" && refresh(), 12000);
     const vis = () => document.visibilityState === "visible" && refresh();
     const msg = (e) => { if (e.data?.type === "new-order") refresh(); };
     document.addEventListener("visibilitychange", vis); navigator.serviceWorker?.addEventListener("message", msg);
@@ -387,7 +388,7 @@ function Panel({ tok, out, pwa }) {
   };
   if (!ov) return (<div className="ad-load">{loadErr ? <><p>{loadErr}</p><button type="button" className="ad-btn" onClick={load}>Dobara try karein</button></> : <><span className="ad-spin" /><p>Load ho raha hai…</p></>}</div>);
   const match = (c, v) => !q.trim() || `${v.name} ${v.trim || ""} ${v.color || ""} ${c.title}`.toLowerCase().includes(q.trim().toLowerCase());
-  const tabs = [["home", "Dashboard", IChart], ["activity", "Activity", IPulse], ["orders", "Orders", IBell], ["leads", "Clients", IPeople], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["posts", "Posts", IPost], ["me", "Account", IUser]];
+  const tabs = [["home", "Dashboard", IChart], ["activity", "Activity", IPulse], ["orders", "Orders", IBell], ["leads", "Clients", IPeople], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["posts", "Posts", IPost], ["reviews", "Reviews", IStar], ["me", "Account", IUser]];
   return (<>
     <header className="ad-top"><img src={logo} alt="SAAD CAR" width="900" height="284" /><div className="ad-top__r"><ThemeToggle /><span className="ad-pill">Admin</span></div></header>
     <main className="ad-main">
@@ -405,6 +406,7 @@ function Panel({ tok, out, pwa }) {
             {added.map((a) => <Row key={a.id} v={{ ...a, image: a.image || "/assets/placeholder-vehicle.svg" }} ov={null} kind="add" tok={tok} change={(p) => edit((n) => { Object.assign(n.added.find((x) => x.id === a.id), p); })} remove={() => edit((n) => { n.added = n.added.filter((x) => x.id !== a.id); })} />)}</section>); })}
       </>}
       {tab === "posts" && <AdminPosts tok={tok} api={api} out={out} />}
+      {tab === "reviews" && <AdminReviews tok={tok} api={api} out={out} />}
       {tab === "add" && <AddCar key={formKey} tok={tok} cats={cats} onAdd={(item, nc) => { edit((n) => { if (nc) n.cats.push(nc); n.added.push(item); }); setFormKey((k) => k + 1); setTab("fleet"); setMsg("Gaari add ho gayi. Neeche Save dabana na bhoolein."); }} />}
       {tab === "me" && <>
         <section className="ad-card ad-me"><img src={logo} alt="SAAD CAR" width="900" height="284" /><b>SAAD CAR RENTAL SERVICES</b><span>Owner admin</span></section>
@@ -415,7 +417,7 @@ function Panel({ tok, out, pwa }) {
         <p className="ad-ver">Version: {new Date(Number(__BUILD_ID__)).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}<br />Naya update aane par app khud update ho jati hai.</p>
       </>}
     </main>
-    {(dirty || busy) && tab !== "orders" && tab !== "home" && tab !== "leads" && tab !== "posts" && <div className="ad-save" role="status"><span>Badlaav save nahi hue</span><button type="button" className="ad-btn ad-btn--light" disabled={busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div>}
+    {(dirty || busy) && tab !== "orders" && tab !== "home" && tab !== "leads" && tab !== "posts" && tab !== "reviews" && <div className="ad-save" role="status"><span>Badlaav save nahi hue</span><button type="button" className="ad-btn ad-btn--light" disabled={busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div>}
     {msg && <div className="ad-toast" role="status">{msg}</div>}
     <nav className="ad-tabs" aria-label="Admin">{tabs.map(([k, t, Ic]) => <button key={k} type="button" className={tab === k ? "on" : ""} aria-current={tab === k ? "page" : undefined} onClick={() => setTab(k)}><span className="ad-ic"><Ic />{k === "orders" && st.unread > 0 && <i className="ad-count">{st.unread > 99 ? "99+" : st.unread}</i>}{k === "leads" && leadN > 0 && tab !== "leads" && <i className="ad-count">{leadN > 99 ? "99+" : leadN}</i>}</span>{t}</button>)}</nav>
   </>);

@@ -1,5 +1,6 @@
 import { routeFaqs } from "./data/routeFaqs";
 import { GallerySection, galleryOf } from "../components/CarGallery";
+import { ReviewCards } from "../components/reviews/CarReviews";
 // SEO page components. Every page is built from the data files in src/seo/data, so no page is hand-copied from another.
 // They contain no browser-only code: the build renders them to plain HTML for crawlers (see scripts/prerender.mjs).
 import { Link } from "react-router-dom";
@@ -240,6 +241,7 @@ export function VehicleExtras({ slug }) {
   return (<div className="sx-extra">
     <Sec id="short" title={`${nm} on rent in Islamabad: the short answer`}><Answer q={`Can I hire a ${nm} with a driver?`}>{short}</Answer></Sec>
     {galleryOf(slug).length > 0 && <Sec id="photos" title={`${nm}: interior and exterior photos`}><GallerySection slug={slug} /></Sec>}
+    <Sec id="reviews" title={`${nm}: what customers say`}><p>Real Google reviews of SAAD CAR RENTAL SERVICES. Press “See translation” on any review to read it in your language.</p><ReviewCards slug={slug} /></Sec>
     <Sec id="facts" title={`${nm}: quick facts`} tone="grey"><dl className="sx-facts">{factRows(c).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
       <p className="sx-note">Seating is typical for this model. We confirm the exact vehicle, seats and luggage space for your date when you book.</p></Sec>
     <Sec id="price" title={`${nm} price guide`}><PriceGuide name={nm} rates={rates} /></Sec>

@@ -1,12 +1,27 @@
 // ============================================================
-//  YAHAN APNE ASLI GOOGLE REVIEWS PASTE KAREIN
-//  Google Maps par apna review kholein, naam / stars / text yahan copy karein.
-//  Sirf asli reviews dalein. Naqli reviews Google aur customers dono ke liye nuksan-deh hain.
-//
-//  Ek review aisa dikhta hai (comma lagana na bhoolein):
-//    { name: "Ali Khan", rating: 5, date: "2 months ago", text: "Review ka text yahan", photo: "" },
-//  photo: khali chhorein to naam ka pehla harf wala rangeen icon banega.
-//         Photo chahiye to image public/assets/reviews/ mein rakhein aur "/assets/reviews/ali.webp" likhein.
+//  REAL Google reviews, shown under the matching car (cards, car pages and the reviews window).
+//  Only real reviews belong here. Easiest way to add more: Admin app > Reviews tab > paste them from Google Maps.
+//  cars: car page slugs the review is shown under (empty list = shown under every car).
+//  stars: the star rating Google shows for the review. Please check each one in your Google Business Profile.
+//  `iso` is only used to sort and to write "2 months ago"; `when` is what Google showed when it was copied.
 // ============================================================
+const LC = ["land-cruiser-v8", "premium-luxury-land-cruiser"];
+const G = "https://www.google.com/maps/contrib/";
 export const REVIEWS = [
+  { id: "g-hussain-rizwan-jazzy", name: "Hussain Rizwan Jazzy", url: `${G}102671510839403255935/reviews?hl=en-GB`, meta: "Local Guide · 23 reviews · 99 photos", when: "2 months ago", iso: "2026-08-28", rating: 5, lang: "en", cars: LC,
+    text: "Recently, I rented a Land Cruiser V8 from Saad Rent a Car for one week, and I had an excellent experience. They provided a latest V8 with complete protocol and professional service throughout the rental period. The booking process was smooth, and the staff was cooperative, friendly, and reliable.\n\nI am very satisfied with their service and would highly recommend Saad Rent a Car to anyone looking for a trustworthy and hassle-free car rental experience." },
+  { id: "g-syed-abdullah-shahab", name: "Syed Abdullah Shahab", url: `${G}113080956842400063754/reviews?hl=en-GB`, meta: "3 reviews · 2 photos", when: "2 months ago", iso: "2026-08-28", rating: 5, lang: "en", cars: LC,
+    text: "I rented a Land Cruiser V8 from Saad Rent a Car for Two weeks, and the experience was excellent. The vehicle was clean, well-maintained, and provided with complete protocol. The team was professional, courteous, and made the entire process smooth and hassle-free.\n\nI'm very satisfied with their service and highly recommend Saad Rent a Car to anyone looking for a reliable car rental service." },
+  { id: "g-shabih-syed", name: "Shabih Syed", url: `${G}106913009519511523948/reviews?hl=en-GB`, meta: "3 reviews · 1 photo", when: "Edited a year ago", iso: "2025-10-28", rating: 5, lang: "en", cars: LC,
+    text: "We had an extremely friendly driver who was thoughtful, caring, kind individual called Waheed Khan. He was like family to us. He seemed a well mannered, cultured and a practising Muslim. His service was first rate throughout the amazing holiday. It turned out to be the trip of our life. He was extremely knowledgeable of the routes and the areas we visited. The white land cruiser made our journey so comfortable and smooth. All in all we think the whole experience was a five star rated one." },
+  { id: "g-salman-ahmed", name: "SALMAN ahmed", url: `${G}114398467408521426944/reviews?hl=en-GB`, meta: "2 reviews · 2 photos", when: "2 years ago", iso: "2024-10-28", rating: 5, lang: "en", cars: LC,
+    text: "Too much polite Hospitality specially for Gul Noor bhai And Zahid bhai and Land Cruiser Condition just like new and Prices are Nominal no extra charges as any hidden, fully, Highly Recommended ❤️" },
+  { id: "g-usman-malik", name: "Usman Malik", url: `${G}105361857834351765629/reviews?hl=en-GB`, meta: "2 reviews", when: "a year ago", iso: "2025-10-28", rating: 5, lang: "en", cars: LC,
+    text: "Very honst and proffesinal i always rent a land cruiser" },
+  { id: "g-shamaila-hussain", name: "Shamaila Hussain", url: `${G}114181338615700686789/reviews?hl=en-GB`, meta: "1 review · 1 photo", when: "Edited a month ago", iso: "2026-09-28", rating: 5, lang: "en", cars: [],
+    text: "I had a wonderful experience with Saad Car Rental. Asad was such a genuinely kind, respectful and lovely person. He was very polite, helpful and welcoming throughout, and he made everything so easy and comfortable for us. It’s rare to come across someone who is so friendly, honest and respectful.\n\nI truly appreciate his kindness and excellent service. I would definitely recommend Saad Car Rental to anyone looking for a reliable service and, most importantly, a really nice and trustworthy person to deal with. Thank you so much for everything, Asad. Wishing you lots of success and all the very best! ❤️" },
+  { id: "g-dr-mosa", name: "Dr Mosa", url: `${G}102520389567050362489/reviews?hl=en-GB`, meta: "1 review · 1 photo", when: "2 weeks ago", iso: "2026-10-14", rating: 5, lang: "en", cars: [],
+    text: "I highly recommend Saad Car Rental Services to all visitors looking for a reliable and comfortable car rental experience. Based on my personal experience, their prices are reasonable, their vehicles are in excellent condition, and they offer a luxurious and comfortable travel experience.\n\nThank you, Saad Car Rental Services, for your excellent service and quality vehicles. Keep up the great work! Highly recommended to everyone. ⭐⭐⭐⭐⭐" },
+  { id: "g-tariq-khan", name: "Tariq Khan", url: `${G}105190360270865761581/reviews?hl=en-GB`, meta: "3 reviews · 2 photos", when: "5 months ago", iso: "2026-05-28", rating: 5, lang: "en", cars: [],
+    text: "Absolutely outstanding service from start to finish! The driver picked us up from the airport right on time and was very easy to find, which made arriving stress-free after a long flight. The car was clean, comfortable, and well maintained throughout the trip.\n\nOur driver was professional, respectful, and extremely knowledgeable about the local areas, making our journey around Pakistan smooth and enjoyable. The hospitality and customer service were truly exceptional, and we always felt safe and well looked after.\n\nI would highly recommend this rental company with driver service to anyone visiting Pakistan. I will definitely be using this service every time I visit Pakistan in the future. Thank you again for making our trip so enjoyable and memorable!" },
 ];

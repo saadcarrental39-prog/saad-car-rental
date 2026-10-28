@@ -66,7 +66,12 @@ async function summary(ctx) {
 }
 
 export async function onRequestGet(ctx) {
-  if (new URL(ctx.request.url).searchParams.get("summary") === "1") return summary(ctx);
+  const q = new URL(ctx.request.url).searchParams;
+  if (q.get("summary") === "1") return summary(ctx);
+  if (q.get("curated") === "1") {   // reviews added in the admin app (Reviews tab); cached for a few minutes
+    const kv = store(ctx.env), curated = kv ? (await getJ(kv, "reviews:curated")) || [] : [];
+    return new Response(JSON.stringify({ curated }), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "public, max-age=120" } });
+  }
   const [google, site] = await Promise.all([googleData(ctx.env, ctx), readSite(ctx.env)]);
   return J({ google, site, configured: { google: !!google, store: !!ctx.env.REVIEWS_KV } });
 }

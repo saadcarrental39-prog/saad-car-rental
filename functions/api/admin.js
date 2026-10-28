@@ -9,7 +9,6 @@ import { hasSb } from "../_lib/sb.js";
 import * as SB from "../_lib/sbstats.js";
 import * as SBL from "../_lib/sbleads.js";
 import { listPosts, getPost, savePost, deletePost, pingIndexNow, SITE } from "../_lib/posts.js";
-import { getOrders, markSeen, removeOrder } from "../_lib/orderidx.js";
 const enc = new TextEncoder();
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
 const same = (a, b) => { a = String(a); b = String(b); let d = a.length ^ b.length; for (let i = 0; i < Math.max(a.length, b.length); i++) d |= (a.charCodeAt(i) || 0) ^ (b.charCodeAt(i) || 0); return d === 0; };
@@ -51,15 +50,12 @@ function clean(d) {
 
 async function orderCounts(kv, range) {
   try {
-    const l = await getOrders(kv), days = l.map((m) => dayOf(Number(m.ts) || 0)).filter((d) => d > "2000"), today = dayOf(Date.now()), n = RANGE_DAYS[range] || 7;
+    const l = await kv.list({ prefix: "ord:", limit: 1000 }), days = l.keys.map((k) => dayOf(Number(k.metadata?.ts) || 0)).filter((d) => d > "2000"), today = dayOf(Date.now()), n = RANGE_DAYS[range] || 7;
     const between = (a, b) => days.filter((d) => d >= a && d <= b).length, from = addDays(today, -(n - 1)), pTo = addDays(from, -1);
     return { cur: between(from, today), prev: between(addDays(pTo, -(n - 1)), pTo), today: between(today, today), week: between(addDays(today, -6), today), month: between(addDays(today, -29), today) };
   } catch { return null; }
 }
-export async function onRequestPost(ctx) {   // any unexpected crash answers with a readable reason (shown in the app) instead of a bare 500
-  try { return await handle(ctx); } catch (e) { return json({ error: "server_error", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
-}
-async function handle({ request, env, waitUntil }) {
+export async function onRequestPost({ request, env, waitUntil }) {
   if (!env.ADMIN_USER || !env.ADMIN_PASS) return json({ error: "admin_not_configured" }, 503);
   const kv = env.SITEDATA || env.RECEIPTS; if (!kv) return json({ error: "no_storage" }, 503);
   if (Number(request.headers.get("content-length") || 0) > 1.7e6) return json({ error: "too_big" }, 413);
@@ -73,16 +69,20 @@ async function handle({ request, env, waitUntil }) {
   }
   if (!(await valid(env, (request.headers.get("authorization") || "").replace(/^Bearer\s+/i, "")))) return json({ error: "unauthorized" }, 401);
   if (b.action === "orders") {                                       // newest first; unread = seen is 0
-    try { const list = (await getOrders(kv)).slice(0, 300); return json({ orders: list, unread: list.filter((m) => !m.seen).length }); }
-    catch (e) { return json({ error: "orders_failed", detail: String((e && e.message) || e).slice(0, 160) }, 500); }
+    const l = await kv.list({ prefix: "ord:", limit: 300 });
+    return json({ orders: l.keys.map((k) => k.metadata).filter(Boolean), unread: l.keys.filter((k) => k.metadata && !k.metadata.seen).length });
   }
   if (b.action === "order_seen") {
-    const ids = (Array.isArray(b.ids) ? b.ids : []).map(String).slice(0, 100); if (!ids.length) return json({ ok: true });
-    await markSeen(kv, ids); return json({ ok: true });
+    const ids = new Set((Array.isArray(b.ids) ? b.ids : []).map(String).slice(0, 100)); if (!ids.size) return json({ ok: true });
+    const l = await kv.list({ prefix: "ord:", limit: 300 });
+    await Promise.all(l.keys.filter((k) => k.metadata && ids.has(k.metadata.id) && !k.metadata.seen).map((k) => kv.put(k.name, "1", { expirationTtl: 60 * 60 * 24 * 120, metadata: { ...k.metadata, seen: 1 } })));
+    return json({ ok: true });
   }
   if (b.action === "order_del") {
     const id = String(b.id || ""); if (!/^[a-f0-9]{20}$/.test(id)) return json({ error: "bad_request" }, 400);
-    await removeOrder(kv, id); return json({ ok: true });
+    const l = await kv.list({ prefix: "ord:", limit: 300 });
+    await Promise.all([kv.delete(`oimg:${id}`), ...l.keys.filter((k) => k.name.endsWith(`:${id}`)).map((k) => kv.delete(k.name))]);   // oid:<id> stays, so a repeat post cannot bring it back
+    return json({ ok: true });
   }
   if (b.action === "stats") {                                       // website analytics for the Insights tab (data lives in Supabase, or in D1 binding DB if Supabase is not set up)
     if (!env.DB && !hasSb(env)) return json({ error: "no_db" }, 503);
@@ -144,6 +144,21 @@ async function handle({ request, env, waitUntil }) {
     const old = await kv.get("site:spots"); if (old) await kv.put("site:spots:prev", old);
     await kv.put("site:spots", JSON.stringify(out));
     return json({ ok: true, data: out });
+  }
+  if (b.action === "gmb_list") { try { return json({ reviews: JSON.parse((await kv.get("reviews:curated")) || "[]") }); } catch { return json({ reviews: [] }); } }   // Reviews tab: reviews pasted from Google
+  if (b.action === "gmb_save") {   // Reviews tab: replace the whole list (the app sends the full list every time)
+    const LANG = new Set(["en", "ur", "ar", "zh", "ja", "ko", "ru", "fr", "de", "es", "tr"]);
+    const url = (u) => (/^https:\/\/(www\.google\.com\/maps\/|maps\.google\.com\/|g\.co\/|maps\.app\.goo\.gl\/)[^\s"'<>]{0,400}$/.test(u) ? u : "");
+    const seen = new Set(), out = [];
+    for (const r of (Array.isArray(b.reviews) ? b.reviews : []).slice(0, 300)) {
+      const name = s(r.name, 80), text = String(r.text || "").replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f<>]/g, " ").trim().slice(0, 1800), id = /^[a-z0-9-]{3,60}$/.test(String(r.id || "")) ? String(r.id) : "";
+      if (!name || text.length < 3 || !id || seen.has(id)) continue; seen.add(id);
+      out.push({ id, name, url: url(String(r.url || "")), meta: s(r.meta, 80), when: s(r.when, 40), iso: /^\d{4}-\d{2}-\d{2}$/.test(String(r.iso || "")) ? r.iso : "", rating: Math.min(5, Math.max(1, Math.round(Number(r.rating) || 5))),
+        lang: LANG.has(r.lang) ? r.lang : "en", country: s(r.country, 30), cars: (Array.isArray(r.cars) ? r.cars : []).map((c) => String(c).toLowerCase()).filter((c) => /^[a-z0-9-]{2,70}$/.test(c)).slice(0, 20), text });
+    }
+    const old = await kv.get("reviews:curated"); if (old) await kv.put("reviews:curated:prev", old);
+    await kv.put("reviews:curated", JSON.stringify(out));
+    return json({ ok: true, count: out.length });
   }
   if (b.action === "posts_list") { try { return json({ posts: await listPosts(kv, { drafts: true }) }); } catch { return json({ posts: [] }); } }   // Posts tab: every post incl. drafts / scheduled
   if (b.action === "posts_get") { const p = await getPost(kv, String(b.slug || ""), true); return p ? json({ post: p }) : json({ error: "not_found" }, 404); }

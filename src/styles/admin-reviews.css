@@ -1,0 +1,8 @@
+.ad-rv__ta{width:100%;box-sizing:border-box;margin:10px 0;padding:12px;border-radius:12px;border:1px solid var(--ad-line,#d9d8d2);background:transparent;color:inherit;font:inherit;font-size:16px;line-height:1.5}
+.ad-rv__h{margin:18px 4px 6px;font-size:1rem}
+.ad-rv--new{border-left:4px solid #25d366}
+.ad-rv__top{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.ad-rv__top b{font-size:1rem}.ad-rv__top small{opacity:.7;flex:1}
+.ad-rv__text{margin:8px 0;font-size:.9rem;line-height:1.5;white-space:pre-line;opacity:.9}
+.ad-rv__row{display:flex;flex-wrap:wrap;gap:12px}.ad-rv__row label{display:grid;gap:4px;font-size:.78rem;opacity:.9}.ad-rv__row select,.ad-rv__row input{font-size:16px;padding:8px 10px;border-radius:10px;border:1px solid var(--ad-line,#d9d8d2);background:transparent;color:inherit}
+.ad-rv__chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}.ad-rv__chips button{padding:7px 12px;border-radius:999px;border:1px solid var(--ad-line,#d9d8d2);background:transparent;color:inherit;font-size:.8rem;cursor:pointer}.ad-rv__chips button.on{background:#16181b;color:#fff;border-color:#16181b}
+.ad-rv__save{position:sticky;bottom:78px;z-index:5;display:flex;justify-content:center;padding:8px 0}
