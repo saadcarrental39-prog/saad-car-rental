@@ -8,7 +8,7 @@ const RAW = [
   {
     slug: "islamabad-to-skardu-by-road-guide", updated: UP,
     title: "Islamabad to Skardu by Road: Car With Driver Guide", h1: "Islamabad to Skardu by Car With Driver: Route, Days, Season and Stops",
-    description: "Plan Islamabad to Skardu by road with a professional driver: realistic days, the route over the Karakoram Highway or Babusar, best months, stops and the right 4x4.",
+    description: "Plan Islamabad to Skardu by road with a professional driver: realistic days, the Karakoram Highway or Babusar route, best months, stops and the right 4x4.",
     lead: "Skardu is the gateway to Shigar, Khaplu, Deosai and the Karakoram. Flights from Islamabad are often cancelled by mountain weather, so many visitors drive. This guide explains the route, how many days to allow, when to go and what to ask before you book a car with a driver.",
     answerQ: "How long does it take to drive from Islamabad to Skardu?",
     answer: "Allow two full days. Sources and drivers typically quote about 18 to 24 hours of driving, roughly 700 km, over the Karakoram Highway and the Jaglot to Skardu road. Landslides, weather and checkpoints can add hours, so the safest plan is an overnight stop in Chilas or Gilgit. A 4x4 such as a Prado or Land Cruiser is the usual choice, and the driver stays with you for the whole trip.",
@@ -60,7 +60,7 @@ const RAW = [
   {
     slug: "islamabad-to-kumrat-valley-guide", updated: UP,
     title: "Islamabad to Kumrat Valley: Car With Driver Guide", h1: "Islamabad to Kumrat Valley by Car With Driver: Route, Thall, Jeep and Best Season",
-    description: "Plan Islamabad to Kumrat Valley with a professional driver: the road to Thall, the 4x4 jeep stretch, best months, Jahaz Banda, Katora Lake and a simple itinerary.",
+    description: "Plan Islamabad to Kumrat Valley with a professional driver: the road to Thall, the 4x4 jeep stretch, best months, Jahaz Banda and Katora Lake.",
     lead: "Kumrat is a forested valley on the Panjkora river in Upper Dir, Khyber Pakhtunkhwa. The drive from Islamabad is long and the last stretch is rough, so a little planning makes the trip far easier.",
     answerQ: "How do I get from Islamabad to Kumrat Valley?",
     answer: "Drive from Islamabad to Thall in Upper Dir, typically six to eight hours by motorway, Chakdara and the Dir road, then continue to Kumrat on a rough road where visitors usually switch to a local 4x4 jeep. The best months are roughly May to September. A driver who knows the Dir road makes the long day safer and calmer.",

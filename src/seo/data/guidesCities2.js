@@ -4,7 +4,7 @@ const f = (q, a) => ({ q, a });
 export const CITIES_2 = [
   {
     slug: "islamabad-to-abbottabad-car-with-driver", updated: UP, bookTo: "Abbottabad", vehicles: ["prado", "toyota-fortuner", "honda-civic", "land-cruiser-v8"],
-    title: "Islamabad to Abbottabad Car With Driver: Spots & Hotels", h1: "Islamabad to Abbottabad by Car With Driver: Thandiani, Shimla Hill, Nathia Gali Gateway",
+    title: "Abbottabad Trip: Car With Driver From Islamabad", h1: "Islamabad to Abbottabad by Car With Driver: Thandiani, Shimla Hill, Nathia Gali Gateway",
     description: "Hire a car with driver from Islamabad to Abbottabad: motorway time, Thandiani, Shimla Hill, Ilyasi Mosque, hotels and cars to book directly.",
     lead: "Abbottabad is a cool, green city in the Hazara hills and the gateway to Nathia Gali, Thandiani and the Kaghan route. It is an easy motorway drive from Islamabad, ideal for a day trip or a long weekend.",
     answerQ: "How long does it take to drive from Islamabad to Abbottabad?",
@@ -26,7 +26,7 @@ export const CITIES_2 = [
   },
   {
     slug: "islamabad-to-haripur-car-with-driver", updated: UP, bookTo: "Haripur", vehicles: ["honda-civic", "toyota-grande", "prado", "land-cruiser-v8"],
-    title: "Islamabad to Haripur Car With Driver: Spots & Stays", h1: "Islamabad to Haripur by Car With Driver: Khanpur Dam, Tarbela and Day-Trip Spots",
+    title: "Haripur Trip: Car With Driver From Islamabad", h1: "Islamabad to Haripur by Car With Driver: Khanpur Dam, Tarbela and Day-Trip Spots",
     description: "Hire a car with driver from Islamabad to Haripur: motorway time, Khanpur Dam and Lake, Tarbela Dam, Hasan Abdal, places to eat and cars to book.",
     lead: "Haripur is a green district just north-west of Islamabad, known for Khanpur Dam and an easy motorway drive. It makes a relaxed day trip, or a first stop on the way to Abbottabad, Tarbela and Swabi.",
     answerQ: "How far is Haripur from Islamabad?",
@@ -48,7 +48,7 @@ export const CITIES_2 = [
   },
   {
     slug: "islamabad-to-murree-car-with-driver-guide", updated: UP, bookTo: "Murree", vehicles: ["prado", "land-cruiser-v8", "toyota-fortuner", "honda-civic", "coaster"],
-    title: "Islamabad to Murree Car With Driver: Spots & Hotels", h1: "Islamabad to Murree by Car With Driver: Mall Road, Patriata, Bhurban and Hotels",
+    title: "Murree Trip Guide: Car With Driver From Islamabad", h1: "Islamabad to Murree by Car With Driver: Mall Road, Patriata, Bhurban and Hotels",
     description: "Hire a car with driver from Islamabad to Murree: time, Mall Road, Patriata chairlift, Pindi Point, Bhurban, snow season, hotels and cars to book.",
     lead: "Murree is the classic hill station near Islamabad, loved for its pine forests, Mall Road and winter snow. Parking and traffic can be tough at weekends, which is exactly where a driver helps.",
     answerQ: "How long does it take to drive from Islamabad to Murree?",
@@ -92,7 +92,7 @@ export const CITIES_2 = [
   },
   {
     slug: "islamabad-to-gilgit-car-with-driver-guide", updated: UP, bookTo: "Gilgit", vehicles: ["prado", "land-cruiser-v8", "toyota-fortuner", "revo", "coaster"],
-    title: "Islamabad to Gilgit Car With Driver: Route & Spots", h1: "Islamabad to Gilgit by Car With Driver: Karakoram Highway, Spots and Overnight Stops",
+    title: "Islamabad to Gilgit Guide: Car With Driver", h1: "Islamabad to Gilgit by Car With Driver: Karakoram Highway, Spots and Overnight Stops",
     description: "Islamabad to Gilgit with a professional driver: Karakoram Highway time, Chilas stop, Kargah Buddha, Naltar, Rakaposhi view, season and cars to book.",
     lead: "Gilgit is the main hub of Gilgit-Baltistan and the starting point for Hunza, Naltar and Skardu. The Karakoram Highway is spectacular and long, so most visitors plan two days each way.",
     answerQ: "How long does it take to drive from Islamabad to Gilgit?",
@@ -114,7 +114,7 @@ export const CITIES_2 = [
   },
   {
     slug: "islamabad-to-chitral-car-with-driver", updated: UP, bookTo: "Chitral", vehicles: ["prado", "land-cruiser-v8", "toyota-fortuner", "revo", "coaster"],
-    title: "Islamabad to Chitral Car With Driver: Kalash & Spots", h1: "Islamabad to Chitral by Car With Driver: Lowari Tunnel, Kalash Valleys and Spots",
+    title: "Chitral & Kalash Trip: Car With Driver", h1: "Islamabad to Chitral by Car With Driver: Lowari Tunnel, Kalash Valleys and Spots",
     description: "Islamabad to Chitral with a professional driver: Dir and Lowari Tunnel route, time, Chitral Fort, Kalash valleys, Garam Chashma, season and cars to book.",
     lead: "Chitral sits under the Hindu Kush, with ancient forts, polo grounds and the Kalash valleys. The Lowari Tunnel has made the journey from Islamabad easier, but it is still a long mountain day.",
     answerQ: "How long does it take to drive from Islamabad to Chitral?",
@@ -136,7 +136,7 @@ export const CITIES_2 = [
   },
   {
     slug: "islamabad-to-taxila-hasan-abdal-car-with-driver", updated: UP, bookTo: "Taxila", vehicles: ["honda-civic", "toyota-grande", "prado", "land-cruiser-v8"],
-    title: "Islamabad to Taxila & Hasan Abdal Car With Driver", h1: "Islamabad to Taxila and Hasan Abdal by Car With Driver: Museum, Stupas and Panja Sahib",
+    title: "Taxila & Hasan Abdal Trip: Car With Driver", h1: "Islamabad to Taxila and Hasan Abdal by Car With Driver: Museum, Stupas and Panja Sahib",
     description: "Hire a car with driver from Islamabad to Taxila and Hasan Abdal: UNESCO sites, Taxila Museum, Dharmarajika, Panja Sahib, Wah Garden, timings and cars.",
     lead: "Taxila is a UNESCO World Heritage site and one of the oldest centres of Buddhist learning in the region, less than an hour from Islamabad. Hasan Abdal and Wah Garden make it a full cultural day.",
     answerQ: "How far is Taxila from Islamabad?",

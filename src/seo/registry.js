@@ -25,6 +25,7 @@ import { graphFor, abs } from "./schema";
 import { vehicleFaqs } from "./data/vehicleFacts";
 import { routeFaqs } from "./data/routeFaqs";
 import { imagesOf, heroImagesOf, boostFaqs, boostTags } from "./data/pageMeta";
+import { keywordOverride } from "./data/keywordMap";
 
 const BRAND = B.shortName;
 // Keep text inside search-result limits: join sentences until the limit is reached.
@@ -44,6 +45,7 @@ function add(p) {
   rec.canonical = abs(path);
   // page photos (pageImages.json) + the extra FAQs and #tags from pageBoost.js: the FAQ schema always matches what is visible on the page
   rec.pageImages = rec.indexable ? heroImagesOf(path) : imagesOf(path); rec.tags = boostTags(path);
+  { const kw = keywordOverride(rec); if (kw) { if (kw.title) { rec.title = kw.title; rec.fullTitle = `${kw.title} | ${BRAND}`; } if (kw.description) rec.description = kw.description; } }   // search-keyword titles and descriptions (data/keywordMap.js)
   const have = new Set(rec.faqs.map((f) => f.q)); rec.faqs = [...rec.faqs, ...boostFaqs(path).filter((f) => !have.has(f.q))];
   rec.robots = rec.indexable ? "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" : "noindex, follow";
   rec.breadcrumbs = p.breadcrumbs || [{ name: "Home", path: "/" }];

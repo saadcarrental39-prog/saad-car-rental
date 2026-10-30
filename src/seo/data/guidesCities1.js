@@ -33,7 +33,7 @@ export const CITIES_1 = [
   },
   {
     slug: "islamabad-to-peshawar-car-with-driver", updated: UP, bookTo: "Peshawar", vehicles: ["honda-civic", "toyota-grande", "prado", "land-cruiser-v8"],
-    title: "Islamabad to Peshawar Car With Driver: Spots & Hotels", h1: "Islamabad to Peshawar by Car With Driver: Spots, Food, Hotels and Timings",
+    title: "Peshawar Trip Guide: Car With Driver From Islamabad", h1: "Islamabad to Peshawar by Car With Driver: Spots, Food, Hotels and Timings",
     description: "Hire a car with driver from Islamabad to Peshawar: motorway time, Qissa Khwani, Peshawar Museum, Bala Hisar, Khyber Pass, hotels and cars to book.",
     lead: "Peshawar is one of the oldest living cities in South Asia and only a motorway drive from Islamabad. Whether you need a business day, a family trip or a food and history tour, a driver who knows the old city saves hours.",
     answerQ: "How long does it take to drive from Islamabad to Peshawar?",
@@ -56,7 +56,7 @@ export const CITIES_1 = [
   },
   {
     slug: "islamabad-to-lahore-car-with-driver-guide", updated: UP, bookTo: "Lahore", vehicles: ["honda-civic", "toyota-grande", "prado", "land-cruiser-v8"],
-    title: "Islamabad to Lahore Car With Driver: Spots & Hotels", h1: "Islamabad to Lahore by Car With Driver: Spots, Food, Hotels and Timings",
+    title: "Lahore Trip Guide: Car With Driver From Islamabad", h1: "Islamabad to Lahore by Car With Driver: Spots, Food, Hotels and Timings",
     description: "Hire a car with driver from Islamabad to Lahore: M-2 motorway time, Badshahi Mosque, Lahore Fort, food street, hotels, cars and direct booking.",
     lead: "Lahore is the cultural capital of Pakistan: Mughal monuments, food streets and busy markets. The motorway from Islamabad is quick and comfortable, and a driver who knows Lahore's traffic is a real advantage for sightseeing.",
     answerQ: "How long is the drive from Islamabad to Lahore?",
@@ -79,7 +79,7 @@ export const CITIES_1 = [
   },
   {
     slug: "islamabad-to-faisalabad-car-with-driver", updated: UP, bookTo: "Faisalabad", vehicles: ["honda-civic", "toyota-grande", "prado", "land-cruiser-v8"],
-    title: "Islamabad to Faisalabad Car With Driver: Spots & Hotels", h1: "Islamabad to Faisalabad by Car With Driver: Spots, Hotels and Timings",
+    title: "Faisalabad Trip: Car With Driver From Islamabad", h1: "Islamabad to Faisalabad by Car With Driver: Spots, Hotels and Timings",
     description: "Hire a car with driver from Islamabad to Faisalabad: route and time, Clock Tower and bazaars, Jinnah Garden, Gatwala, hotels and cars to book directly.",
     lead: "Faisalabad, once Lyallpur, is the textile capital of Pakistan and a major business city. It is reachable by motorway from Islamabad, and a driver is especially useful for the busy centre around the Clock Tower.",
     answerQ: "How long does it take to drive from Islamabad to Faisalabad?",
@@ -101,7 +101,7 @@ export const CITIES_1 = [
   },
   {
     slug: "islamabad-to-hunza-car-with-driver-guide", updated: UP, bookTo: "Hunza", vehicles: ["prado", "land-cruiser-v8", "toyota-fortuner", "revo", "coaster"],
-    title: "Islamabad to Hunza Car With Driver: Spots & Hotels", h1: "Islamabad to Hunza by Car With Driver: Spots, Hotels, Days and Best Season",
+    title: "Hunza Trip Guide: Car With Driver From Islamabad", h1: "Islamabad to Hunza by Car With Driver: Spots, Hotels, Days and Best Season",
     description: "Islamabad to Hunza with a professional driver: Karakoram Highway time, Baltit and Altit forts, Attabad Lake, Passu, Khunjerab, hotels, season and cars.",
     lead: "Hunza is the most loved valley in Pakistan for visitors from home and abroad: forts, glaciers, apricot orchards and views of Rakaposhi. It is a long journey on the Karakoram Highway, so a rested, experienced driver is essential.",
     answerQ: "How long does it take to drive from Islamabad to Hunza?",
@@ -125,7 +125,7 @@ export const CITIES_1 = [
   },
   {
     slug: "islamabad-to-chakwal-kallar-kahar-guide", updated: UP, bookTo: "Chakwal", vehicles: ["honda-civic", "toyota-grande", "prado", "land-cruiser-v8"],
-    title: "Islamabad to Chakwal & Kallar Kahar Car With Driver", h1: "Islamabad to Chakwal, Kallar Kahar and Katas Raj by Car With Driver: Spots and Hotels",
+    title: "Chakwal & Kallar Kahar Trip: Car With Driver", h1: "Islamabad to Chakwal, Kallar Kahar and Katas Raj by Car With Driver: Spots and Hotels",
     description: "Hire a car with driver from Islamabad to Chakwal: Kallar Kahar lake, Katas Raj temples, Choa Saidan Shah, Khewra, hotels, timings and direct booking.",
     lead: "Chakwal and the Salt Range are a favourite day trip from Islamabad: a lake, ancient temples and quiet hills, all close to the M-2 motorway. A driver lets you stop at all of them without worrying about the road.",
     answerQ: "How far is Chakwal and Kallar Kahar from Islamabad?",
@@ -147,7 +147,7 @@ export const CITIES_1 = [
   },
   {
     slug: "islamabad-to-swat-valley-car-with-driver", updated: UP, bookTo: "Swat", vehicles: ["prado", "land-cruiser-v8", "toyota-fortuner", "revo", "coaster"],
-    title: "Islamabad to Swat Valley Car With Driver: Spots Guide", h1: "Islamabad to Swat Valley by Car With Driver: Mingora, Fizagat, Malam Jabba and More Spots",
+    title: "Swat Valley Guide: Car With Driver From Islamabad", h1: "Islamabad to Swat Valley by Car With Driver: Mingora, Fizagat, Malam Jabba and More Spots",
     description: "Islamabad to Swat with a professional driver: Mingora, Saidu Sharif, Fizagat, Malam Jabba, Marghazar, Madyan, Bahrain, timings, hotels and cars.",
     lead: "Swat is a green valley of rivers, waterfalls, Buddhist heritage and hill resorts, reached by motorway from Islamabad. This guide focuses on the places to see in Swat itself, and links to the Kalam post for the upper valley.",
     answerQ: "What are the best places to visit in Swat and how do I get there?",
@@ -170,7 +170,7 @@ export const CITIES_1 = [
   },
   {
     slug: "islamabad-to-kalam-car-with-driver", updated: UP, bookTo: "Kalam", vehicles: ["prado", "land-cruiser-v8", "toyota-fortuner", "revo", "coaster"],
-    title: "Islamabad to Kalam Car With Driver: Spots & Hotels", h1: "Islamabad to Kalam by Car With Driver: Ushu, Mahodand, Matiltan and Hotels",
+    title: "Kalam Trip Guide: Car With Driver", h1: "Islamabad to Kalam by Car With Driver: Ushu, Mahodand, Matiltan and Hotels",
     description: "Islamabad to Kalam valley with a professional driver: route and time, Ushu Forest, Mahodand Lake, Matiltan, Spin Khwar, hotels, season and cars to book.",
     lead: "Kalam sits high in the upper Swat valley, surrounded by pine forest, glaciers and alpine lakes. It is a long day from Islamabad, so most visitors stay at least one night.",
     answerQ: "How far is Kalam from Islamabad and how long is the drive?",
