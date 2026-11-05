@@ -117,3 +117,12 @@
 .px-thumb{display:block;height:auto;align-self:start;justify-self:start;width:calc(100% + 58px);max-width:none;margin:-18px -40px 8px -18px;aspect-ratio:480/252;object-fit:cover;border-radius:18px 18px 0 0;background:#e9e8e2}
 .sx-cards a{align-content:start}
 .sx-veh li{display:flex;flex-direction:column;gap:10px}.sx-veh li>a:first-child{flex:1;height:auto}.sx-veh li>a.sx-veh__book{height:auto;display:block;text-align:center;padding:12px 14px;border:0;border-radius:999px;background:#16181b;color:#fff;font-weight:700;font-size:.88rem;text-decoration:none}.sx-veh li>a.sx-veh__book:hover{background:#2c2f34}
+
+/* wedding car booking page */
+.wd-trust{margin:8px 0 0;font-size:.85rem;color:#c9c9d1;letter-spacing:.02em}
+.wd-cars .wd-photo{aspect-ratio:16/9;object-fit:cover}
+.wd-ev{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;list-style:none;padding:0;margin:14px 0 0}
+.wd-ev li{display:grid;gap:6px;align-content:start;padding:18px;border:1px solid #e3e3df;border-radius:18px;background:#fff}
+.wd-ev b{font-size:1rem}.wd-ev span{font-size:.88rem;color:#62666c;line-height:1.55}
+.wd-teaser{margin-top:14px}.wd-links{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-top:18px}
+@media(max-width:700px){.px-gal--3.wd-teaser{grid-template-columns:1fr}}

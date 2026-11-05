@@ -81,7 +81,7 @@ const urlset = (items, ns = "") => `<?xml version="1.0" encoding="UTF-8"?>\n<url
 const urlTag = (p, extra = "") => `<url><loc>${x(site + (p.path === "/" ? "/" : p.path))}</loc><lastmod>${(p.updated || BUSINESS.contentUpdated)}</lastmod>${extra}</url>`;   // lastmod = the content review date in business.config.js (stable between deploys)
 const idx = PAGES.filter((p) => p.indexable);
 const groups = {
-  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "guide", "legal", "audience", "pillar", "info", "article"].includes(p.kind)),
+  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "guide", "legal", "audience", "pillar", "info", "article", "wedding"].includes(p.kind)),
   "sitemap-islamabad.xml": idx.filter((p) => p.kind === "spot"),
   "sitemap-vehicles.xml": idx.filter((p) => p.kind === "vehicle"),
   "sitemap-services.xml": idx.filter((p) => p.kind === "service"),
@@ -140,6 +140,10 @@ const catalog = {
       description: "Airport pickup and a professional driver for visitors from abroad, to the northern areas and other cities. Book in advance.",
       tags: ["tourists", "airport-pickup", "northern-pakistan"],
       representativeQueries: ["tourist car with driver in Pakistan", "Islamabad airport pickup for tourists"] },
+    { identifier: urn("site:wedding-car-booking"), displayName: "Wedding car booking with driver in Islamabad", type: "text/html", url: site + "/wedding-car-booking-with-driver",
+      description: "Wedding cars with a professional driver in Islamabad and Rawalpindi: Land Cruiser V8, Prado, Honda Civic, Toyota Corolla Grande and a Coaster for barat, nikah, mehndi, walima and parties. Quoted per wedding.",
+      tags: ["wedding", "barat", "mehndi", "coaster", "land-cruiser-v8", "prado"],
+      representativeQueries: ["wedding car booking in Islamabad", "Land Cruiser V8 for barat Islamabad", "Coaster for mehndi in Islamabad"] },
     { identifier: urn("site:overseas-pakistanis"), displayName: "Car with driver for overseas Pakistanis", type: "text/html", url: site + "/overseas-pakistanis",
       description: "Overseas Pakistanis can book a car with a professional driver in advance, for airport pickup, family trips and weddings.",
       tags: ["overseas-pakistanis", "airport-pickup", "family-travel"],
@@ -187,7 +191,7 @@ writeFileSync(join(dist, "robots.txt"), `User-agent: *\nAllow: /\n${PRIVATE}\n# 
 - Payment: cash or bank transfer. No online payment on the website.
 - How to book: call, WhatsApp, or the Book Now form at ${site}/book . A booking is confirmed when the team confirms it in writing.
 - Machine-readable: ${site}/llms.txt , ${site}/ai-catalog.json , ${site}/sitemap.xml , ${site}/ai-info
-${sec("Vehicles (each with a professional driver)", by("vehicle"))}${sec("Services", by("service"))}${sec("Local service: places in Islamabad", by("pillar").filter((p) => p.path.includes("local") || p.path.includes("places")).concat(by("spot")))}${sec("Out of Station and tour pages", by("pillar").filter((p) => p.path.includes("out-of-station")))}${sec("Cities, regions and provinces served from Islamabad", by("location", "province"))}${sec("Destinations (Islamabad to ...)", by("destination"))}${sec("Airport, hubs and guides", by("airport", "hub", "guide", "audience", "info", "about", "contact"))}${sec("Policies", by("legal"))}
+${sec("Vehicles (each with a professional driver)", by("vehicle"))}${sec("Services", by("service", "wedding"))}${sec("Local service: places in Islamabad", by("pillar").filter((p) => p.path.includes("local") || p.path.includes("places")).concat(by("spot")))}${sec("Out of Station and tour pages", by("pillar").filter((p) => p.path.includes("out-of-station")))}${sec("Cities, regions and provinces served from Islamabad", by("location", "province"))}${sec("Destinations (Islamabad to ...)", by("destination"))}${sec("Airport, hubs and guides", by("airport", "hub", "guide", "audience", "info", "about", "contact"))}${sec("Policies", by("legal"))}
 ## Frequently asked questions
 ${faq.map((x) => `### ${x.q}\n${x.a}`).join("\n\n")}
 `);

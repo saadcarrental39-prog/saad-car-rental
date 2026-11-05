@@ -48,8 +48,8 @@ export const GUIDE = {
     {
       id: "occasions", title: "Family, business, weddings and events",
       intro: "The same professional drivers handle everyday family travel and special occasions. Book early for popular wedding dates and holiday weekends.",
-      phrases: ["wedding car rental Islamabad", "bridal car with driver Islamabad", "corporate car rental Islamabad", "executive transport Islamabad", "family trip car with driver", "group transport Islamabad Coaster", "hotel transfer Islamabad", "VIP car with driver Islamabad"],
-      cards: [{ service: "wedding-event-transportation" }, { service: "corporate-transportation" }, { service: "business-travel" }, { service: "family-travel" }, { service: "group-transportation" }, { service: "vip-executive-transportation" }],
+      phrases: ["wedding car booking Islamabad", "wedding car rental Islamabad", "barat car Islamabad", "groom car Land Cruiser V8", "mehndi Coaster rent Islamabad", "bridal car with driver Islamabad", "corporate car rental Islamabad", "executive transport Islamabad", "family trip car with driver", "group transport Islamabad Coaster", "hotel transfer Islamabad", "VIP car with driver Islamabad"],
+      cards: [{ to: "/wedding-car-booking-with-driver", title: "Wedding car booking with driver", text: "Land Cruiser V8, Prado, Honda Civic, Corolla and Coaster for barat, nikah, mehndi and walima." }, { service: "wedding-event-transportation" }, { service: "corporate-transportation" }, { service: "business-travel" }, { service: "family-travel" }, { service: "group-transportation" }, { service: "vip-executive-transportation" }],
     },
     {
       id: "cars", title: "The cars you can hire",

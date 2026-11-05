@@ -24,6 +24,9 @@ import { Hero, Cta, Answer, Sec, Faq, Chips, Bullets, LinkCards, VehicleStrip, S
 import { factRows, ratesOf, seatsOf, similarCars, rs } from "./data/vehicleFacts";
 import { GUIDES, GUIDES_HUB, guide, TERMS_ROWS } from "./data/articles";
 import { TourHubPage, TourSpotPage } from "./tourPages";
+import { WEDDING } from "./data/wedding";
+import { imagesOf, Pic } from "./media";
+import { imgSet } from "../imgset";
 
 const crumbsOf = (path) => (pageByPath(path) || { breadcrumbs: [] }).breadcrumbs;
 const placeCard = (p) => ({ to: placePath(p), title: p.name, text: p.highlights[0] });
@@ -113,6 +116,7 @@ export function ServicePage({ slug }) {
     <Sec id="where" title="Where we provide it" tone="grey"><LinkCards items={s.places.map(place).filter(Boolean).map((p) => ({ to: p.basis === "base" || p.slug === "rawalpindi" ? placePath(p) : tripPath(p), title: p.name, text: p.highlights[0] }))} /></Sec>
     <Sec id="how" title="How to book"><Steps items={BOOKING_STEPS} /></Sec>
     <Faq items={s.faqs} />
+    {["wedding-event-transportation", "group-transportation", "vip-executive-transportation", "premium-car-rental", "chauffeur-service", "family-travel"].includes(slug) && <WeddingTeaser title="Wedding car booking with driver" />}
     <Sec id="more" title="Other services" tone="grey"><LinkCards items={rel.map(svcCard)} /></Sec>
     <Cta ctx={s.name} />
   </>);
@@ -249,6 +253,7 @@ export function VehicleExtras({ slug }) {
     <Sec id="best" title={`What the ${c.title} is best for`} tone={X ? undefined : "grey"}><p>{VEHICLE_PITCH_SENTENCE(c)}</p><Chips items={fit} />{!photoOf(c) && <p className="sx-note">Real photos of this vehicle are sent on request. It is available on request, so please call or WhatsApp to confirm your date and ask for photos.</p>}</Sec>
     <Sec id="trips" title={`Best trips in the ${c.title}`} tone={X ? "grey" : undefined}><LinkCards items={places.map((p) => ({ to: tripPath(p), title: tripLabel(p), text: p.highlights[0] }))} /></Sec>
     <Sec id="similar" title="Similar vehicles you may prefer"><VehicleStrip cats={sim} /></Sec>
+    {((VEHICLE_FIT[slug] || []).includes("wedding") || slug === "coaster" || slug === "honda-civic" || slug === "toyota-grande") && <WeddingTeaser title={`${nm} for weddings: wedding car booking with driver`} text={`Book the ${nm} with a professional driver for a barat, nikah, mehndi, walima or party in Islamabad and Rawalpindi. See wedding car photos, the functions we cover and how to book.`} tone="grey" />}
     <Sec id="svc" title="Related services" tone="grey"><LinkCards items={svc.map(svcCard)} /></Sec>
     <Sec id="trust" title="Booking with confidence"><p>{SITE.name} has served Islamabad for {SITE.years} years and is rated {SITE.rating} on Google from {SITE.reviewCount} reviews. <a href={SITE.reviewsUrl} target="_blank" rel="noopener noreferrer">Read our Google reviews</a> · <Link to="/about">About us</Link> · <Link to="/guides/booking-terms-explained">Booking terms explained</Link> · <Link to="/refund-policy">Refund and cancellation policy</Link></p><Updated /></Sec>
     <Faq items={pg.faqs} />
@@ -276,7 +281,8 @@ export function HomeSeoSections() {
       <p>{SITE.name} has operated from G-11 Markaz, Islamabad for {SITE.years} years and is rated {SITE.rating} on Google from {SITE.reviewCount} reviews. Our address, phone number and WhatsApp are the same on every page, and you can <Link to="/about">read more about us</Link>, <Link to="/contact">visit or contact the office</Link> and <a href={SITE.reviewsUrl} target="_blank" rel="noopener noreferrer">read our Google reviews</a>.</p></Sec>
     <Sec id="svc" title="Our services"><LinkCards items={SERVICE_PAGES.slice(0, 6).map(svcCard)} /><p><Link to="/services">All services →</Link></p></Sec>
     <Sec id="routes" title="Popular routes from Islamabad"><LinkCards items={feat.map((x) => ({ to: tripPath(x), title: tripLabel(x), text: x.plan }))} /><p><Link to="/routes">All routes →</Link> · <Link to="/northern-areas">Northern areas →</Link> · <Link to="/car-rental-pakistan">Across Pakistan →</Link></p></Sec>
-    <Sec id="air" title="Airport transfers" tone="grey"><p>Arrive at Islamabad International Airport and find a professional driver ready. <Link to="/airport-transfer/islamabad">See how airport pickup works →</Link></p></Sec>
+    <WeddingTeaser title="Wedding car booking with driver in Islamabad" tone="grey" />
+    <Sec id="air" title="Airport transfers"><p>Arrive at Islamabad International Airport and find a professional driver ready. <Link to="/airport-transfer/islamabad">See how airport pickup works →</Link></p></Sec>
     <Sec id="abroad" title="Visiting Pakistan or coming home from abroad?"><LinkCards items={[{ to: "/visit-pakistan", title: "Tourists visiting Pakistan", text: "Airport pickup and a professional driver for Hunza, Skardu, Swat and more. Book in advance." }, { to: "/overseas-pakistanis", title: "Overseas Pakistanis", text: "Book a premium car with a driver before you land. Family trips, weddings and airport pickup." }]} /></Sec>
     <Sec id="how" title="How to book"><Steps items={BOOKING_STEPS} /></Sec>
     <Faq items={FAQS.slice(0, 8)} />
@@ -298,6 +304,7 @@ export function AudiencePage({ slug }) {
     <Sec id="trips" title={a.tripsTitle}><LinkCards items={trips.map((x) => ({ to: tripPath(x), title: tripLabel(x), text: x.highlights[0] }))} /><p><Link to="/northern-areas">All northern areas →</Link> · <Link to="/routes">All routes →</Link> · <Link to="/car-rental-pakistan">Across Pakistan →</Link></p></Sec>
     <Sec id="advance" title={a.adviceTitle} tone="grey"><Bullets items={a.advice} /></Sec>
     <Sec id="how" title="How advance booking works"><Steps items={[["1. Send your plan", "Arrival date and time, flight number, pickup and drop-off places, number of travellers and luggage, by WhatsApp, phone or the booking form."], ["2. We confirm", "We confirm the vehicle and driver for your dates and send you a quote. Nothing is charged by the website."], ["3. Your driver is ready", "Your professional driver is at the agreed place and time, and stays with you for the booking."]]} /></Sec>
+    {slug === "overseas-pakistanis" && <WeddingTeaser title="Coming home for a wedding? Book your wedding cars in advance" />}
     <Sec id="also" title="You may also need" tone="grey"><LinkCards items={[other, { to: "/services/private-tours", title: "Private tours with a driver", text: "Plan multi-day trips with your own vehicle and driver." }, { to: "/services/family-travel", title: "Family travel", text: "Comfortable vehicles for families with luggage." }, { to: "/faq", title: "Frequently asked questions", text: "Vehicles, airport pickup, quotes and more." }]} /></Sec>
     <Faq items={a.faqs} />
     <Cta ctx={a.h1} title="Book your car in advance" text="Send your dates, flight and plan. We reply with a quote, never a fake instant price." />
@@ -385,12 +392,66 @@ export function PillarPage({ slug }) {
       {LOCAL_GROUPS.map((g, i) => (<Sec key={g.id} id={g.id} title={g.title} tone={i % 2 ? "grey" : undefined}><p>{g.intro}</p><LinkCards items={SPOTS.filter((y) => y.group === g.id).map(spotCard)} /></Sec>))}
       <Sec id="areas" title="Pickup areas in Islamabad"><p>We pick up from every sector of Islamabad. Some of the areas our customers book from:</p><ul className="sx-list">{AREAS.map(([a, t]) => <li key={a}><b>{a}.</b> {t}</li>)}</ul></Sec>
     </>)}
+    {slug === "local" && <WeddingTeaser title="Weddings and events inside Islamabad" tone="grey" text="Choose the Local service for wedding cars inside Islamabad and Rawalpindi: a decorated Land Cruiser V8, Prado, Honda Civic or Corolla with a professional driver, and a Coaster for mehndi and guests." />}
     {D.how && <Sec id="how" title={D.howTitle}><Steps items={D.how} /></Sec>}
     {D.vs && <Sec id="compare" title={D.vsTitle} tone="grey"><p>{D.vs}</p><p>{slug === "out" ? <Link to="/local-car-rental-islamabad">Local service in Islamabad →</Link> : <Link to="/out-of-station-car-rental">Out of Station trips →</Link>}{" · "}<Link to="/car-rental-guide">Search guide →</Link>{" · "}<Link to="/cars">Our fleet →</Link></p></Sec>}
     {slug === "out" && <Sec id="more" title="Explore more routes"><p><Link to="/routes">Routes from Islamabad →</Link> · <Link to="/destinations">Destinations →</Link> · <Link to="/northern-areas">Northern areas →</Link> · <Link to="/car-rental-pakistan">Across Pakistan →</Link> · <Link to="/airport-transfer/islamabad">Airport transfer →</Link></p></Sec>}
     {slug === "places" && <Sec id="more" title="Related" tone="grey"><p><Link to="/local-car-rental-islamabad">How the Local service works →</Link> · <Link to="/out-of-station-car-rental">Out of Station trips →</Link> · <Link to="/services/hotel-transfers">Hotel transfers →</Link> · <Link to="/airport-transfer/islamabad">Airport transfer →</Link></p></Sec>}
     <Faq items={D.faqs} title="Common questions" />
     <Cta ctx={D.h1} svc={slug === "out" ? "out" : "local"} title={slug === "out" ? "Plan your out of station trip" : "Book your local car with driver"} text="Choose your service on the booking form, tell us your plan and we reply with a quote." />
+  </>);
+}
+
+
+// ------------------------------------------------------------------ WEDDING CAR BOOKING page (/wedding-car-booking-with-driver) + the teaser shown on other pages
+const wedImgs = () => imagesOf(WEDDING.path);
+const wedImg = (key) => wedImgs().find((i) => i.key === key);
+function WedCar({ c }) {
+  const cat = category(c.slug); if (!cat) return null; const ph = photoOf(cat); const wi = c.img && wedImg(c.img);
+  return (<li><Link to={`/cars/${c.slug}`}>
+    {wi ? <img src={wi.url} srcSet={wi.srcSet} sizes="(max-width: 700px) 90vw, 360px" alt={wi.alt} width={wi.w} height={wi.h} loading="lazy" decoding="async" className="wd-photo" />
+      : ph ? <img src={ph.image} {...imgSet(ph.image, "(max-width: 700px) 90vw, 360px")} alt={`${ph.color} ${ph.name} ${ph.trim} wedding car with professional driver`.replace(/\s+/g, " ")} width="805" height="510" loading="lazy" decoding="async" /> : <span className="sx-veh__ph">Real photos on request<br />Ask us on WhatsApp</span>}
+    <b>{c.name}</b><span>{c.text}</span><em>Wedding car with driver →</em></Link></li>);
+}
+// Small block with three wedding photos and a link: used on the home page, services page, vehicle pages and other pages that should send visitors to the wedding page.
+export function WeddingTeaser({ title = "Wedding car booking with driver", tone, n = 3, text }) {
+  const im = wedImgs().slice(0, n); const d = text || "Book a decorated Land Cruiser V8, Prado, Honda Civic or Toyota Corolla with a professional driver for your barat, nikah, mehndi and walima in Islamabad and Rawalpindi, plus a Coaster for family and guests.";
+  return (<Sec id="wedding-cars" title={title} tone={tone}>
+    <p>{d}</p>
+    {im.length > 0 && <div className={`px-gal px-gal--${Math.min(im.length, 3)} wd-teaser`}>{im.map((x) => <Pic key={x.key} im={x} sizes="(max-width: 700px) 92vw, 380px" className="px-fig px-fig--gal" />)}</div>}
+    <p className="wd-links"><Link className="sx-btn sx-btn--quote" to={WEDDING.path}>Wedding car booking with driver →</Link> <Link to="/cars/land-cruiser-v8">Land Cruiser V8 for weddings</Link> · <Link to="/cars/prado">Prado</Link> · <Link to="/cars/honda-civic">Honda Civic</Link> · <Link to="/cars/toyota-grande">Toyota Corolla</Link> · <Link to="/cars/coaster">Coaster for mehndi and parties</Link></p>
+  </Sec>);
+}
+export function WeddingPage() {
+  const W = WEDDING; const p = pageByPath(W.path); const imgs = wedImgs();
+  const rel = [
+    { to: "/services/wedding-event-transportation", title: "Wedding and event transportation", text: "The full service: couple, family and guest vehicles." },
+    { to: "/guides/wedding-car-with-driver-guide", title: "Wedding car planning guide", text: "How to choose, when to book and what to tell us." },
+    { to: "/cars/coaster", title: "Coaster for groups and parties", text: "Mehndi, barat guests and group events." },
+    { to: "/local-car-rental-islamabad", title: "Local service in Islamabad", text: "Daily and event cars inside the city." },
+    { to: "/out-of-station-car-rental", title: "Out of Station trips", text: "Barat and family travel to other cities." },
+    { to: "/airport-transfer/islamabad", title: "Airport transfer", text: "Pickup for wedding guests from abroad." },
+    { to: "/overseas-pakistanis", title: "Overseas Pakistanis", text: "Book cars for a family wedding before you land." },
+    { to: "/guides/booking-terms-explained", title: "Booking terms explained", text: "What is included and what to ask." },
+  ];
+  return (<>
+    <Hero eyebrow={W.eyebrow} h1={W.h1} lead={W.lead} crumbs={p.breadcrumbs}><Updated /><p className="wd-trust">{SITE.years} years in Islamabad · Rated {SITE.rating} on Google from {SITE.reviewCount} reviews</p></Hero>
+    <Sec id="answer" title="Quick answer"><Answer q={W.answerQ}>{W.answer}</Answer></Sec>
+    <Sec id="facts" title="Wedding car booking: key facts" tone="grey"><dl className="sx-facts">{W.facts.map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl></Sec>
+    <Sec id="cars" title={W.carsTitle}><p>{W.carsIntro}</p><ul className="sx-veh wd-cars">{W.cars.map((c) => <WedCar key={c.slug} c={c} />)}</ul></Sec>
+    {imgs.length > 0 && <Sec id="photos" title={W.galleryTitle} tone="grey"><p>{W.galleryIntro}</p><div className="px-gal px-gal--3">{imgs.map((im) => <Pic key={im.key} im={im} sizes="(max-width: 700px) 92vw, 380px" className="px-fig px-fig--gal" />)}</div></Sec>}
+    <Sec id="events" title={W.eventsTitle}><p>{W.eventsIntro}</p><ul className="wd-ev">{W.events.map(([t, x]) => <li key={t}><b>{t}</b><span>{x}</span></li>)}</ul></Sec>
+    <Sec id="coaster" title={W.partiesTitle} tone="grey"><p>{W.partiesIntro}</p><Chips items={W.parties} /><p><Link to="/cars/coaster">Toyota Coaster with driver →</Link> · <Link to="/services/group-transportation">Group transportation →</Link> · <Link to="/services/corporate-transportation">Corporate events →</Link> · <Link to="/services/family-travel">Family travel →</Link></p></Sec>
+    <Sec id="where" title={W.whereTitle}><p>{W.whereIntro}</p><ul className="sx-list">{W.areas.map(([a, t]) => <li key={a}><b>{a}.</b> {t}</li>)}</ul>
+      <LinkCards items={[{ to: "/locations/islamabad", title: "Car rental in Islamabad", text: "Pickups across the city and sectors" }, { to: "/locations/rawalpindi", title: "Car rental in Rawalpindi", text: "Covered daily from our Islamabad base" }, { to: "/islamabad-places", title: "Islamabad places", text: "Hotels, markets and landmarks we cover" }, { to: "/routes/islamabad-to-lahore", title: "Islamabad to Lahore", text: "Barat and family travel by motorway" }]} /></Sec>
+    <Sec id="how" title="How to book your wedding car" tone="grey"><Steps items={W.how} /></Sec>
+    <Sec id="tell" title={W.tellTitle}><Bullets items={W.tell} /></Sec>
+    <Sec id="tips" title={W.tipsTitle} tone="grey"><Bullets items={W.tips} /></Sec>
+    <Sec id="trust" title="Why families book their wedding cars with us"><p>{SITE.name} has served Islamabad for {SITE.years} years and is rated {SITE.rating} on Google from {SITE.reviewCount} reviews. Every wedding car comes with an experienced professional driver, the same address and phone number appear on every page, and the quote is always sent before you travel. <a href={SITE.reviewsUrl} target="_blank" rel="noopener noreferrer">Read our Google reviews</a> · <Link to="/about">About us</Link> · <Link to="/refund-policy">Refund and cancellation policy</Link></p></Sec>
+    <Sec id="urdu" title="اردو میں خلاصہ: شادی کے لیے گاڑی ڈرائیور کے ساتھ" tone="grey"><div lang="ur" dir="rtl" className="sx-ur">{W.ur.map((t) => <p key={t}>{t}</p>)}</div><p lang="ur-Latn">{W.roman}</p></Sec>
+    <Faq items={p.faqs} title="Wedding car booking: questions and answers" />
+    <Sec id="related" title="Related pages"><LinkCards items={rel} /><p><Link to="/cars">Our full fleet →</Link> · <Link to="/services">All services →</Link> · <Link to="/faq">FAQ →</Link> · <Link to="/contact">Contact →</Link></p></Sec>
+    <Cta ctx="Wedding car booking" title="Book your wedding car with a driver" text="Send the date, the venue, the pickup time and the number of cars. We confirm the vehicles and reply with a quote before the wedding." />
   </>);
 }
 
@@ -463,6 +524,7 @@ function SeoBody({ page }) {
   if (k === "info") return <AiInfoPage />;
   if (k === "spot") return <SpotPage slug={page.slug} />;
   if (k === "pillar") return <PillarPage slug={page.slug} />;
+  if (k === "wedding") return <WeddingPage />;
   if (k === "tourspots") return <TourHubPage />;
   if (k === "tourspot") return <TourSpotPage slug={page.slug} />;
   if (k === "article") return page.slug === "index" ? <GuidesHubPage /> : <ArticlePage slug={page.slug} />;

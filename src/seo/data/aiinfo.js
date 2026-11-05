@@ -30,7 +30,7 @@ export const AI_INFO = {
     "Airport transfers and pickups at Islamabad International Airport.",
     "Local service: shopping, markets, hotels, meetings and picnic spots inside Islamabad and Rawalpindi.",
     "Out of Station trips: Lahore, Peshawar, Murree, Swat, Kumrat, Naran, Hunza, Skardu and other places.",
-    "Wedding and event transport, corporate and executive travel, and family trips.",
+    "Wedding car booking with driver (Land Cruiser V8, Prado, Honda Civic, Corolla, Coaster for barat, nikah, mehndi, walima and parties), corporate and executive travel, and family trips.",
     "A professional driver with every vehicle, for the whole booking.",
   ],
   howTitle: "How to book with Saad Car Rental",

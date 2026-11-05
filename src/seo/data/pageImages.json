@@ -948,5 +948,41 @@
   "og": "group-tourism",
   "ogTitle": "Search Saad Car Rental",
   "images": []
+ },
+ "/wedding-car-booking-with-driver": {
+  "og": "wedding-land-cruiser-just-married",
+  "ogTitle": "Wedding Car Booking With Driver in Islamabad",
+  "images": [
+   {
+    "key": "wedding-land-cruiser-just-married",
+    "alt": "White Toyota Land Cruiser V8 decorated with red roses and white flowers for a Pakistani wedding with a groom in a turban at the window",
+    "cap": "Land Cruiser V8 for the groom's entry: floral bonnet garland, roses on the doors and a professional driver."
+   },
+   {
+    "key": "wedding-convoy-land-cruiser-prado-civic",
+    "alt": "Wedding car convoy in Islamabad: white Land Cruiser V8, black Honda Civic and white Prado decorated with roses and flowers outside a banquet hall",
+    "cap": "A decorated wedding convoy arriving at a banquet hall in Islamabad."
+   },
+   {
+    "key": "wedding-land-cruiser-v8-white",
+    "alt": "White Land Cruiser V8 2018 model with rose garlands and bonnet flowers parked at a wedding venue entrance in Islamabad",
+    "cap": "Land Cruiser V8 2018 model, a favourite for barat and nikah arrivals."
+   },
+   {
+    "key": "wedding-prado-black",
+    "alt": "Black Toyota Prado decorated with red roses and white flowers with the groom seated in the back at a wedding in Islamabad",
+    "cap": "Black Prado with floral decoration for the groom and family."
+   },
+   {
+    "key": "wedding-honda-civic-black",
+    "alt": "Black Honda Civic decorated with red and white roses, ribbons and a floral roof garland at a wedding in Islamabad",
+    "cap": "Honda Civic: a sleek, decorated sedan for the couple or close family."
+   },
+   {
+    "key": "wedding-toyota-corolla-grande",
+    "alt": "White Toyota Corolla Grande decorated with roses and a floral bonnet garland for a wedding in Islamabad with the groom smiling at the window",
+    "cap": "Toyota Corolla Grande, a classic wedding sedan with a professional driver."
+   }
+  ]
  }
 }

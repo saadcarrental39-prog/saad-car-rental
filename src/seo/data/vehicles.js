@@ -9,8 +9,8 @@ export const USE = {
 };
 export const VEHICLE_FIT = {
   prado: ["family", "northern", "long-distance", "airport", "corporate", "vip", "wedding", "tourism"],
-  "land-cruiser-v8": ["northern", "family", "vip", "long-distance", "corporate", "tourism", "mountain"],
-  "premium-luxury-land-cruiser": ["northern", "family", "vip", "long-distance", "corporate", "tourism", "mountain"],
+  "land-cruiser-v8": ["northern", "family", "vip", "wedding", "long-distance", "corporate", "tourism", "mountain"],
+  "premium-luxury-land-cruiser": ["northern", "family", "vip", "wedding", "long-distance", "corporate", "tourism", "mountain"],
   revo: ["adventure", "northern", "mountain", "family", "luggage", "long-distance"],
   "range-rover": ["vip", "corporate", "wedding", "executive", "airport"],
   "honda-civic": ["city", "airport", "corporate", "executive", "couples", "short-distance"],

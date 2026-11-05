@@ -103,7 +103,7 @@ const BASE_GUIDES = [
       { id: "tell", title: "What to tell us early", list: ["Date, venue and the time the car must be at each place", "Number of cars and number of passengers in each", "Whether you plan to decorate the car with flowers or ribbons: tell us in advance and we confirm what is possible", "The contact person on the day and the phone number the driver should call"] },
     ],
     faqs: [f("How early should I book a wedding car?", "As early as you can once the date is fixed. Wedding season and holiday weekends fill the popular vehicles first."), f("Is the driver included?", "Yes. Every car is provided with an experienced professional driver."), f("Can I get several cars for the baraat?", "Tell us how many cars you need and the date. We confirm what we can provide together and suggest alternatives where needed."), f("Can the car go to a venue outside Islamabad?", "Yes. Tell us the venue and the schedule and we quote the trip as an Out of Station booking.")],
-    related: ["/services/wedding-event-transportation", "/cars/mercedes-g-wagon", "/cars/coaster", "/guides/booking-terms-explained", "/guides/which-car-for-which-trip-pakistan"],
+    related: ["/wedding-car-booking-with-driver", "/services/wedding-event-transportation", "/cars/mercedes-g-wagon", "/cars/coaster", "/guides/booking-terms-explained", "/guides/which-car-for-which-trip-pakistan"],
   },
   {
     slug: "islamabad-airport-pickup-guide", updated: "2026-10-17",

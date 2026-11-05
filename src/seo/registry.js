@@ -26,6 +26,7 @@ import { vehicleFaqs } from "./data/vehicleFacts";
 import { routeFaqs } from "./data/routeFaqs";
 import { imagesOf, heroImagesOf, boostFaqs, boostTags } from "./data/pageMeta";
 import { keywordOverride } from "./data/keywordMap";
+import { WEDDING } from "./data/wedding";
 
 const BRAND = B.shortName;
 // Keep text inside search-result limits: join sentences until the limit is reached.
@@ -116,6 +117,22 @@ SERVICE_PAGES.forEach((s) => {
     description: fit([s.intro.split(". ")[0] + ".", CTA, "Professional driver included."]),
     og: { a: s.name.toUpperCase(), b: "With professional driver", vehicle: lead ? lead.slug : "prado" }, service: { type: s.name, areas: ["Islamabad", "Rawalpindi", "Pakistan"] } });
 });
+
+
+// ---------------------------------------------------------------- wedding car booking (one page for every wedding search: barat, nikah, mehndi, walima, Coaster)
+{
+  const url = abs(WEDDING.path);
+  const weddingCars = WEDDING.cars.filter((c) => category(c.slug));
+  add({ path: WEDDING.path, kind: "wedding", title: WEDDING.title, h1: WEDDING.h1, description: WEDDING.description, priority: 0.9, changefreq: "weekly", faqs: WEDDING.faqs, speakable: true,
+    breadcrumbs: [home, { name: "Services", path: "/services" }, { name: "Wedding Car Booking", path: WEDDING.path }],
+    og: { a: "WEDDING CAR BOOKING", b: "Land Cruiser · Prado · Civic · Corolla · Coaster", vehicle: "land-cruiser-v8" },
+    service: { type: "Wedding car rental with driver", areas: ["Islamabad", "Rawalpindi", "Bahria Town", "DHA Islamabad", "Pakistan"] },
+    offerCatalog: { "@type": "OfferCatalog", name: "Wedding cars with professional driver", itemListElement: weddingCars.map((c) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: `${c.name} with driver for weddings`, url: abs(`/cars/${c.slug}`) } })) },
+    extraNodes: [
+      { "@type": "ItemList", "@id": `${url}#cars`, name: "Wedding cars with driver in Islamabad", numberOfItems: weddingCars.length, itemListElement: weddingCars.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.name, url: abs(`/cars/${c.slug}`) })) },
+      { "@type": "HowTo", "@id": `${url}#howto`, name: "How to book a wedding car with a driver in Islamabad", description: "Send your wedding plan, choose the cars, receive a quote and meet your professional driver on the day.", step: WEDDING.how.map(([n, t], i) => ({ "@type": "HowToStep", position: i + 1, name: n.replace(/^\d+\.\s*/, ""), text: t })) },
+    ] });
+}
 
 // ---------------------------------------------------------------- places
 const nm = (p) => p.short || p.name;
