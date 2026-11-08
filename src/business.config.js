@@ -20,9 +20,9 @@ export const BUSINESS = {
   website: (/^https?:\/\/[^/]*\.pages\.dev/i.test(env.VITE_SITE_URL || "") ? "" : env.VITE_SITE_URL || "https://www.saadcarremtal.com").replace(/\/+$/, "") || "https://www.saadcarremtal.com",   // a preview address (xxx.pages.dev) is never used as the site address
 
   // ---- contact ----
-  phone: env.VITE_PHONE_NUMBER || "+923339850599",
-  phoneDisplay: "0333 9850599",
-  whatsapp: String(env.VITE_WHATSAPP_NUMBER || "923339850599").replace(/\D/g, ""),
+  phone: env.VITE_PHONE_NUMBER || "+923009040006",
+  phoneDisplay: "0300 9040006",
+  whatsapp: String(env.VITE_WHATSAPP_NUMBER || "923009040006").replace(/\D/g, ""),
   email: null,                                         // [BUSINESS CONFIRMATION REQUIRED]
   contactUrl: "/contact",
   bookingUrl: "/book",
@@ -71,7 +71,7 @@ export const BUSINESS = {
   ],
 
   // ---- freshness: the date shown as "Last updated" on guides, routes and destinations (change it when you review the content) ----
-  contentUpdated: "2026-10-17",
+  contentUpdated: "2026-11-08",
 
   // ---- ABOUT page facts. Leave null / empty until you confirm them: a block appears on the About page ONLY when it has a value. ----
   about: {

@@ -10,7 +10,7 @@ export const SEED_POSTS = [
     keyword: "islamabad to murree land cruiser with driver",
     category: "Murree & Galiyat", location: "Murree", date: "2026-10-25", status: "published",
     description: "Islamabad to Murree Land Cruiser with driver: Patriata chairlift, Kashmir Point and Ayubia plan, timings, season tips and a clear quote on WhatsApp.",
-    summary: "An Islamabad to Murree Land Cruiser with driver trip takes about 1.5 to 2 hours each way in normal traffic. A one-day plan covers Mall Road, Kashmir Point and the Patriata (New Murree) chairlift, while Ayubia is best added as an early start. A professional driver handles the hill roads. Call or WhatsApp 0333 9850599 for a quote.",
+    summary: "An Islamabad to Murree Land Cruiser with driver trip takes about 1.5 to 2 hours each way in normal traffic. A one-day plan covers Mall Road, Kashmir Point and the Patriata (New Murree) chairlift, while Ayubia is best added as an early start. A professional driver handles the hill roads. Call or WhatsApp 0300 9040006 for a quote.",
     tags: ["land cruiser rental islamabad", "murree tour from islamabad", "patriata chairlift", "kashmir point murree", "ayubia chairlift", "car with driver murree", "murree day trip", "saad car rental"],
     images: [
       { url: P("murree-patriata"), alt: "White Toyota Land Cruiser with driver on the Patriata road near Murree with chairlift cabins above the pine forest", caption: "Land Cruiser on the Patriata road: the chairlift cabins run above the pine forest." },
@@ -33,7 +33,7 @@ export const SEED_POSTS = [
       { q: "Why choose a Land Cruiser with driver for Murree?", a: "A Land Cruiser is stable and comfortable on long hill roads and gives good ground clearance. With a professional driver you do not have to handle the bends, traffic and parking yourself. In heavy snow the driver decides if it is safe to continue." },
       { q: "Can I book for Murree snowfall days?", a: "Yes, but the trip depends on road conditions. We confirm on WhatsApp the day before, and the driver may advise changing the day if the roads are closed or unsafe." },
       { q: "What is included in the booking?", a: "Every vehicle comes with an experienced professional driver. Fuel, tolls, parking and any overnight stay are agreed and written in the quote before the trip." },
-      { q: "How do I book a Land Cruiser for Murree?", a: "Call or WhatsApp 0333 9850599 with your pickup point, date and number of passengers. You get a clear quote before you travel." },
+      { q: "How do I book a Land Cruiser for Murree?", a: "Call or WhatsApp 0300 9040006 with your pickup point, date and number of passengers. You get a clear quote before you travel." },
     ],
     body: `## Why a Land Cruiser with driver for Murree?
 Murree is only about 60 km from Islamabad, but the last part is a steady climb with many bends, and the weekend traffic is heavy. A **Land Cruiser with a professional driver** keeps the family comfortable and lets you enjoy the view instead of the road. See the [Land Cruiser V8](/cars/land-cruiser-v8) and the [premium Land Cruiser](/cars/premium-luxury-land-cruiser) on our cars page, or read the full [Islamabad to Murree route](/routes/islamabad-to-murree) page.
@@ -128,7 +128,7 @@ Send your dates, group size and pickup point on WhatsApp and we prepare a clear 
     keyword: "islamabad to naran kaghan land cruiser with driver",
     category: "Northern Areas", location: "Naran Kaghan", date: "2026-10-25", status: "published",
     description: "Islamabad to Naran Kaghan Land Cruiser with driver: Saif ul Malook, Lulusar, Babusar Top and Shogran, with timings, season and booking tips.",
-    summary: "Islamabad to Naran Kaghan Land Cruiser with driver takes about 7 to 9 hours one way, so most families stay at least two nights. From Naran you can visit Lake Saif ul Malook, Lulusar Lake, Babusar Top and Shogran. A professional driver handles the Kaghan road. Call or WhatsApp 0333 9850599 for a quote.",
+    summary: "Islamabad to Naran Kaghan Land Cruiser with driver takes about 7 to 9 hours one way, so most families stay at least two nights. From Naran you can visit Lake Saif ul Malook, Lulusar Lake, Babusar Top and Shogran. A professional driver handles the Kaghan road. Call or WhatsApp 0300 9040006 for a quote.",
     tags: ["naran kaghan tour from islamabad", "lake saif ul malook", "babusar top", "lulusar lake", "shogran siri paye", "land cruiser rental islamabad", "car with driver naran", "kaghan valley"],
     images: [
       { url: P("naran-toyota-corolla"), alt: "White Toyota Corolla on a winding road through pine forest with snow peaks and a river in the Kaghan Valley near Naran", caption: "The Kaghan road follows the river with pine forest and snow peaks ahead." },
@@ -151,7 +151,7 @@ Send your dates, group size and pickup point on WhatsApp and we prepare a clear 
       { q: "Can a Land Cruiser go to Lake Saif ul Malook?", a: "The road to Naran is easy for a Land Cruiser, but the last part to the lake is a rough track usually done by local jeeps. Your driver will arrange the transfer with you." },
       { q: "Is it safe to drive to Naran with a driver?", a: "Our drivers know the Kaghan road, the landslide-prone sections and the safe halts. We advise early starts and no driving on mountain roads after dark." },
       { q: "What is included in the booking?", a: "Every vehicle comes with an experienced professional driver. Fuel, tolls, parking and overnight stay are agreed and written in the quote before the trip." },
-      { q: "How do I book a Land Cruiser for Naran?", a: "Call or WhatsApp 0333 9850599 with your pickup point, dates and number of passengers. You get a clear quote before you travel." },
+      { q: "How do I book a Land Cruiser for Naran?", a: "Call or WhatsApp 0300 9040006 with your pickup point, dates and number of passengers. You get a clear quote before you travel." },
     ],
     body: `## Islamabad to Naran Kaghan by road
 The usual route goes from Islamabad through Abbottabad, Mansehra and Balakot, then follows the Kunhar River up the Kaghan Valley to Naran. The road is scenic all the way, with pine forest, waterfalls and snow peaks in the distance. Read our [Islamabad to Naran route](/routes/islamabad-to-naran), the [Kaghan guide](/guides/islamabad-to-naran-kaghan-guide) and the [Naran page](/locations/naran).

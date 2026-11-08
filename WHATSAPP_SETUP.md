@@ -2,15 +2,15 @@
 
 Flow: customer clicks **Book via WhatsApp** -> receipt PNG is created -> website sends it to `/api/booking`
 (`functions/api/booking.js`, Cloudflare Pages Function) -> WhatsApp Business Cloud API delivers the PNG
-to the owner number (+92 333 9850599). No copy/paste for the customer.
+to the owner number (+92 300 9040006). No copy/paste for the customer.
 If this is not set up yet, the site automatically falls back to: save PNG + copy + open chat.
 
 ## 1. Meta / WhatsApp Cloud API
 1. https://developers.facebook.com -> Create App (type: Business) -> add product **WhatsApp**.
 2. WhatsApp > API Setup: you get a **Phone number ID** and can add a sender number.
-   - IMPORTANT: the *sender* number must be different from the owner's number (+92 333 9850599).
+   - IMPORTANT: the *sender* number must be different from the owner's number (+92 300 9040006).
      Use a new SIM/number for the API, or Meta's free test number while testing
-     (test number can only message numbers you verify under "To" — add +92 333 9850599 there).
+     (test number can only message numbers you verify under "To" — add +92 300 9040006 there).
 3. Create a permanent token: Business Settings > Users > System Users > add system user > Generate token
    with `whatsapp_business_messaging` + `whatsapp_business_management`.
 
@@ -27,7 +27,7 @@ Wait for "Approved" (usually minutes to a few hours).
 |---|---|
 | `WA_TOKEN` | permanent token from step 1 |
 | `WA_PHONE_ID` | Phone number ID from step 1 |
-| `WA_TO` | `923339850599` (add more owners with commas: `923339850599,923001234567`) |
+| `WA_TO` | `923009040006` (add more owners with commas: `923009040006,923001234567`) |
 | `WA_TEMPLATE` | `new_booking` (optional, default) |
 | `WA_LANG` | `en` (optional, default) |
 

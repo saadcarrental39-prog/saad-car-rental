@@ -9,7 +9,7 @@ export const FAQS = [
   f("Do you provide cars from Islamabad to Lahore?", "Yes. We provide chauffeur-driven trips between Islamabad or Rawalpindi and Lahore, one-way or round trip."),
   f("Can I book a car for a wedding?", "Yes. Tell us the date, venues and timing and we will confirm vehicles and quote. Please book early for popular wedding dates."),
   f("Do you provide corporate transportation?", "Yes. We arrange guest pickups, executive transport and team transfers for companies and organisations."),
-  f("How do I get today's quote?", "Call 0333 9850599, message us on WhatsApp, or use the Book Now form with your pickup, destination, date and number of passengers. We reply with a quote for your trip."),
+  f("How do I get today's quote?", "Call 0300 9040006, message us on WhatsApp, or use the Book Now form with your pickup, destination, date and number of passengers. We reply with a quote for your trip."),
   f("How do I book through WhatsApp?", "Open the Book Now form, fill in your trip details and send. Your booking message is prepared for our WhatsApp chat so you only need to press Send, and our team confirms your vehicle."),
   f("Do you have offices in other cities?", "Our office is in Islamabad (G-11 Markaz). We provide chauffeur-driven travel to and from other cities and the northern areas from our Islamabad base."),
   f("What is the difference between Local and Out of Station service?", "Local is for travel inside Islamabad, such as shopping, hotels, meetings and picnic spots. Out of Station is for any trip that leaves Islamabad, for example to Murree, Lahore, Swat, Kumrat, Hunza or Skardu. They are quoted separately, so you choose one when you book."),

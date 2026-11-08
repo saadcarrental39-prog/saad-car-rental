@@ -66,7 +66,7 @@ export const GUIDE = {
   ],
   faqs: [
     f("Do you rent cars without a driver in Pakistan?", "No. Every vehicle is provided with an experienced professional driver, so you do not drive yourself. This suits visitors, families and business travellers who want a comfortable and safe journey."),
-    f("How do I rent a car with a driver in Islamabad?", "Call 0333 9850599, message us on WhatsApp or use the Book Now form with your pickup, destination, date and number of passengers. We confirm the vehicle and reply with a quote for your trip."),
+    f("How do I rent a car with a driver in Islamabad?", "Call 0300 9040006, message us on WhatsApp or use the Book Now form with your pickup, destination, date and number of passengers. We confirm the vehicle and reply with a quote for your trip."),
     f("Which cars can I hire in Islamabad?", "Premium Luxury Land Cruiser (2025 model), Land Cruiser V8 (2018 model), Lexus LX 570, Prado, Toyota Fortuner, Mercedes G Wagon, Audi, Hilux Revo, Honda Civic, Toyota Corolla Grande, Range Rover and a Toyota Coaster for groups, each with a professional driver."),
     f("Can I book a car from Islamabad airport?", "Yes. Share your flight number, landing time, number of passengers and luggage and we arrange the pickup. You can also book a drop to the airport."),
     f("Which car is best for Hunza, Skardu or Naran?", "An SUV or 4x4 such as the Land Cruiser, Prado or Hilux Revo is the sensible choice for mountain roads. A Coaster suits larger groups on the main routes."),

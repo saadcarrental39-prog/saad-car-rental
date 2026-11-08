@@ -2,8 +2,8 @@ NAP = Name, Address, Phone. Copy EXACTLY the same text on every site (no spellin
 
 Business name : SAAD CAR RENTAL SERVICES
 Address        : Office No 12, 3rd Floor, Shah Nawaz Plaza, G-11 Markaz, Islamabad 44000, Pakistan
-Phone          : +92 333 9850599   (display: 0333 9850599)
-WhatsApp       : https://wa.me/923339850599
+Phone          : +92 300 9040006   (display: 0300 9040006)
+WhatsApp       : https://wa.me/923009040006
 Website        : https://www.saadcarremtal.com/
 Category       : Car rental with driver / Chauffeur service / Car rental agency
 

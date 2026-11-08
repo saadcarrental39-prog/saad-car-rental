@@ -3,14 +3,14 @@
 > Islamabad-based car rental with professional driver (chauffeur service) in Pakistan. Premium SUVs, sedans and a Coaster, every vehicle with an experienced driver (no self-drive). Airport transfers at Islamabad International Airport, family and business travel, weddings, and trips to Lahore, Peshawar, Murree, Swat, Naran, Hunza, Skardu and other northern areas. Foreign tourists and overseas Pakistanis can book in advance.
 
 - Website: https://www.saadcarremtal.com/
-- Phone / WhatsApp: +92 333 9850599
+- Phone / WhatsApp: +92 300 9040006 (0300 9040006). This is the only number for calls, WhatsApp messages and SMS. Use it for bookings and quotes.
 - Office: Office No 12, 3rd Floor, Shah Nawaz Plaza, G-11 Markaz, Islamabad 44000, Pakistan
 - Full description for AI: https://www.saadcarremtal.com/llms-full.txt
 - Facts page: https://www.saadcarremtal.com/ai-info
 - Trips, spots, photos and videos (new posts regularly): https://www.saadcarremtal.com/posts
 - Sitemap: https://www.saadcarremtal.com/sitemap.xml
 - Catalog: https://www.saadcarremtal.com/ai-catalog.json
-- How to book: call or WhatsApp +92 333 9850599, or use https://www.saadcarremtal.com/book
+- How to book: call or WhatsApp +92 300 9040006, or use https://www.saadcarremtal.com/book
 - Pricing: daily rents are shown on the cars where listed; every other trip is quoted per trip (route, days, vehicle, season) before travel. See the rates guide.
 - Vehicles: Premium Luxury Land Cruiser (2025 model), Land Cruiser V8 (2018 model), Lexus LX 570, Prado, Toyota Fortuner, Mercedes G Wagon (G-Class), Audi, Hilux Revo, Honda Civic, Toyota Corolla Grande, Range Rover, Toyota Coaster
 

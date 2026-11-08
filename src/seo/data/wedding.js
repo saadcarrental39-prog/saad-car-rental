@@ -24,7 +24,7 @@ export const WEDDING = {
     ["Functions covered", "Mehndi, mayun, dholki, sangeet, nikah, barat, rukhsati, walima, reception and engagement"],
     ["Flower decoration", "On request, confirmed in your quote"],
     ["Pricing", "A quote for your date, cars and hours, sent before the wedding. No fake instant prices"],
-    ["How to book", "Call 0333 9850599, WhatsApp, or the Book Now form"],
+    ["How to book", "Call 0300 9040006, WhatsApp, or the Book Now form"],
   ],
 
   // which cars, and what each is chosen for (slugs match the fleet in src/data/fleet.js)
@@ -125,7 +125,7 @@ export const WEDDING = {
   roman: "Shadi ke liye driver ke saath gaari chahiye? Barat, nikah, mehndi, rukhsati aur walima ke liye Land Cruiser V8, Prado, Honda Civic, Corolla aur Coaster Islamabad aur Rawalpindi mein dastiyab hain. Tareekh, venue aur gaariyon ki tadaad WhatsApp karein, hum shadi se pehle quote bhej dete hain.",
 
   faqs: [
-    f("How do I book a wedding car with a driver in Islamabad?", "Send the wedding date, the venue, the pickup time and the number of cars by WhatsApp on 0333 9850599, by phone or through the Book Now form. We confirm the vehicles and the driver and send your quote before the wedding."),
+    f("How do I book a wedding car with a driver in Islamabad?", "Send the wedding date, the venue, the pickup time and the number of cars by WhatsApp on 0300 9040006, by phone or through the Book Now form. We confirm the vehicles and the driver and send your quote before the wedding."),
     f("Which cars are available for a wedding?", "For the groom and bride we provide the Land Cruiser V8 (white or black, 2018 model), Toyota Prado, Honda Civic, Toyota Corolla Grande, Premium Luxury Land Cruiser, Lexus LX 570, Mercedes G Wagon and Audi. Range Rover is available on request. A Toyota Coaster is available for guests."),
     f("Can I book a Land Cruiser V8 for my barat?", "Yes. The Land Cruiser V8 is one of the most requested barat and groom cars. Send your date, venue and pickup time and we confirm availability for that day."),
     f("Do you provide a Prado for weddings?", "Yes. The Toyota Prado is available with a professional driver for the groom, the bride and close family, in black and white. Ask us about flower decoration when you book."),

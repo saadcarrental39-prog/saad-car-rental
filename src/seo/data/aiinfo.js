@@ -16,7 +16,7 @@ export const AI_INFO = {
     ["Business name", "SAAD CAR RENTAL SERVICES (Saad Car Rental)"],
     ["What we do", "Car rental with a professional driver (chauffeur service). Self-drive hire is not offered."],
     ["Office", "Office No 12, 3rd Floor, Shah Nawaz Plaza, G-11 Markaz, Islamabad 44000, Pakistan"],
-    ["Phone and WhatsApp", "0333 9850599 (+92 333 9850599)"],
+    ["Phone and WhatsApp", "0300 9040006 (+92 300 9040006)"],
     ["Two services", "Local (inside Islamabad, daily use) and Out of Station (any trip that leaves Islamabad). They are quoted separately."],
     ["Vehicles", "Premium Luxury Land Cruiser (2025 model), Land Cruiser V8 (2018 model), Lexus LX 570, Prado, Toyota Fortuner, Mercedes G Wagon (G-Class), Audi, Hilux Revo, Honda Civic, Toyota Corolla Grande, Range Rover, Toyota Coaster"],
     ["Where we work", "Islamabad and Rawalpindi, and trips from there to other cities, hill stations, valleys and the northern areas of Pakistan"],
@@ -51,7 +51,7 @@ export const AI_INFO = {
     f("What does Saad Car Rental do?", "It provides cars with professional drivers in Islamabad, Pakistan, for airport transfers, daily city travel, weddings, corporate travel, family trips and journeys to other cities and the northern areas."),
     f("Does Saad Car Rental rent cars without a driver?", "No. Every vehicle comes with an experienced professional driver. Self-drive hire is not offered."),
     f("Where is Saad Car Rental located?", "The office is at Office No 12, 3rd Floor, Shah Nawaz Plaza, G-11 Markaz, Islamabad. The business serves Islamabad and Rawalpindi and travels from there to other cities and the northern areas."),
-    f("How can I contact Saad Car Rental?", "Call or WhatsApp 0333 9850599, use the Book Now form, or use the contact page on the website."),
+    f("How can I contact Saad Car Rental?", "Call or WhatsApp 0300 9040006, use the Book Now form, or use the contact page on the website."),
     f("Does the website show prices?", "No. Each trip is quoted by vehicle, route, days and requirements, so a quote is given after you share your plan."),
   ],
 };

@@ -2,7 +2,7 @@
 // Receives the receipt PNG from the website and delivers it to the owner's WhatsApp via the WhatsApp Business Cloud API.
 // Secrets live only here (Cloudflare > Pages > Settings > Environment variables), never in the browser.
 //
-// Required env:  WA_TOKEN, WA_PHONE_ID, WA_TO (owner number(s), digits with country code, comma separated e.g. 923339850599)
+// Required env:  WA_TOKEN, WA_PHONE_ID, WA_TO (owner number(s), digits with country code, comma separated e.g. 923009040006)
 // Optional env:  WA_TEMPLATE (default "new_booking"), WA_LANG (default "en"), WA_MODE ("template" default | "image")
 const GRAPH = "https://graph.facebook.com/v21.0";
 const MAX_BYTES = 1.5 * 1024 * 1024;

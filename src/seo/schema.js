@@ -19,7 +19,7 @@ export const businessNode = (areas = []) => clean({
   hasMap: B.googleBusinessProfile, sameAs: sameAs(),
   areaServed: [{ "@type": "City", name: B.city }, { "@type": "Country", name: B.country }, ...areas],
   openingHoursSpecification: B.businessHours ? B.businessHours.map((h) => ({ "@type": "OpeningHoursSpecification", dayOfWeek: h.days.map((d) => DAY[d] || d), opens: h.opens, closes: h.closes })) : undefined,
-  contactPoint: [{ "@type": "ContactPoint", telephone: B.phone, contactType: "customer service", areaServed: B.countryCode }],
+  contactPoint: [{ "@type": "ContactPoint", telephone: B.phone, contactType: "customer service", areaServed: B.countryCode, availableLanguage: ["English", "Urdu"] }, { "@type": "ContactPoint", telephone: B.phone, contactType: "reservations", areaServed: B.countryCode, availableLanguage: ["English", "Urdu"] }],
   knowsAbout: ["Car rental with driver", "Chauffeur service", "Airport transfers", "Intercity travel in Pakistan", "Northern areas of Pakistan"],
 });
 
