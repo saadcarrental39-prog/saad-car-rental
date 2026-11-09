@@ -6,6 +6,7 @@ import { SERVICE_PAGES } from "./data/services";
 import { category } from "./links";
 import { baseFleet } from "../data/fleet";
 import { BUSINESS } from "../business.config";
+import { coFor } from "./data/companies";
 
 export const MIN_SCORE = 80;
 // Prices are allowed ONLY when they are the rent set in src/data/fleet.js (the owner's own per-day rate shown on the car card).
@@ -22,6 +23,7 @@ export function uniqueText(page) {
   if (page.kind === "destination") { const p = place(page.slug); return [p.intro, p.highlights.join(" "), p.road, p.season, p.plan, faq].join(" "); }
   if (page.kind === "route") { const r = route(page.slug); const p = place(r.to); return [r.note, (r.extra || []).join(" "), p.plan, p.road, p.season].join(" "); }
   if (page.kind === "service") { const s = SERVICE_PAGES.find((x) => x.slug === page.slug); return [s.intro, s.points.join(" "), (s.more || []).join(" "), faq].join(" "); }
+  if (page.kind === "company") { const c = coFor(page.slug); return [c.about, c.needs.map((n) => n.join(" ")).join(" "), c.cars.map((x) => x[1]).join(" "), c.faqs.map((x) => `${x.q} ${x.a}`).join(" ")].join(" "); }
   if (page.kind === "vehicle") { const c = category(page.slug); return [c.description, c.vehicles.map((v) => v.description).join(" "), faq].join(" "); }
   return faq;
 }
@@ -37,7 +39,7 @@ export function score(page, s) {
   if (s.dupTitle || s.dupDesc || s.dupH1) { a -= 10; notes.push("duplicate title/description/H1"); }
   out.searchIntent = Math.max(a, 0);
   // Unique value (20)
-  const uw = words(uniqueText(page)); const entity = ["location", "destination", "route", "service", "vehicle"].includes(page.kind);
+  const uw = words(uniqueText(page)); const entity = ["location", "destination", "route", "service", "vehicle", "company"].includes(page.kind);
   const limits = entity ? [150, 100, 60] : [300, 200, 100];
   const base = entity ? uw : s.words;
   out.uniqueValue = base >= limits[0] ? 20 : base >= limits[1] ? 15 : base >= limits[2] ? 10 : 0;

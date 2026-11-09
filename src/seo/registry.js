@@ -27,6 +27,7 @@ import { routeFaqs } from "./data/routeFaqs";
 import { imagesOf, heroImagesOf, boostFaqs, boostTags } from "./data/pageMeta";
 import { keywordOverride } from "./data/keywordMap";
 import { WEDDING } from "./data/wedding";
+import { CO_HUB, CO_GROUPS, COMPANIES, CO_GENERIC_FAQS, coPath, coInGroup } from "./data/companies";
 
 const BRAND = B.shortName;
 // Keep text inside search-result limits: join sentences until the limit is reached.
@@ -132,6 +133,37 @@ SERVICE_PAGES.forEach((s) => {
       { "@type": "ItemList", "@id": `${url}#cars`, name: "Wedding cars with driver in Islamabad", numberOfItems: weddingCars.length, itemListElement: weddingCars.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: c.name, url: abs(`/cars/${c.slug}`) })) },
       { "@type": "HowTo", "@id": `${url}#howto`, name: "How to book a wedding car with a driver in Islamabad", description: "Send your wedding plan, choose the cars, receive a quote and meet your professional driver on the day.", step: WEDDING.how.map(([n, t], i) => ({ "@type": "HowToStep", position: i + 1, name: n.replace(/^\d+\.\s*/, ""), text: t })) },
     ] });
+}
+
+
+// ---------------------------------------------------------------- corporate contract rental: hub, three category hubs and one page per organisation
+{
+  const catalog = (n) => ({ "@type": "OfferCatalog", name: n, itemListElement: categories().map((c) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name: `${c.title} with driver on contract`, url: abs(`/cars/${c.slug}`) } })) });
+  const howNode = (url) => ({ "@type": "HowTo", "@id": `${url}#howto`, name: "How to rent cars with drivers on a corporate contract", description: "Send the requirement, receive a written quote, confirm the contract and the driver starts on schedule.", step: CO_HUB.how.map(([n, t], i) => ({ "@type": "HowToStep", position: i + 1, name: n.replace(/^\d+\.\s*/, ""), text: t })) });
+  const AREAS = ["Islamabad", "Rawalpindi", "Pakistan"];
+  const url0 = abs(CO_HUB.path);
+  add({ path: CO_HUB.path, kind: "cohub", slug: "index", title: CO_HUB.title, h1: CO_HUB.h1, description: CO_HUB.description, priority: 0.9, changefreq: "weekly", faqs: CO_HUB.faqs, speakable: true,
+    breadcrumbs: [home, { name: "Services", path: "/services" }, { name: "Corporate Car Rental", path: CO_HUB.path }],
+    og: { a: "CORPORATE CAR RENTAL", b: "Monthly contracts · Professional drivers", vehicle: "land-cruiser-v8" },
+    service: { type: "Corporate car rental with driver (monthly and long-term contracts)", areas: AREAS, audience: "Companies, UN agencies and NGOs" }, offerCatalog: catalog("Corporate contract car rental with driver"),
+    extraNodes: [{ "@type": "ItemList", "@id": `${url0}#organisations`, name: "Organisation pages: corporate car rental with driver", numberOfItems: COMPANIES.length, itemListElement: COMPANIES.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: `Car rental for ${c.short}`, url: abs(coPath(c)) })) }, howNode(url0)] });
+  Object.values(CO_GROUPS).forEach((g) => {
+    const list = coInGroup(g.key); const url = abs(g.path);
+    add({ path: g.path, kind: "cohub", slug: g.key, title: g.title, h1: g.h1, description: g.description, priority: 0.8, changefreq: "weekly", faqs: g.faqs, speakable: true,
+      breadcrumbs: [home, { name: "Corporate Car Rental", path: CO_HUB.path }, { name: g.name, path: g.path }],
+      og: { a: g.name.toUpperCase().slice(0, 34), b: "Monthly contracts · Professional drivers", vehicle: g.key === "ngo-un" ? "toyota-fortuner" : g.key === "oil-gas" ? "revo" : "toyota-grande" },
+      service: { type: `Contract car rental with driver for ${g.name.toLowerCase()}`, areas: AREAS, audience: g.name }, offerCatalog: catalog(`Car rental with driver for ${g.name.toLowerCase()}`),
+      extraNodes: [{ "@type": "ItemList", "@id": `${url}#organisations`, name: g.name, numberOfItems: list.length, itemListElement: list.map((c, i) => ({ "@type": "ListItem", position: i + 1, name: `Car rental for ${c.short}`, url: abs(coPath(c)) })) }] });
+  });
+  COMPANIES.forEach((c) => {
+    const g = CO_GROUPS[c.group]; const url = abs(coPath(c));
+    add({ path: coPath(c), kind: "company", slug: c.slug, title: `Monthly Car Rental for ${c.short}`, h1: `Monthly Car Rental With Driver for ${c.name} Teams`,
+      description: fit([`Monthly, long-term and daily car rental with driver for ${c.short} teams in Islamabad and Pakistan.`, "SUVs, 4x4, sedans and Coaster with a written quote."], 158),
+      priority: 0.7, changefreq: "monthly", faqs: [...c.faqs, ...CO_GENERIC_FAQS(c)], speakable: true,
+      breadcrumbs: [home, { name: "Corporate Car Rental", path: CO_HUB.path }, { name: g.name, path: g.path }, { name: c.short, path: coPath(c) }],
+      og: { a: `CAR RENTAL FOR ${c.short.toUpperCase()}`.slice(0, 40), b: "Monthly contracts · Professional drivers", vehicle: c.cars[0][0] },
+      service: { type: "Corporate car rental with driver (monthly and long-term contracts)", areas: AREAS, audience: `Staff, consultants and contractors working with ${c.name}` }, offerCatalog: catalog(`Car rental with driver for ${c.short} teams`) });
+  });
 }
 
 // ---------------------------------------------------------------- places
@@ -271,6 +303,7 @@ export const SEARCH_INDEX = (() => {
     const p = pg.path; const seg = p.split("/").filter(Boolean);
     let k = "Pages", b = null, extra = "";
     if (p === "/cars" || p.startsWith("/cars/")) { k = "Cars"; const c = categories().find((x) => p === `/cars/${x.slug}`); if (c) { b = `/book?car=${c.vehicles[0].id}`; extra = c.vehicles.map((v) => `${v.name} ${v.color} ${v.trim}`).join(" ") + " car rental with driver chauffeur suv sedan"; } }
+    else if (seg[0] === "corporate-car-rental") { k = "Companies"; extra = "company ngo un agency monthly contract rental corporate staff transport"; }
     else if (seg[0] === "services") { k = "Services"; extra = "service chauffeur hire"; }
     else if (seg[0] === "routes") { k = "Routes"; const n = place(pg); if (n) b = `/book?svc=out&from=Islamabad&to=${encodeURIComponent(n)}`; extra = "route trip tour road journey from islamabad"; }
     else if (seg[0] === "locations" && seg[1]) { k = "Cities"; const n = place(pg); if (n) b = `/book?svc=out&from=Islamabad&to=${encodeURIComponent(n)}`; extra = "city rental car with driver"; }

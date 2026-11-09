@@ -25,6 +25,7 @@ import { factRows, ratesOf, seatsOf, similarCars, rs } from "./data/vehicleFacts
 import { GUIDES, GUIDES_HUB, guide, TERMS_ROWS } from "./data/articles";
 import { TourHubPage, TourSpotPage } from "./tourPages";
 import { WEDDING } from "./data/wedding";
+import { CO_HUB, CO_GROUPS, COMPANIES, coFor, coPath, coInGroup, groupOf } from "./data/companies";
 import { imagesOf, Pic } from "./media";
 import { imgSet } from "../imgset";
 
@@ -117,6 +118,7 @@ export function ServicePage({ slug }) {
     <Sec id="how" title="How to book"><Steps items={BOOKING_STEPS} /></Sec>
     <Faq items={s.faqs} />
     {["wedding-event-transportation", "group-transportation", "vip-executive-transportation", "premium-car-rental", "chauffeur-service", "family-travel"].includes(slug) && <WeddingTeaser title="Wedding car booking with driver" />}
+    {["corporate-transportation", "business-travel", "group-transportation", "vip-executive-transportation", "long-distance-travel", "chauffeur-service", "customized-travel"].includes(slug) && <CompanyTeaser title="Monthly contracts for companies, UN agencies and NGOs" />}
     <Sec id="more" title="Other services" tone="grey"><LinkCards items={rel.map(svcCard)} /></Sec>
     <Cta ctx={s.name} />
   </>);
@@ -282,6 +284,7 @@ export function HomeSeoSections() {
     <Sec id="svc" title="Our services"><LinkCards items={SERVICE_PAGES.slice(0, 6).map(svcCard)} /><p><Link to="/services">All services →</Link></p></Sec>
     <Sec id="routes" title="Popular routes from Islamabad"><LinkCards items={feat.map((x) => ({ to: tripPath(x), title: tripLabel(x), text: x.plan }))} /><p><Link to="/routes">All routes →</Link> · <Link to="/northern-areas">Northern areas →</Link> · <Link to="/car-rental-pakistan">Across Pakistan →</Link></p></Sec>
     <WeddingTeaser title="Wedding car booking with driver in Islamabad" tone="grey" />
+    <CompanyTeaser />
     <Sec id="air" title="Airport transfers"><p>Arrive at Islamabad International Airport and find a professional driver ready. <Link to="/airport-transfer/islamabad">See how airport pickup works →</Link></p></Sec>
     <Sec id="abroad" title="Visiting Pakistan or coming home from abroad?"><LinkCards items={[{ to: "/visit-pakistan", title: "Tourists visiting Pakistan", text: "Airport pickup and a professional driver for Hunza, Skardu, Swat and more. Book in advance." }, { to: "/overseas-pakistanis", title: "Overseas Pakistanis", text: "Book a premium car with a driver before you land. Family trips, weddings and airport pickup." }]} /></Sec>
     <Sec id="how" title="How to book"><Steps items={BOOKING_STEPS} /></Sec>
@@ -455,6 +458,57 @@ export function WeddingPage() {
   </>);
 }
 
+
+// ------------------------------------------------------------------ CORPORATE CONTRACT RENTAL: hub, category hubs and one page per organisation
+const CoDisclaimer = ({ name }) => <p className="co-note"><strong>Independent company.</strong> {name ? `SAAD CAR RENTAL SERVICES is not part of, endorsed by, affiliated with or an approved vendor of ${name}. The name is used only to describe which teams this page is written for, and ${name} is not claimed as a client.` : CO_HUB.disclaimer} All names and trademarks belong to their owners.</p>;
+function CoCar({ slug, reason }) {
+  const cat = category(slug); if (!cat) return null; const ph = photoOf(cat);
+  return (<li><Link to={`/cars/${slug}`}>
+    {ph ? <img src={ph.image} {...imgSet(ph.image, "(max-width: 700px) 90vw, 360px")} alt={`${ph.color} ${ph.name} ${ph.trim} for corporate monthly rental with driver`.replace(/\s+/g, " ")} width="805" height="510" loading="lazy" decoding="async" /> : <span className="sx-veh__ph">Photos on request</span>}
+    <b>{cat.title}</b><span>{reason}</span><em>Rent with driver →</em></Link></li>);
+}
+export function CompanyTeaser({ title = "Corporate car rental with driver: monthly contracts for companies, UN agencies and NGOs", tone, text }) {
+  const d = text || "Companies, oil and gas teams, telecom and multinational offices, UN agencies and NGOs rent our cars with professional drivers on monthly, long-term and daily contracts in Islamabad and across Pakistan. Choose your organisation below.";
+  return (<Sec id="corporate-contracts" title={title} tone={tone}><p>{d}</p>
+    <ul className="sx-chips co-chips">{COMPANIES.map((c) => <li key={c.slug}><Link to={coPath(c)}>{c.short}</Link></li>)}</ul>
+    <p className="wd-links"><Link className="sx-btn sx-btn--quote" to={CO_HUB.path}>Corporate car rental with driver →</Link> <Link to="/corporate-car-rental/oil-and-gas-companies">Oil and gas companies</Link> · <Link to="/corporate-car-rental/ngos-and-un-agencies">NGOs and UN agencies</Link> · <Link to="/corporate-car-rental/telecom-and-multinational-companies">Telecom and multinationals</Link></p></Sec>);
+}
+export function CompanyPage({ slug }) {
+  const c = coFor(slug); const g = groupOf(c); const p = pageByPath(coPath(c)); const sibs = coInGroup(c.group).filter((x) => x.slug !== c.slug);
+  return (<>
+    <Hero eyebrow={c.segment} h1={p.h1} lead={`Monthly, long-term and daily car rental with a professional driver for ${c.name} teams, staff, consultants and contractors in Islamabad and across Pakistan. The full fleet, one written quote, and a driver who arrives on time.`} crumbs={p.breadcrumbs}><Updated /></Hero>
+    <Sec id="answer" title="Quick answer"><Answer q={`Can ${c.short} teams rent cars with drivers on a monthly contract?`}>{`Yes. SAAD CAR RENTAL SERVICES, based in G-11 Markaz, Islamabad, provides cars with professional drivers on monthly, long-term and daily contracts for teams, consultants and contractors working with ${c.name}. Choose the vehicles, tell us the duration, the working hours and the routes, and we send a written quote that states what is included. We are an independent company and not an approved vendor of ${c.name}.`}</Answer></Sec>
+    <Sec id="about" title={`${c.short}: who this page is for`} tone="grey"><p>{c.about}</p><p>This page is for staff, consultants, contractors, auditors and visiting teams who work with {c.name} and need a car with a driver in Islamabad, Rawalpindi or across Pakistan.</p><CoDisclaimer name={c.name} /></Sec>
+    <Sec id="needs" title={`What ${c.short} teams usually need`}><ul className="wd-ev">{c.needs.map(([t, x]) => <li key={t}><b>{t}</b><span>{x}</span></li>)}</ul></Sec>
+    <Sec id="cars" title={`Vehicles suggested for ${c.short} teams`} tone="grey"><p>Every vehicle comes with an experienced professional driver. These are the vehicles teams in this sector usually ask for, and you can mix them on one contract.</p><ul className="sx-veh">{c.cars.map(([s, r]) => <CoCar key={s} slug={s} reason={r} />)}</ul></Sec>
+    <Sec id="fleet" title="Our full fleet for corporate contracts"><p>All vehicles are available with a driver, depending on availability for your dates. Tap any vehicle for details and photos.</p><VehicleStrip cats={categories()} /></Sec>
+    <Sec id="types" title="Contract types we quote" tone="grey"><ul className="wd-ev">{CO_HUB.types.map(([t, x]) => <li key={t}><b>{t}</b><span>{x}</span></li>)}</ul></Sec>
+    <Sec id="how" title="How a contract works"><Steps items={CO_HUB.how} /></Sec>
+    <Sec id="send" title={`What to send for a ${c.short} contract quote`} tone="grey"><Bullets items={CO_HUB.what} /></Sec>
+    <Sec id="trust" title="What procurement and admin teams look for"><Bullets items={CO_HUB.trust} /><p>Read what customers say in our <a href={SITE.reviewsUrl} target="_blank" rel="noopener noreferrer">Google reviews</a> · <Link to="/about">About us</Link> · <Link to="/guides/booking-terms-explained">Booking terms explained</Link> · <Link to="/refund-policy">Refund and cancellation policy</Link></p></Sec>
+    <Faq items={p.faqs} title={`${c.short}: questions and answers`} />
+    <Sec id="related" title="Related pages" tone="grey"><LinkCards items={[...sibs.slice(0, 5).map((x) => ({ to: coPath(x), title: `Car rental for ${x.short}`, text: x.segment })), { to: g.path, title: g.name, text: "All organisations in this group" }, { to: CO_HUB.path, title: "Corporate car rental with driver", text: "Monthly contracts for every organisation" }, { to: "/services/corporate-transportation", title: "Corporate transportation", text: "The full corporate service" }, { to: "/services/business-travel", title: "Business travel", text: "Cars for meetings and visits" }, { to: "/airport-transfer/islamabad", title: "Airport transfer", text: "Pickup for visiting staff and delegations" }]} /><p><Link to="/cars">Our full fleet →</Link> · <Link to="/services">All services →</Link> · <Link to="/contact">Contact →</Link></p></Sec>
+    <Cta ctx={`Corporate contract: ${c.name}`} title={`Get a contract quote for ${c.short} teams`} text="Send the vehicles, the start date, the duration, the working hours and the routes. We reply with a written quote that states what is included." />
+  </>);
+}
+export function CoHubPage({ groupKey }) {
+  const g = groupKey ? CO_GROUPS[groupKey] : null; const D = g || CO_HUB; const p = pageByPath(D.path);
+  const sections = g ? [g] : Object.values(CO_GROUPS);
+  return (<>
+    <Hero eyebrow={D.eyebrow} h1={D.h1} lead={D.lead} crumbs={p.breadcrumbs}><Updated /></Hero>
+    <Sec id="answer" title="Quick answer"><Answer q={D.answerQ}>{D.answer}</Answer></Sec>
+    <Sec id="points" title={g ? g.pointsTitle : CO_HUB.typesTitle} tone="grey">{g ? <Bullets items={g.points} /> : <ul className="wd-ev">{CO_HUB.types.map(([t, x]) => <li key={t}><b>{t}</b><span>{x}</span></li>)}</ul>}</Sec>
+    {sections.map((s) => <Sec key={s.key} id={`orgs-${s.key}`} title={g ? `${s.name}: choose your organisation` : s.name}><LinkCards items={coInGroup(s.key).map((x) => ({ to: coPath(x), title: `Car rental for ${x.short}`, text: x.segment }))} /></Sec>)}
+    <Sec id="fleet" title="Fleet for corporate contracts" tone="grey"><p>Every vehicle comes with an experienced professional driver. Mix vehicles on one contract: for example two Fortuners for field teams, a Corolla for the manager and a Coaster for staff.</p><VehicleStrip cats={categories()} /></Sec>
+    <Sec id="how" title={CO_HUB.howTitle}><Steps items={CO_HUB.how} /></Sec>
+    <Sec id="send" title={CO_HUB.whatTitle} tone="grey"><Bullets items={CO_HUB.what} /></Sec>
+    <Sec id="trust" title={CO_HUB.trustTitle}><Bullets items={CO_HUB.trust} /><CoDisclaimer /></Sec>
+    <Faq items={p.faqs} title="Corporate car rental: questions and answers" />
+    <Sec id="related" title="Related pages" tone="grey"><LinkCards items={[...(g ? [{ to: CO_HUB.path, title: "All corporate car rental pages", text: "Every organisation and group" }] : Object.values(CO_GROUPS).map((x) => ({ to: x.path, title: x.name, text: `${coInGroup(x.key).length} organisation pages` }))), { to: "/services/corporate-transportation", title: "Corporate transportation", text: "The full corporate service" }, { to: "/services/business-travel", title: "Business travel", text: "Cars for meetings and visits" }, { to: "/services/group-transportation", title: "Group transportation", text: "Coaster for staff and events" }, { to: "/out-of-station-car-rental", title: "Out of Station trips", text: "Travel between cities and provinces" }]} /></Sec>
+    <Cta ctx={D.h1} title="Request a corporate contract quote" text="Send the organisation, the vehicles, the start date, the duration and the routes. We reply with a written quote." />
+  </>);
+}
+
 // ------------------------------------------------------------------ /ai-info : plain facts for people and AI assistants
 export function AiInfoPage() {
   const p = pageByPath(AI_INFO.path), site = BUSINESS.website;
@@ -525,6 +579,8 @@ function SeoBody({ page }) {
   if (k === "spot") return <SpotPage slug={page.slug} />;
   if (k === "pillar") return <PillarPage slug={page.slug} />;
   if (k === "wedding") return <WeddingPage />;
+  if (k === "company") return <CompanyPage slug={page.slug} />;
+  if (k === "cohub") return <CoHubPage groupKey={page.slug === "index" ? null : page.slug} />;
   if (k === "tourspots") return <TourHubPage />;
   if (k === "tourspot") return <TourSpotPage slug={page.slug} />;
   if (k === "article") return page.slug === "index" ? <GuidesHubPage /> : <ArticlePage slug={page.slug} />;
@@ -537,6 +593,21 @@ export function SeoPage({ page }) {
   return (<>{lang !== "en-US" && lang !== "en-GB" && <p className="i18n-note" lang={lang}>{t("The detailed guide text on this page is in English. Booking, contact and menus are in your language. Call or WhatsApp us and we will help you.")}</p>}<SeoBody page={page} /></>);
 }
 export const NotFoundPage = () => { const t = useT(); return (
-  <div className="pad narrow"><h1>{t("Page not found")}</h1><p className="lead">{t("That page does not exist. Browse our fleet, services or routes, or contact us.")}</p>
-    <p className="row"><Link className="btn btn--dark" to="/cars">{t("Our fleet")}</Link><Link className="btn" to="/services">{t("Services")}</Link><Link className="btn" to="/contact">{t("Contact")}</Link></p></div>
+  <div className="pad narrow nf"><p className="eyebrow">404</p><h1>{t("Page not found")}</h1>
+    <p className="lead">{t("That page does not exist or has moved. Use the links below to find what you need, or call or WhatsApp us and we will help you directly.")}</p>
+    <p className="row"><Link className="btn btn--dark" to="/">{t("Home")}</Link><Link className="btn" to="/cars">{t("Our fleet")}</Link><Link className="btn" to="/services">{t("Services")}</Link><Link className="btn" to="/contact">{t("Contact")}</Link></p>
+    <h2>{t("Popular pages")}</h2>
+    <ul className="sx-list nf__list">
+      <li><Link to="/wedding-car-booking-with-driver">Wedding car booking with driver</Link></li>
+      <li><Link to="/corporate-car-rental">Corporate car rental with driver (monthly contracts)</Link></li>
+      <li><Link to="/airport-transfer/islamabad">Islamabad airport transfer</Link></li>
+      <li><Link to="/local-car-rental-islamabad">Local car rental in Islamabad</Link></li>
+      <li><Link to="/out-of-station-car-rental">Out of station car rental</Link></li>
+      <li><Link to="/northern-areas">Northern areas trips</Link></li>
+      <li><Link to="/routes">Routes from Islamabad</Link></li>
+      <li><Link to="/faq">Frequently asked questions</Link></li>
+      <li><Link to="/search">Search the website</Link></li>
+    </ul>
+    <p>{t("Need a car with a driver now?")} <a href={telHref}>{BUSINESS.phoneDisplay}</a> · <a href={waHref()} target="_blank" rel="noopener noreferrer">WhatsApp</a></p>
+  </div>
 ); };
