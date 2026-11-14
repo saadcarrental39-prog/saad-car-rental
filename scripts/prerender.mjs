@@ -81,7 +81,7 @@ const urlset = (items, ns = "") => `<?xml version="1.0" encoding="UTF-8"?>\n<url
 const urlTag = (p, extra = "") => `<url><loc>${x(site + (p.path === "/" ? "/" : p.path))}</loc><lastmod>${(p.updated || BUSINESS.contentUpdated)}</lastmod>${extra}</url>`;   // lastmod = the content review date in business.config.js (stable between deploys)
 const idx = PAGES.filter((p) => p.indexable);
 const groups = {
-  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "guide", "legal", "audience", "pillar", "info", "article", "wedding"].includes(p.kind)),
+  "sitemap-pages.xml": idx.filter((p) => ["app", "about", "contact", "hub", "faq", "airport", "guide", "legal", "audience", "pillar", "info", "article", "wedding", "landing"].includes(p.kind)),
   "sitemap-companies.xml": idx.filter((p) => p.kind === "company" || p.kind === "cohub"),
   "sitemap-islamabad.xml": idx.filter((p) => p.kind === "spot"),
   "sitemap-vehicles.xml": idx.filter((p) => p.kind === "vehicle"),

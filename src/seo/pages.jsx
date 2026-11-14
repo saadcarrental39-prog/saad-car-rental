@@ -23,6 +23,9 @@ import { categories, category, vehiclesForPlace, servicesForPlace, servicesForVe
 import { Hero, Cta, Answer, Sec, Faq, Chips, Bullets, LinkCards, VehicleStrip, Steps, BOOKING_STEPS, Updated, DataTable, PriceGuide, Crumbs } from "./blocks";
 import { factRows, ratesOf, seatsOf, similarCars, rs } from "./data/vehicleFacts";
 import { GUIDES, GUIDES_HUB, guide, TERMS_ROWS } from "./data/articles";
+import { LANDINGS, PACKAGES_HUB, landing } from "./data/landing";
+import { OfferBox } from "./blocks";
+import { OFFER } from "../offer";
 import { TourHubPage, TourSpotPage } from "./tourPages";
 import { WEDDING } from "./data/wedding";
 import { CO_HUB, CO_GROUPS, COMPANIES, coFor, coPath, coInGroup, groupOf } from "./data/companies";
@@ -250,10 +253,11 @@ export function VehicleExtras({ slug }) {
     <Sec id="reviews" title={`${nm}: what customers say`}><p>Real Google reviews of SAAD CAR RENTAL SERVICES. Press “See translation” on any review to read it in your language.</p><ReviewCards slug={slug} /></Sec>
     <Sec id="facts" title={`${nm}: quick facts`} tone="grey"><dl className="sx-facts">{factRows(c).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
       <p className="sx-note">Seating is typical for this model. We confirm the exact vehicle, seats and luggage space for your date when you book.</p></Sec>
-    <Sec id="price" title={`${nm} price guide`}><PriceGuide name={nm} rates={rates} /></Sec>
+    <Sec id="price" title={`${nm} price guide`}><PriceGuide name={nm} rates={rates} />{OFFER.on && <OfferBox cats={[c]} />}</Sec>
     {X && <Sec id="about" title={`About the ${X.name} with driver`} tone="grey">{X.about.map((t, i) => <p key={i}>{t}</p>)}<p className="sx-note">People also search for: {X.alias.join(", ")}.</p></Sec>}
     <Sec id="best" title={`What the ${c.title} is best for`} tone={X ? undefined : "grey"}><p>{VEHICLE_PITCH_SENTENCE(c)}</p><Chips items={fit} />{!photoOf(c) && <p className="sx-note">Real photos of this vehicle are sent on request. It is available on request, so please call or WhatsApp to confirm your date and ask for photos.</p>}</Sec>
     <Sec id="trips" title={`Best trips in the ${c.title}`} tone={X ? "grey" : undefined}><LinkCards items={places.map((p) => ({ to: tripPath(p), title: tripLabel(p), text: p.highlights[0] }))} /></Sec>
+    {LANDINGS.some((l) => l.focus.includes(slug)) && <Sec id="pkgs" title={`Packages for the ${nm}`} tone="grey"><LinkCards items={landingCards(LANDINGS.filter((l) => l.focus.includes(slug)).slice(0, 6))} /><p><Link to="/packages">All offers and packages →</Link></p></Sec>}
     <Sec id="similar" title="Similar vehicles you may prefer"><VehicleStrip cats={sim} /></Sec>
     {((VEHICLE_FIT[slug] || []).includes("wedding") || slug === "coaster" || slug === "honda-civic" || slug === "toyota-grande") && <WeddingTeaser title={`${nm} for weddings: wedding car booking with driver`} text={`Book the ${nm} with a professional driver for a barat, nikah, mehndi, walima or party in Islamabad and Rawalpindi. See wedding car photos, the functions we cover and how to book.`} tone="grey" />}
     <Sec id="svc" title="Related services" tone="grey"><LinkCards items={svc.map(svcCard)} /></Sec>
@@ -561,6 +565,55 @@ export function ArticlePage({ slug }) {
   </>);
 }
 
+
+// ------------------------------------------------------------------ offers and packages (/packages and the landing pages)
+const landingCards = (list) => list.map((x) => ({ to: x.path, title: x.h1.replace(/ (With|in) .*$/i, ""), text: x.description.split(". ")[0].replace(/\.$/, "") + "." }));
+export function PackagesPage() {
+  const p = pageByPath(PACKAGES_HUB.path);
+  return (<>
+    <Hero eyebrow={PACKAGES_HUB.eyebrow} h1={PACKAGES_HUB.h1} lead={PACKAGES_HUB.lead} crumbs={p.breadcrumbs}><Updated /></Hero>
+    <Sec id="offer" title="Current offer"><OfferBox /></Sec>
+    <Sec id="packages" title="Choose your package" tone="grey">
+      <div className="sx-pkg">{LANDINGS.map((x) => (<article key={x.slug}><span className="sx-pkg__tag">{x.tag}</span><h3>{x.pkg}</h3><p>{x.description.split(". ")[0].replace(/\.$/, "")}.</p><Link to={x.path}>See this package →</Link></article>))}</div>
+    </Sec>
+    <Sec id="cars" title="Offer on every vehicle"><p>The offer applies to the whole fleet. Open a car to see its details, colours and the reduced daily rent.</p><VehicleStrip cats={categories().filter((c) => c.vehicles.some((v) => !v.placeholder))} /></Sec>
+    <Sec id="how" title="How the offer works" tone="grey"><Bullets items={[`${OFFER.line}, taken off the daily rent for Local and Out of Station bookings.`, "Where a car shows a listed rent, the old rent is crossed out and the new one is shown. Other vehicles are quoted per trip with the same reduction.", "Mention the offer on WhatsApp, by phone or in the booking form. Your written quote shows it.", "Every booking includes a professional driver. Fuel, tolls, driver stay and waiting time are agreed in the quote before you travel."]} /><p><Link to="/guides/booking-terms-explained">Booking terms explained →</Link> · <Link to="/guides/car-rental-with-driver-islamabad-rates">How pricing works →</Link></p></Sec>
+    <Faq items={[{ q: "What is the current offer?", a: `${OFFER.line}. It applies to Local and Out of Station bookings with a professional driver${OFFER.endsText ? ` until ${OFFER.endsText}` : ""}.` }, { q: "Do I need a code?", a: "No code is needed. Mention the offer when you book and we confirm it in your written quote." }, { q: "Does the offer apply to every car?", a: "Yes. It applies to every vehicle in the fleet, including the Land Cruiser V8, Prado, Revo, Coaster and sedans." }, { q: "Can I combine the offer with a package?", a: "Yes. A package is a way of planning your trip, and the offer comes off the daily rent of the vehicle you choose." }]} />
+    <Cta ctx="Offers and packages" title="Claim the offer and get a quote" text="Send your dates, pickup and destination. We reply with a written quote that shows the offer." />
+  </>);
+}
+export function LandingPage({ slug }) {
+  const a = landing(slug); const p = pageByPath(a.path);
+  const cats = a.focus.map(category).filter(Boolean); const trips = (a.trips || []).map(place).filter((x) => x && x.status === "live");
+  const rel = a.related.map((path) => pageByPath(path)).filter(Boolean).map((x) => ({ to: x.path, title: x.h1, text: (x.description || "").split(". ")[0].replace(/\.$/, "") + "." }));
+  return (<>
+    <Hero eyebrow={a.eyebrow} h1={a.h1} lead={a.lead} crumbs={p.breadcrumbs}><Updated /></Hero>
+    {OFFER.on && <Sec id="offer" title="Your offer on this booking"><OfferBox cats={cats} /></Sec>}
+    <Sec id="answer" title={a.answerQ}><Answer q="Short answer: yes.">{a.answer}</Answer></Sec>
+    {a.sections.map((sec, i) => (<Sec key={sec.id} id={sec.id} title={sec.title} tone={i % 2 === 0 ? "grey" : undefined}>
+      {sec.p && sec.p.map((t, j) => <p key={j}>{t}</p>)}
+      {sec.list && <Bullets items={sec.list} />}
+      {sec.links && <p>{sec.links.map(([to, t], j) => <span key={to}>{j > 0 ? " · " : ""}<Link to={to}>{t} →</Link></span>)}</p>}
+    </Sec>))}
+    <Sec id="vehicles" title="Vehicles for this booking" tone={a.sections.length % 2 === 0 ? "grey" : undefined}><p>Every vehicle comes with an experienced professional driver. Tell us your group size and luggage and we confirm the right one.</p><VehicleStrip cats={cats} /></Sec>
+    {trips.length > 0 && <Sec id="trips" title="Places to plan"><LinkCards items={trips.map((x) => ({ to: tripPath(x), title: tripLabel(x), text: x.highlights[0] }))} /></Sec>}
+    <Sec id="how" title="How booking works" tone="grey"><Steps items={BOOKING_STEPS} /></Sec>
+    <Faq items={a.faqs} />
+    <Sec id="related" title="Related pages" tone="grey"><LinkCards items={rel} /><p><Link to="/packages">All offers and packages →</Link></p></Sec>
+    <Cta ctx={a.h1} car={a.focus[0]} title="Book with the special offer" text="Send your date, pickup and destination. We reply with a written quote that shows the offer." />
+  </>);
+}
+
+
+// Home page: the special offer and the packages, right under the booking box.
+export function HomeOffers() {
+  if (!OFFER.on) return null;
+  return (<section id="offers" className="sec" aria-labelledby="offers-h"><h2 id="offers-h" className="h2">Special offer and packages</h2>
+    <p className="lead">{OFFER.line}{OFFER.endsText ? `, until ${OFFER.endsText}` : ""}. Choose a package for your trip, tell us the date and we send a written quote that shows the offer.</p>
+    <div className="sx-pkg">{LANDINGS.map((x) => (<article key={x.slug}><span className="sx-pkg__tag">{OFFER.short}</span><h3>{x.pkg}</h3><p>{x.description.split(". ")[0].replace(/\.$/, "")}.</p><Link to={x.path}>See this package →</Link></article>))}</div>
+    <p><Link to="/packages">All offers and packages →</Link></p></section>);
+}
+
 // ------------------------------------------------------------------ router glue
 function SeoBody({ page }) {
   const k = page.kind;
@@ -573,6 +626,7 @@ function SeoBody({ page }) {
   if (k === "faq") return <FaqPage />;
   if (k === "hub") return <HubPage slug={page.slug} />;
   if (k === "audience") return <AudiencePage slug={page.slug} />;
+  if (k === "landing") return page.slug === "packages" ? <PackagesPage /> : <LandingPage slug={page.slug} />;
   if (k === "legal") return <LegalPage slug={page.slug} />;
   if (k === "guide") return <GuidePage />;
   if (k === "info") return <AiInfoPage />;

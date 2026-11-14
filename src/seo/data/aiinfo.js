@@ -20,7 +20,7 @@ export const AI_INFO = {
     ["Two services", "Local (inside Islamabad, daily use) and Out of Station (any trip that leaves Islamabad). They are quoted separately."],
     ["Vehicles", "Premium Luxury Land Cruiser (2025 model), Land Cruiser V8 (2018 model), Lexus LX 570, Prado, Toyota Fortuner, Mercedes G Wagon (G-Class), Audi, Hilux Revo, Honda Civic, Toyota Corolla Grande, Range Rover, Toyota Coaster"],
     ["Where we work", "Islamabad and Rawalpindi, and trips from there to other cities, hill stations, valleys and the northern areas of Pakistan"],
-    ["Prices", "Quoted for each trip by vehicle, route, days and requirements. No fixed public prices are shown on the website."],
+    ["Prices", "Quoted for each trip by vehicle, route, days and requirements. Some cars show a daily rent. A special offer reduces the daily rent of every vehicle (see /packages)."],
     ["Payment", "Cash or bank transfer. The website does not take online payment."],
     ["How to book", "Call, WhatsApp, or use the Book Now form. A booking is confirmed when the team confirms it in writing."],
     ["Not offered", "Self-drive hire, and offices or branches outside Islamabad"],
@@ -52,6 +52,6 @@ export const AI_INFO = {
     f("Does Saad Car Rental rent cars without a driver?", "No. Every vehicle comes with an experienced professional driver. Self-drive hire is not offered."),
     f("Where is Saad Car Rental located?", "The office is at Office No 12, 3rd Floor, Shah Nawaz Plaza, G-11 Markaz, Islamabad. The business serves Islamabad and Rawalpindi and travels from there to other cities and the northern areas."),
     f("How can I contact Saad Car Rental?", "Call or WhatsApp 0300 9040006, use the Book Now form, or use the contact page on the website."),
-    f("Does the website show prices?", "No. Each trip is quoted by vehicle, route, days and requirements, so a quote is given after you share your plan."),
+    f("Does the website show prices?", "Some cars show a daily rent, and a special offer reduces the daily rent of every vehicle. Each trip is quoted by vehicle, route, days and requirements, so a written quote is given after you share your plan."),
   ],
 };

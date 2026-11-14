@@ -1,0 +1,19 @@
+/* Special offer strip, offer boxes and price display */
+.offer-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 14px;padding:9px clamp(12px,3vw,40px);background:#16181b;color:#f3f1ec;font-size:.86rem;line-height:1.35;text-align:center}
+.offer-bar strong{font-weight:800;letter-spacing:.01em}
+.offer-bar__tag{background:#d8b45a;color:#16181b;font-weight:800;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;padding:3px 9px;border-radius:99px}
+.offer-bar__end{opacity:.8}
+.offer-bar a{color:#f3f1ec;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.offer-bar a:hover{color:#d8b45a}
+.lc__chips .lc__offer{background:#d8b45a;color:#16181b;font-weight:800}
+.lc__rates s{opacity:.55;font-size:.82em;margin-right:6px}
+.lc__rates .lc__save{display:block;font-size:.72rem;font-weight:800;color:#2e7d4f;margin-top:2px}
+.sx-offer{margin:10px 0 0;padding:10px 14px;border-radius:12px;background:#fbf3dc;border:1px solid #ecd9a0;color:#3b2f0b;font-size:.92rem;line-height:1.5}
+.sx-offerbox{margin:14px 0;padding:18px 20px;border-radius:18px;background:linear-gradient(135deg,#16181b,#2a2d33);color:#f3f1ec}
+.sx-offerbox h3{margin:0 0 6px;font-size:1.15rem;color:#fff}.sx-offerbox p{margin:6px 0;color:#e4e2dc}.sx-offerbox b{color:#d8b45a}
+.sx-offerbox .sx-tablewrap{background:#fff;color:#16181b;border-color:#fff}
+.sx-pkg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:12px 0}
+.sx-pkg article{border:1px solid #e3e3df;border-radius:18px;padding:18px;background:#fff;display:flex;flex-direction:column;gap:8px}
+.sx-pkg h3{margin:0;font-size:1.05rem}.sx-pkg p{margin:0;color:#4a4e55;font-size:.92rem;line-height:1.55}
+.sx-pkg .sx-pkg__tag{align-self:flex-start;background:#fbf3dc;border:1px solid #ecd9a0;color:#3b2f0b;border-radius:99px;font-size:.72rem;font-weight:800;padding:3px 10px}
+.sx-pkg a{font-weight:700;margin-top:auto}

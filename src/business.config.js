@@ -98,6 +98,11 @@ export const BUSINESS = {
     notIncluded: null,            // e.g. "Tolls, parking, driver overnight stay and extra hours"
   },
 
+  // ---- SPECIAL OFFER shown on every page: a strip at the top, on every car and in every booking box.
+  // amountOff is taken off the daily rent of every vehicle (Local and Out of Station). Where a car shows a listed rent, the page shows the old rent crossed out and the new one.
+  // To stop the offer: set active to false and run update.bat. To change it: change amountOff (rupees). endsOn: "2026-12-31" shows an end date (null = no end date).
+  offer: { active: true, amountOff: 1000, endsOn: null },
+
   // ---- brand assets ----
   logo: "/assets/brand/saadcar-logo-dark.svg",
   logoPng: "/assets/brand/saadcar-logo-light-1200.png",

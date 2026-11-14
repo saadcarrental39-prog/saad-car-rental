@@ -11,6 +11,7 @@ import { ROUTES } from "./data/routes";
 import { SERVICE_PAGES } from "./data/services";
 import { FAQS } from "./data/faq";
 import { AUDIENCES } from "./data/audiences";
+import { LANDINGS, PACKAGES_HUB } from "./data/landing";
 import { LEGAL } from "./data/legal";
 import { GUIDE } from "./data/guide";
 import { SPOTS } from "./data/islamabad";
@@ -215,6 +216,17 @@ AUDIENCES.filter((a) => a.status === "live").forEach((a) => {
     og: { a: a.slug === "visit-pakistan" ? "VISIT PAKISTAN" : "OVERSEAS PAKISTANIS", b: a.ogB, vehicle: a.slug === "visit-pakistan" ? "land-cruiser-v8" : "prado" }, service: a.service });
 });
 
+
+
+// ---------------------------------------------------------------- offers, packages and vehicle landing pages (Land Cruiser V8, Revo, tours, business, corporate)
+add({ path: PACKAGES_HUB.path, kind: "landing", slug: "packages", title: PACKAGES_HUB.title, h1: PACKAGES_HUB.h1, description: PACKAGES_HUB.description, priority: 0.9, changefreq: "weekly",
+  faqs: [{ q: "What is the current offer?", a: "A reduction on the daily rent of every vehicle, with a professional driver. Mention it when you book and we confirm it in your quote." }, { q: "Do I need a code?", a: "No code is needed. Mention the offer when you book." }],
+  breadcrumbs: [home, { name: "Offers and packages", path: PACKAGES_HUB.path }], og: PACKAGES_HUB.og, updated: B.contentUpdated,
+  service: { type: "Car rental with driver: offers and packages", areas: ["Islamabad", "Rawalpindi", "Pakistan"] } });
+LANDINGS.forEach((l) => {
+  add({ path: l.path, kind: "landing", slug: l.slug, title: l.title, h1: l.h1, description: l.description, priority: 0.8, changefreq: "weekly", faqs: l.faqs, updated: B.contentUpdated,
+    breadcrumbs: [home, { name: "Offers and packages", path: PACKAGES_HUB.path }, { name: l.pkg, path: l.path }], og: l.og, service: l.service });
+});
 
 // ---------------------------------------------------------------- search guide + legal pages
 add({ path: GUIDE.path, kind: "guide", title: GUIDE.title, h1: GUIDE.h1, description: GUIDE.description, priority: 0.8, changefreq: "weekly", faqs: GUIDE.faqs,

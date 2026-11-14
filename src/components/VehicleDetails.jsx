@@ -1,3 +1,4 @@
+import { offerMsg } from "../offer";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { SITE, waHref } from "../config";
@@ -13,7 +14,7 @@ export default function VehicleDetails() {
   const v = id && allVehicles.find((x) => x.id === id);
   if (!v) return null;
   const x = DETAILS[v.id] || DEFAULT_DETAIL, name = `${v.name} ${v.trim}`.trim();
-  const wa = waHref(`Hello, I would like to enquire about the ${name} (${v.color}) with a professional driver.`);
+  const wa = waHref(`Hello, I would like to enquire about the ${name} (${v.color}) with a professional driver.${offerMsg()}`);
   return (<div className="vd" onMouseDown={(e) => e.target === e.currentTarget && setId(null)}>
     <div className="vd__box" role="dialog" aria-modal="true" aria-labelledby="vd-t">
       <button type="button" className="mdl__x" onClick={() => setId(null)} aria-label="Close details">×</button>

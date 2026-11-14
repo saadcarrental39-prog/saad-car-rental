@@ -9,7 +9,7 @@ import { RvRating, RvCount } from "../components/reviews/Live";
 import HeroShowcase from "../components/HeroShowcase";
 import HomeBooking from "../components/HomeBooking";
 import HomePosts from "../components/HomePosts";
-import { HomeSeoSections } from "../seo/pages";
+import { HomeSeoSections, HomeOffers } from "../seo/pages";
 import { imgSet, CARD_SIZES } from "../imgset";
 import { useT } from "../i18n";
 const featured = allVehicles.filter((v) => !v.placeholder);
@@ -38,6 +38,7 @@ export default function Home() {
       <div className="row"><a className="btn btn--dark" href="#fleet">{t("Explore Cars")}</a><Link className="btn" to="/book">{t("Book Now")}</Link>{telHref && <a className="btn" href={telHref}>{t("Call Now")}</a>}{waHref() && <a className="btn" href={waHref()} target="_blank" rel="noopener noreferrer">WhatsApp</a>}</div></div>
       <HeroShowcase images={heroImages} /></section>
     <HomeBooking />
+    <HomeOffers />
     <section id="fleet" className="sec"><h2 className="h2">{t("Explore Our Fleet")}</h2><p className="lead">{t("All vehicles available with a professional driver.")}</p>
       {[...ROOMS, ...fleet.filter((c) => !ROOMS.some(([, s]) => s.includes(c.slug))).map((c) => [c.title, [c.slug]])].map(([t_, slugs]) => { const vs = roomCars(slugs); return vs.length ? (<div className="showroom" key={t_}><VehicleCarousel vehicles={vs} label={`${t_} carousel`} /><h3><Link to={`/cars/${slugs[0]}`}>{t_} {t("with professional driver")} →</Link></h3></div>) : null; })}
       <div className="cats">{fleet.map((c) => (<Link className="cat" to={`/cars/${c.slug}`} key={c.slug}><img src={c.vehicles[0].image} {...imgSet(c.vehicles[0].image, CARD_SIZES)} alt={`${c.title} with professional driver`} loading="lazy" width="805" height="510" /><div><h3>{c.title}</h3><p>{t("With professional driver")} →</p></div></Link>))}</div></section>

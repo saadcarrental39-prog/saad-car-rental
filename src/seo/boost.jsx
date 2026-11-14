@@ -1,5 +1,6 @@
 // Extra sections shown just above the closing call-to-action on the pages listed in data/pageBoost.js:
 // why customers book, photos, offers, what to tell us, more FAQs, related pages and #tags.
+import { offerMsg, OFFER } from "../offer";
 import { Link, useLocation } from "react-router-dom";
 import { SITE, telHref, waHref } from "../config";
 import { BOOST, OFFERS } from "./data/pageBoost";
@@ -13,8 +14,8 @@ export function PageBoost() {
   const card = (l) => { const th = thumbOf(l.to); return <li key={l.to}><Link to={l.to}>{th && <img className="px-thumb" src={th} alt="" width="480" height="252" loading="lazy" decoding="async" />}<b>{l.title}</b><span>{l.text}</span><em aria-hidden="true">→</em></Link></li>; };
   if (!b) return gl ? <div className="px-boost"><Sec id="px-guide" title="Read the full trip guide" tone="grey"><ul className="sx-cards">{card(gl)}</ul></Sec></div> : null;
   const vehicle = path.startsWith("/cars/"); const imgs = imagesOf(path); const gallery = vehicle ? imgs : imgs.slice(1);
-  const offers = [...(b.offer ? [b.offer] : []), ...OFFERS];
-  const msg = `Hello ${SITE.name}, I would like a quote (${path.replace(/^\//, "").replace(/[/-]/g, " ")}). Pickup: Destination: Date: Passengers:`; const chat = waHref(msg);
+  const offers = [...(OFFER.on ? [[`Special offer: ${OFFER.line}`, "Applies to Local and Out of Station bookings with a professional driver. Mention it when you book and your written quote shows it."]] : []), ...(b.offer ? [b.offer] : []), ...OFFERS];
+  const msg = `Hello ${SITE.name}, I would like a quote (${path.replace(/^\//, "").replace(/[/-]/g, " ")}). Pickup: Destination: Date: Passengers:${offerMsg()}`; const chat = waHref(msg);
   const faqs = boostFaqs(path);
   return (
     <div className="px-boost">
@@ -25,7 +26,7 @@ export function PageBoost() {
       <Sec id="px-offers" title="Offers and extras: just ask" tone={gallery.length ? "grey" : undefined}>
         <ul className="px-offers">{offers.map(([t, x]) => <li key={t}><b>{t}</b><p>{x}</p></li>)}</ul>
         <p className="px-row">{telHref && <a className="sx-btn sx-btn--call" href={telHref}>Call · {SITE.phoneDisplay}</a>}{chat && <a className="sx-btn sx-btn--wa" href={chat} target="_blank" rel="noopener noreferrer">WhatsApp now</a>}<Link className="sx-btn sx-btn--quote" to="/book">Get a quote</Link></p>
-        <p className="sx-note">Offers are arranged when you book and depend on your route, dates and vehicle. Nothing is added to your price without your agreement.</p>
+        <p className="sx-note">The special offer comes off the daily rent. Other extras are arranged when you book and depend on your route, dates and vehicle. Nothing is added to your price without your agreement.</p>
       </Sec>
       <Sec id="px-ask" title="Tell us these four things for a fast quote" tone={gallery.length ? undefined : "grey"}>
         <ol className="px-ask">{b.ask.map((x) => <li key={x}>{x}</li>)}</ol>

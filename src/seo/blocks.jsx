@@ -11,6 +11,7 @@ import { VEHICLE_PITCH, VEHICLE_FIT, USE } from "./data/vehicles";
 import { imgSet } from "../imgset";
 import { useT } from "../i18n";
 import { BUSINESS as B } from "../business.config";
+import { OFFER, offerMsg, afterOffer } from "../offer";
 import { rs } from "./data/vehicleFacts";
 
 export const Crumbs = ({ items }) => { const t = useT(); return items.length < 2 ? null : (
@@ -36,13 +37,13 @@ export const Hero = ({ eyebrow, h1, lead, crumbs, children }) => {
 // "Call now / WhatsApp now / Get a quote" (Call and WhatsApp use the number from business.config.js)
 export function Cta({ ctx, from, to, title = "Get today's availability and quote", text = "Tell us your pickup, destination, date and vehicle preference. We reply with a quote, never a fake instant price.", car, svc }) {
   const t = useT();
-  const msg = `Hello ${SITE.name}, I would like a quote for a car with driver${ctx ? ` (${ctx})` : ""}. Pickup: ${from || ""} Destination: ${to || ""} Date: Passengers:`;
+  const msg = `Hello ${SITE.name}, I would like a quote for a car with driver${ctx ? ` (${ctx})` : ""}. Pickup: ${from || ""} Destination: ${to || ""} Date: Passengers:${offerMsg()}`;
   const q = [from && `from=${encodeURIComponent(from)}`, to && `to=${encodeURIComponent(to)}`, car && `car=${encodeURIComponent(car)}`, svc && `svc=${svc}`].filter(Boolean).join("&");
   const chat = waHref(msg);
   return (
     <><PageBoost />
     <section className="sx-cta" aria-label={t("Contact and booking")}><div className="sx-in">
-      <div><h2>{t(title)}</h2><p>{t(text)}</p></div>
+      <div><h2>{t(title)}</h2><p>{t(text)}</p>{OFFER.on && <p className="sx-offer"><b>{t("Special offer")}:</b> {OFFER.line}. {t("Ask for it when you book.")} <Link to="/packages">{t("See packages")} →</Link></p>}</div>
       <div className="sx-cta__row">
         {telHref && <a className="sx-btn sx-btn--call" href={telHref}>{t("Call now")} · {SITE.phoneDisplay}</a>}
         {chat && <a className="sx-btn sx-btn--wa" href={chat} target="_blank" rel="noopener noreferrer">{t("WhatsApp now")}</a>}
@@ -114,9 +115,20 @@ export function PriceGuide({ name, rates = [] }) {
   const pr = B.pricing || {};
   const lines = [pr.localFromPerDay && ["Local (Islamabad / Rawalpindi)", `from ${rs(pr.localFromPerDay)} per day`], pr.outOfStationFromPerDay && ["Out of Station", `from ${rs(pr.outOfStationFromPerDay)} per day`], pr.airportFrom && ["Airport pickup or drop", `from ${rs(pr.airportFrom)}`]].filter(Boolean);
   return (<>
-    {rates.length > 0 && <p><b>Local rent{name ? ` for the ${name}` : ""}: {rates.map(rs).join(" to ")} per day</b> with a professional driver. Out of Station trips are priced separately.</p>}
+    {rates.length > 0 && (OFFER.on ? <p><b>Local rent{name ? ` for the ${name}` : ""}: <s>{rates.map(rs).join(" to ")}</s> {rates.map((n) => rs(afterOffer(n))).join(" to ")} per day</b> with a professional driver, after our current offer ({OFFER.short}). Out of Station trips are priced separately, with the same reduction.</p> : <p><b>Local rent{name ? ` for the ${name}` : ""}: {rates.map(rs).join(" to ")} per day</b> with a professional driver. Out of Station trips are priced separately.</p>)}
     {lines.length > 0 && <DataTable head={["Service", "Starting price"]} rows={lines} />}
     <p>The final quote depends on four things: whether the booking is <Link to="/local-car-rental-islamabad">Local</Link> or <Link to="/out-of-station-car-rental">Out of Station</Link>, the route and number of days, the vehicle, and any extras such as waiting time or an overnight driver stay. You always receive the quote before you travel.</p>
     <p>{pr.included ? <><b>Included:</b> {pr.included}. </> : null}{pr.notIncluded ? <><b>Not included:</b> {pr.notIncluded}. </> : null}{!pr.included && !pr.notIncluded ? "What is included and what is extra is written in your quote. " : null}<Link to="/guides/booking-terms-explained">Booking terms explained →</Link> · <Link to="/guides/car-rental-with-driver-islamabad-rates">How pricing works →</Link></p>
   </>);
+}
+
+// Offer box: the current offer, and (when a car has a listed rent) the old and the new rent side by side.
+export function OfferBox({ cats, title }) {
+  if (!OFFER.on) return null;
+  const rows = [];
+  (cats || fleet).forEach((c) => { const seen = new Set(); c.vehicles.forEach((v) => { const k = `${v.name}${v.trim}`; if ((v.price || v.priceOut) && !seen.has(k)) { seen.add(k); rows.push([`${v.name} ${v.trim}`.trim(), v.price ? `${rs(v.price)} → ${rs(afterOffer(v.price))}` : "Quote on request", v.priceOut ? `${rs(v.priceOut)} → ${rs(afterOffer(v.priceOut))}` : "Quote on request"]); } }); });
+  return (<div className="sx-offerbox"><h3>{title || `Special offer: ${OFFER.line}`}</h3>
+    <p>{OFFER.endsText ? `Valid until ${OFFER.endsText}. ` : ""}It applies to Local and Out of Station bookings with a professional driver. Mention it on WhatsApp, by phone or in the booking form and we confirm it in your quote.</p>
+    {rows.length > 0 && <DataTable head={["Vehicle with listed rent", "Local per day", "Out of Station per day"]} rows={rows} />}
+    <p>Other vehicles are quoted per trip, and the same {OFFER.short} comes off your daily rent.</p></div>);
 }
