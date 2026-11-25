@@ -20,6 +20,17 @@ export const VEHICLE_FIT = {
   audi: ["executive", "airport", "corporate", "wedding", "city", "couples"],
   "toyota-fortuner": ["family", "northern", "long-distance", "airport", "tourism", "mountain", "luggage"],
   coaster: ["groups", "family-groups", "corporate-groups", "tours", "events", "wedding-guests", "northern-group"],
+  "mercedes-a-class": ["executive", "airport", "corporate", "city", "couples", "wedding"],
+  "mercedes-ml": ["vip", "executive", "corporate", "family", "airport", "wedding", "long-distance"],
+  "bmw-m3": ["executive", "wedding", "city", "couples", "corporate"],
+  "suzuki-swift": ["city", "couples", "short-distance", "airport"],
+  "suzuki-ertiga": ["family", "airport", "city", "intercity", "luggage"],
+  "toyota-innova-crysta": ["family", "airport", "corporate", "long-distance", "intercity", "tourism"],
+  "toyota-avanza": ["family", "airport", "city", "intercity"],
+  "honda-mobilio": ["family", "airport", "city", "intercity"],
+  "suzuki-wagon-r": ["city", "short-distance", "couples"],
+  "suzuki-cultus": ["city", "short-distance", "couples", "airport"],
+  "toyota-hiace": ["groups", "family-groups", "corporate-groups", "tours", "events", "wedding-guests", "airport"],
 };
 // One short, honest sentence per vehicle used on route / service / location pages.
 export const VEHICLE_PITCH = {
@@ -35,11 +46,22 @@ export const VEHICLE_PITCH = {
   audi: "a sleek luxury car for executives, airport transfers, weddings and city travel, best kept to paved roads",
   "toyota-fortuner": "a practical seven-seat SUV for families, airport pickups, hill roads and intercity journeys",
   coaster: "a group vehicle for families, tours, events and wedding guests (available on request)",
+  "mercedes-a-class": "a premium hatchback for executives, airport transfers and stylish city travel",
+  "mercedes-ml": "a luxury SUV for VIP guests, families, weddings and long journeys with a quiet, spacious cabin",
+  "bmw-m3": "a sporty sedan that makes a statement at weddings, executive arrivals and special occasions",
+  "suzuki-swift": "a compact, economical hatchback for city travel, short trips and light airport runs",
+  "suzuki-ertiga": "a family MPV with room for passengers and luggage on airport runs and intercity journeys",
+  "toyota-innova-crysta": "a spacious family MPV that is comfortable on long drives and suits corporate guests",
+  "toyota-avanza": "a practical family MPV for airport runs, city travel and intercity trips",
+  "honda-mobilio": "a family MPV with flexible seating for airport pickups, day trips and city travel",
+  "suzuki-wagon-r": "a compact city hatchback for errands and short trips with one to three guests",
+  "suzuki-cultus": "an economical hatchback for city travel, errands and short trips",
+  "toyota-hiace": "a high-roof group van for families, groups and events travelling together",
 };
 // Terrain -> default recommendation order (a place can override with its own `vehicles` list).
 export const TERRAIN = {
-  city:     { label: "city", vehicles: ["honda-civic", "toyota-grande", "audi", "prado", "toyota-fortuner", "land-cruiser-v8", "lexus-lx-570", "mercedes-g-wagon", "range-rover"], advice: "Sedans are the practical choice for city and airport runs; choose an SUV when you want more room or a more premium arrival." },
-  plains:   { label: "highway / motorway", vehicles: ["toyota-grande", "honda-civic", "prado", "toyota-fortuner", "land-cruiser-v8", "lexus-lx-570", "coaster"], advice: "On motorway and highway journeys comfort matters most: a sedan suits one to three passengers, an SUV suits families with luggage, and a Coaster suits groups." },
+  city:     { label: "city", vehicles: ["honda-civic", "toyota-grande", "audi", "prado", "toyota-fortuner", "land-cruiser-v8", "lexus-lx-570", "mercedes-g-wagon", "range-rover", "mercedes-a-class", "suzuki-swift", "suzuki-cultus"], advice: "Sedans are the practical choice for city and airport runs; choose an SUV when you want more room or a more premium arrival." },
+  plains:   { label: "highway / motorway", vehicles: ["toyota-grande", "honda-civic", "prado", "toyota-fortuner", "land-cruiser-v8", "lexus-lx-570", "coaster", "toyota-innova-crysta", "suzuki-ertiga", "toyota-hiace"], advice: "On motorway and highway journeys comfort matters most: a sedan suits one to three passengers, an SUV suits families with luggage, and a Coaster suits groups." },
   hills:    { label: "hill-road", vehicles: ["prado", "toyota-fortuner", "land-cruiser-v8", "revo", "toyota-grande", "coaster"], advice: "Hill roads are fine for a comfortable SUV; in winter, when snow or ice is possible, ask us about a 4x4 choice before you book." },
   mountain: { label: "mountain-road", vehicles: ["prado", "toyota-fortuner", "land-cruiser-v8", "premium-luxury-land-cruiser", "revo", "coaster"], advice: "Mountain routes reward higher ground clearance and a driver who knows the road: an SUV or 4x4 is the sensible choice, and a Coaster works for larger groups on the main routes." },
   extreme:  { label: "rough-road / 4x4", vehicles: ["revo", "land-cruiser-v8", "prado", "toyota-fortuner"], advice: "Some stretches here are rough, steep or seasonal. A 4x4 such as the Revo or Land Cruiser is the sensible choice, and some final legs use local jeeps." },

@@ -10,8 +10,8 @@ import { CarReviewBadge } from "../components/reviews/CarReviews";
 import { WeddingTeaser, CompanyTeaser } from "../seo/pages";
 
 // Which filter tab each category belongs to (add a new category slug here when you add a car in fleet.js).
-const TYPE = { "land-cruiser-v8": "SUV", "premium-luxury-land-cruiser": "SUV", prado: "SUV", "range-rover": "SUV", "lexus-lx-570": "SUV", "mercedes-g-wagon": "SUV", "toyota-fortuner": "SUV", audi: "Sedan", revo: "Pickup", "honda-civic": "Sedan", "toyota-grande": "Sedan", coaster: "Van / Coaster" };
-const TABS = ["All", "SUV", "Sedan", "Pickup", "Van / Coaster"];
+const TYPE = { "land-cruiser-v8": "SUV", "premium-luxury-land-cruiser": "SUV", prado: "SUV", "range-rover": "SUV", "lexus-lx-570": "SUV", "mercedes-g-wagon": "SUV", "toyota-fortuner": "SUV", audi: "Sedan", revo: "Pickup", "honda-civic": "Sedan", "toyota-grande": "Sedan", coaster: "Van / Coaster", "toyota-hiace": "Van / Coaster", "mercedes-ml": "SUV", "bmw-m3": "Sedan", "mercedes-a-class": "Hatchback", "suzuki-swift": "Hatchback", "suzuki-wagon-r": "Hatchback", "suzuki-cultus": "Hatchback", "suzuki-ertiga": "Family MPV", "toyota-innova-crysta": "Family MPV", "toyota-avanza": "Family MPV", "honda-mobilio": "Family MPV" };
+const TABS = ["All", "SUV", "Sedan", "Hatchback", "Family MPV", "Pickup", "Van / Coaster"];
 
 // Swatch colour from the colour NAME in fleet.js (so the dot always matches the car it shows).
 const SWATCH = [["white", "#f2f2f0"], ["black", "#17171a"], ["grey", "#8b94a0"], ["gray", "#8b94a0"], ["silver", "#c3c7cd"], ["red", "#b3262b"], ["blue", "#1f56b8"], ["plum", "#6b2d5c"], ["maroon", "#6e2a2a"], ["cream", "#efe7d3"]];

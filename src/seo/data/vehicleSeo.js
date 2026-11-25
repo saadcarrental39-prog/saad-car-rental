@@ -3,6 +3,292 @@
 // AI assistants and visitors all read the same honest text. Prices appear only where the owner supplied them (Land Cruiser pages, written as "100,000 PKR" so the site price filter accepts them); no invented specs, no "best / cheapest / guaranteed" claims.
 // To add another car later: add its slug here, in fleet.js, vehicles.js and details.js, then run update.bat.
 export const VEHICLE_SEO = {
+"mercedes-a-class": {
+    "title": "Mercedes A-Class on Rent in Islamabad",
+    "desc": "Hire a Mercedes-Benz A-Class with a professional driver in Islamabad for executives, airport transfers and stylish city travel. Call or WhatsApp.",
+    "name": "Mercedes A-Class",
+    "brand": "Mercedes-Benz",
+    "model": "A-Class",
+    "alias": [
+      "Mercedes A-Class with driver",
+      "A-Class on rent Islamabad",
+      "Mercedes hatchback rent a car Islamabad"
+    ],
+    "about": [
+      "The Mercedes-Benz A-Class is the compact luxury choice in our fleet: a graphite-grey hatchback with a sharp, modern look, provided with an experienced professional driver by SAAD CAR RENTAL SERVICES. It suits guests who want a premium arrival without the size of a full-size SUV.",
+      "Business visitors choose it for meetings across Islamabad and Rawalpindi, for airport pickups with light luggage and for stylish city days. It is at its best with one to three passengers. For a larger group or heavy bags, we suggest an SUV and tell you before you book."
+    ],
+    "faqs": [
+      {
+        "q": "Is the A-Class a good choice for airport pickups?",
+        "a": "Yes, for one to three guests with moderate luggage. For several large bags we suggest an SUV or an MPV."
+      },
+      {
+        "q": "Who usually books the A-Class?",
+        "a": "Business visitors, couples and guests who want a modern premium car for city travel and meetings."
+      }
+    ]
+  },
+  "mercedes-ml": {
+    "title": "Mercedes ML SUV on Rent in Islamabad",
+    "desc": "Mercedes-Benz ML SUV with a professional driver in Islamabad for VIP guests, families and weddings. Call or WhatsApp to confirm your date.",
+    "name": "Mercedes ML",
+    "brand": "Mercedes-Benz",
+    "model": "ML",
+    "alias": [
+      "Mercedes ML with driver",
+      "Mercedes ML SUV on rent Islamabad",
+      "ML 350 rent a car Islamabad"
+    ],
+    "about": [
+      "The Mercedes ML is a white luxury SUV with a quiet, comfortable cabin, provided with an experienced professional driver by SAAD CAR RENTAL SERVICES. It gives VIP guests and families more room than a sedan while keeping a polished, formal look.",
+      "We offer it for airport arrivals, wedding days, corporate visits and long motorway journeys from Islamabad. The white finish is bright and photographs well at venues, and the driver handles the route, parking and timing while passengers relax."
+    ],
+    "faqs": [
+      {
+        "q": "What is the Mercedes ML best for?",
+        "a": "VIP guests, families, wedding days and long motorway journeys where comfort and presence matter."
+      },
+      {
+        "q": "Can the ML go to Murree or the north?",
+        "a": "On the main hill roads in normal conditions, yes. For snow or rough tracks we suggest a Prado, Land Cruiser or Revo and tell you before you book."
+      }
+    ]
+  },
+  "bmw-m3": {
+    "title": "BMW M3 on Rent in Islamabad With Driver",
+    "desc": "Book a white BMW M3 sports sedan with a professional driver in Islamabad for weddings, executive arrivals and special occasions. Call or WhatsApp.",
+    "name": "BMW M3",
+    "brand": "BMW",
+    "model": "M3",
+    "alias": [
+      "BMW M3 with driver",
+      "BMW M3 for wedding Islamabad",
+      "BMW rent a car Islamabad"
+    ],
+    "about": [
+      "The BMW M3 is our sporty statement sedan: a white M3 with a bold front end and wide stance, provided with an experienced professional driver by SAAD CAR RENTAL SERVICES. It is chosen when the car itself should be noticed.",
+      "It suits wedding arrivals, executive entrances, photo shoots and special occasions in Islamabad and Rawalpindi. It is a low sports sedan, so it is best kept to paved roads and city or motorway use, and it carries up to four passengers with limited luggage."
+    ],
+    "faqs": [
+      {
+        "q": "Is the BMW M3 suitable for weddings?",
+        "a": "Yes. Its sporty look and white finish make it a popular statement car for the couple. Tell us your schedule and we confirm the booking."
+      },
+      {
+        "q": "Can the M3 be used for long trips?",
+        "a": "On paved roads and motorways, yes. For mountain or rough routes we suggest an SUV or 4x4."
+      }
+    ]
+  },
+  "suzuki-swift": {
+    "title": "Suzuki Swift on Rent in Islamabad",
+    "desc": "Rent a Suzuki Swift with a professional driver in Islamabad for city travel, short trips and light airport runs. Call or WhatsApp.",
+    "name": "Suzuki Swift",
+    "brand": "Suzuki",
+    "model": "Swift",
+    "alias": [
+      "Suzuki Swift with driver",
+      "Swift on rent Islamabad",
+      "small car with driver Islamabad"
+    ],
+    "about": [
+      "The Suzuki Swift is our compact, easy-going hatchback: a white Swift that is simple to park and comfortable in busy city traffic, provided with an experienced professional driver by SAAD CAR RENTAL SERVICES.",
+      "Guests choose it for errands, shopping days, short trips and airport runs with light luggage, when a large vehicle is not needed. It suits one to three passengers. If your group or luggage is larger, we suggest a bigger vehicle and tell you honestly before you book."
+    ],
+    "faqs": [
+      {
+        "q": "How many people fit in the Swift?",
+        "a": "The Swift typically suits up to four passengers with light luggage. For more people or heavy bags, we suggest an MPV or an SUV."
+      },
+      {
+        "q": "Is the Swift good for Murree?",
+        "a": "For a day trip in dry weather it can manage the main road, but in winter or on rough roads we recommend a 4x4."
+      }
+    ]
+  },
+  "suzuki-ertiga": {
+    "title": "Suzuki Ertiga on Rent in Islamabad",
+    "desc": "Suzuki Ertiga family MPV with a professional driver in Islamabad for families, airport pickups and intercity trips. Call or WhatsApp.",
+    "name": "Suzuki Ertiga",
+    "brand": "Suzuki",
+    "model": "Ertiga",
+    "alias": [
+      "Suzuki Ertiga with driver",
+      "Ertiga on rent Islamabad",
+      "7 seater car with driver Islamabad"
+    ],
+    "about": [
+      "The Suzuki Ertiga is a white family MPV with flexible seating, provided with an experienced professional driver by SAAD CAR RENTAL SERVICES. It gives a family more room than a sedan without the size of a large SUV.",
+      "Families use it for airport pickups, day trips, shopping and intercity journeys such as Lahore or Peshawar. It is a practical choice for a group of up to six passengers; tell us your luggage and we confirm the fit before the trip."
+    ],
+    "faqs": [
+      {
+        "q": "Is the Ertiga a seven-seater?",
+        "a": "The Ertiga is a family MPV that typically seats up to six passengers with the driver. We confirm seating and luggage for your date when you book."
+      },
+      {
+        "q": "Is the Ertiga good for family airport pickups?",
+        "a": "Yes. Its flexible seating and boot space suit families arriving with several bags."
+      }
+    ]
+  },
+  "toyota-innova-crysta": {
+    "title": "Toyota Innova Crysta on Rent in Islamabad",
+    "desc": "Hire a Toyota Innova Crysta MPV with a professional driver in Islamabad for families, corporate guests and long journeys. Call or WhatsApp.",
+    "name": "Toyota Innova Crysta",
+    "brand": "Toyota",
+    "model": "Innova Crysta",
+    "alias": [
+      "Innova Crysta with driver",
+      "Toyota Innova on rent Islamabad",
+      "Innova Crysta rent a car Islamabad"
+    ],
+    "about": [
+      "The Toyota Innova Crysta is a white premium MPV with a spacious cabin, provided with an experienced professional driver by SAAD CAR RENTAL SERVICES. It is one of the most comfortable ways to move a family or a small team over a long day.",
+      "Corporate guests like its smart look, and families like the room for luggage and the relaxed ride on motorway journeys from Islamabad to Lahore, Peshawar or the hill stations. It suits up to six passengers."
+    ],
+    "faqs": [
+      {
+        "q": "Who books the Innova Crysta?",
+        "a": "Families, corporate guests and small teams who want a roomy, comfortable vehicle for long drives."
+      },
+      {
+        "q": "Can the Innova Crysta be used for the northern areas?",
+        "a": "On the main roads in good weather, yes. For rough or snowy routes we suggest a 4x4 and tell you before you book."
+      }
+    ]
+  },
+  "toyota-avanza": {
+    "title": "Toyota Avanza on Rent in Islamabad",
+    "desc": "Toyota Avanza family MPV with a professional driver in Islamabad for family travel, airport transfers and intercity trips. Call or WhatsApp.",
+    "name": "Toyota Avanza",
+    "brand": "Toyota",
+    "model": "Avanza",
+    "alias": [
+      "Toyota Avanza with driver",
+      "Avanza on rent Islamabad",
+      "family car with driver Islamabad"
+    ],
+    "about": [
+      "The Toyota Avanza is a white family MPV that seats a household comfortably, provided with an experienced professional driver by SAAD CAR RENTAL SERVICES. It is a practical, no-fuss vehicle for everyday family travel.",
+      "We offer it for airport runs, visits between Islamabad and Rawalpindi and intercity trips. It suits up to six passengers, and we confirm luggage space for your group before you travel."
+    ],
+    "faqs": [
+      {
+        "q": "Is the Avanza comfortable for long drives?",
+        "a": "Yes, on motorway and intercity routes it is a comfortable family vehicle. Tell us your luggage and we confirm the fit."
+      },
+      {
+        "q": "How is the Avanza different from the Ertiga?",
+        "a": "Both are family MPVs. Tell us your group size and bags and we recommend the one with the better fit for your date."
+      }
+    ]
+  },
+  "honda-mobilio": {
+    "title": "Honda Mobilio on Rent in Islamabad",
+    "desc": "Honda Mobilio family MPV with a professional driver in Islamabad for family travel, airport pickups and day trips. Call or WhatsApp.",
+    "name": "Honda Mobilio",
+    "brand": "Honda",
+    "model": "Mobilio",
+    "alias": [
+      "Honda Mobilio with driver",
+      "Mobilio on rent Islamabad",
+      "MPV with driver Islamabad"
+    ],
+    "about": [
+      "The Honda Mobilio is a white family MPV with flexible seating, provided with an experienced professional driver by SAAD CAR RENTAL SERVICES. It is easy to drive through city traffic and roomy enough for a small family.",
+      "Guests use it for airport pickups, day trips and visits across Islamabad and Rawalpindi. It suits up to six passengers, and we confirm luggage space for your group when you book."
+    ],
+    "faqs": [
+      {
+        "q": "Is the Mobilio good for city use?",
+        "a": "Yes. It is easy to drive and park in city traffic, and comfortable for family outings."
+      },
+      {
+        "q": "Can the Mobilio carry extra luggage?",
+        "a": "Space depends on how many seats are used. Tell us your bags and we confirm the fit or suggest a larger vehicle."
+      }
+    ]
+  },
+  "suzuki-wagon-r": {
+    "title": "Suzuki Wagon R on Rent in Islamabad",
+    "desc": "Suzuki Wagon R Stingray with a professional driver in Islamabad for economical city travel, errands and short trips. Call or WhatsApp.",
+    "name": "Suzuki Wagon R",
+    "brand": "Suzuki",
+    "model": "Wagon R Stingray",
+    "alias": [
+      "Suzuki Wagon R with driver",
+      "Wagon R on rent Islamabad",
+      "economical car with driver Islamabad"
+    ],
+    "about": [
+      "The Suzuki Wagon R Stingray is our smallest and most economical choice: a tall, compact hatchback in white, provided with an experienced professional driver by SAAD CAR RENTAL SERVICES.",
+      "It suits errands, short city trips and solo or small-group travel in Islamabad and Rawalpindi, with light luggage. It carries up to three passengers, and for more people or bags we suggest a larger vehicle."
+    ],
+    "faqs": [
+      {
+        "q": "How many passengers can the Wagon R take?",
+        "a": "Typically up to three passengers with light luggage. For a larger group we suggest a Cultus, a Swift or an MPV."
+      },
+      {
+        "q": "Is the Wagon R good for long trips?",
+        "a": "It is best for city and short trips. For long motorway journeys with luggage we suggest a sedan, an MPV or an SUV."
+      }
+    ]
+  },
+  "suzuki-cultus": {
+    "title": "Suzuki Cultus on Rent in Islamabad",
+    "desc": "Suzuki Cultus in white, grey and blue-grey with a professional driver in Islamabad for city travel, errands and airport runs. Call or WhatsApp.",
+    "name": "Suzuki Cultus",
+    "brand": "Suzuki",
+    "model": "Cultus",
+    "alias": [
+      "Suzuki Cultus with driver",
+      "Cultus on rent Islamabad",
+      "budget car with driver Islamabad"
+    ],
+    "about": [
+      "The Suzuki Cultus is a simple, economical hatchback that we offer in three colours: white, grey and blue-grey, each provided with an experienced professional driver by SAAD CAR RENTAL SERVICES.",
+      "It suits errands, shopping days, short trips and airport runs with light luggage for up to four passengers. Choose your colour when you book and we confirm what is available for your date."
+    ],
+    "faqs": [
+      {
+        "q": "Which colours does the Cultus come in?",
+        "a": "We offer the Cultus in white, grey and blue-grey. We confirm the colour for your date when you book."
+      },
+      {
+        "q": "Is the Cultus suitable for the airport?",
+        "a": "Yes, for up to three or four guests with light luggage. For more bags we suggest an MPV or an SUV."
+      }
+    ]
+  },
+  "toyota-hiace": {
+    "title": "Toyota Hiace on Rent in Islamabad With Driver",
+    "desc": "Toyota Hiace high-roof group van with a professional driver in Islamabad for families, groups, events and tours. Call or WhatsApp.",
+    "name": "Toyota Hiace",
+    "brand": "Toyota",
+    "model": "Hiace",
+    "alias": [
+      "Toyota Hiace with driver",
+      "Hiace on rent Islamabad",
+      "van with driver Islamabad"
+    ],
+    "about": [
+      "The Toyota Hiace is a white high-roof group van, provided with an experienced professional driver by SAAD CAR RENTAL SERVICES. It carries a whole group together, which keeps arrivals organised and the plan simple.",
+      "Groups book it for airport pickups, family gatherings, events, wedding guests and tours from Islamabad. Seating depends on the van configuration, so tell us your group size and luggage and we confirm the fit or suggest a Coaster."
+    ],
+    "faqs": [
+      {
+        "q": "How many people does the Hiace carry?",
+        "a": "Seating depends on the configuration of the van. Tell us your group size and we confirm that it fits, or suggest a Coaster for a larger group."
+      },
+      {
+        "q": "Is the Hiace good for airport groups?",
+        "a": "Yes. A group can travel together with luggage, with one driver for the whole trip."
+      }
+    ]
+  },
   "premium-luxury-land-cruiser": {
     title: "Premium Luxury Land Cruiser Rental Islamabad",
     desc: "Hire the Premium Luxury Land Cruiser (2025 model, black) with a professional driver in Islamabad for VIP, executive and wedding travel. Call or WhatsApp.",

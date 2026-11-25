@@ -15,6 +15,20 @@ export const SETS = {
   800,
   1200
  ],
+ "bmw-m3-white": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
+ "civic-grey": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
  "civic-rs-black": [
   480,
   620,
@@ -44,6 +58,13 @@ export const SETS = {
   1200
  ],
  "corolla-altis-silver": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
+ "corolla-silver-grey": [
   480,
   620,
   680,
@@ -120,6 +141,13 @@ export const SETS = {
   800,
   1200
  ],
+ "honda-mobilio-white": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
  "land-cruiser-grey": [
   480,
   620,
@@ -179,6 +207,20 @@ export const SETS = {
   800,
   1200
  ],
+ "mercedes-a-class-grey": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
+ "mercedes-ml-white": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
  "prado-black": [
   480,
   620,
@@ -208,6 +250,69 @@ export const SETS = {
   1200
  ],
  "revo-blue": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
+ "suzuki-cultus-blue-grey": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
+ "suzuki-cultus-grey": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
+ "suzuki-cultus-white": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
+ "suzuki-ertiga-white": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
+ "suzuki-swift-white": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
+ "suzuki-wagon-r-white": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
+ "toyota-avanza-white": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
+ "toyota-hiace-white": [
+  480,
+  620,
+  680,
+  800,
+  1200
+ ],
+ "toyota-innova-crysta-white": [
   480,
   620,
   680,

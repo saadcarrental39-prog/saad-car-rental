@@ -80,8 +80,8 @@ add({ path: "/book", kind: "app", title: "Book a Car With Driver", h1: "Book Now
   description: "Book a premium car with professional driver in Islamabad. No account needed.", og: { a: "BOOK NOW", b: "Car with professional driver", vehicle: "prado" } });
 
 // ---------------------------------------------------------------- vehicles (/cars/<slug>: URLs unchanged, SEO value kept)
-const VEH_SEO = { "land-cruiser-v8": "Land Cruiser V8 2018 Model", "premium-luxury-land-cruiser": "Premium Luxury Land Cruiser", prado: "Prado", revo: "Hilux Revo", "honda-civic": "Honda Civic", "toyota-grande": "Toyota Corolla Grande", "range-rover": "Range Rover", coaster: "Toyota Coaster", "lexus-lx-570": "Lexus LX 570", "mercedes-g-wagon": "Mercedes G Wagon", audi: "Audi", "toyota-fortuner": "Toyota Fortuner" };
-const BRANDS = { "honda-civic": "Honda", "range-rover": "Land Rover" };
+const VEH_SEO = { "land-cruiser-v8": "Land Cruiser V8 2018 Model", "premium-luxury-land-cruiser": "Premium Luxury Land Cruiser", prado: "Prado", revo: "Hilux Revo", "honda-civic": "Honda Civic", "toyota-grande": "Toyota Corolla Grande", "range-rover": "Range Rover", coaster: "Toyota Coaster", "lexus-lx-570": "Lexus LX 570", "mercedes-g-wagon": "Mercedes G Wagon", audi: "Audi", "toyota-fortuner": "Toyota Fortuner", "mercedes-a-class": "Mercedes A-Class", "mercedes-ml": "Mercedes ML", "bmw-m3": "BMW M3", "suzuki-swift": "Suzuki Swift", "suzuki-ertiga": "Suzuki Ertiga", "toyota-innova-crysta": "Toyota Innova Crysta", "toyota-avanza": "Toyota Avanza", "honda-mobilio": "Honda Mobilio", "suzuki-wagon-r": "Suzuki Wagon R", "suzuki-cultus": "Suzuki Cultus", "toyota-hiace": "Toyota Hiace" };
+const BRANDS = { "honda-civic": "Honda", "range-rover": "Land Rover", "mercedes-a-class": "Mercedes-Benz", "mercedes-ml": "Mercedes-Benz", "bmw-m3": "BMW", "suzuki-swift": "Suzuki", "suzuki-ertiga": "Suzuki", "suzuki-wagon-r": "Suzuki", "suzuki-cultus": "Suzuki", "honda-mobilio": "Honda" };
 categories().forEach((c) => {
   const nm = VEH_SEO[c.slug] || c.title; const X = VEHICLE_SEO[c.slug];
   const uses = (VEHICLE_FIT[c.slug] || []).slice(0, 3).map((u) => USE[u].toLowerCase());

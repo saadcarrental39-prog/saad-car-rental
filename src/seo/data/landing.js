@@ -1,6 +1,7 @@
 // OFFER / PACKAGE LANDING PAGES: vehicle-specific pages (Land Cruiser V8, Toyota Revo) and trip packages (northern areas, adventure, business, corporate).
 // Same rules as every page on the site: no invented prices (the only figures are the owner's listed rents and the offer amount from business.config.js,
 // inserted automatically), no "guarantee", no unconfirmed claims. A package is a way of planning a trip with a professional driver; the quote is always written before you travel.
+import { LANDINGS_MORE } from "./landing2";
 const f = (q, a) => ({ q, a });
 
 export const PACKAGES_HUB = {
@@ -11,7 +12,7 @@ export const PACKAGES_HUB = {
   og: { a: "OFFERS & PACKAGES", b: "Weddings · VIP · Corporate · Family · Northern areas", vehicle: "land-cruiser-v8" },
 };
 
-export const LANDINGS = [
+const BASE = [
   {
     slug: "land-cruiser-v8-wedding-car-booking-islamabad", path: "/land-cruiser-v8-wedding-car-booking-islamabad", pkg: "Wedding", tag: "Weddings",
     title: "Land Cruiser V8 for Wedding in Islamabad", h1: "Land Cruiser V8 Wedding Car Booking With Driver in Islamabad",
@@ -221,4 +222,8 @@ export const LANDINGS = [
     service: { type: "Corporate travel with driver", areas: ["Islamabad", "Rawalpindi", "Pakistan"] }, og: { a: "CORPORATE TRAVEL", b: "Executives · Staff · Events · Companies", vehicle: "land-cruiser-v8" },
   },
 ];
+const GRP = { "northern-areas-tour-packages": "tour", "adventure-tourism-pakistan-with-driver": "tour", "business-trip-car-rental-islamabad": "business", "corporate-travel-packages-pakistan": "business" };
+const FEATURED = ["land-cruiser-v8-wedding-car-booking-islamabad", "northern-areas-tour-packages", "corporate-travel-packages-pakistan"];
+export const GROUPS = [["stay", "Stay in Islamabad with a driver"], ["driver", "Personal drivers"], ["support", "Women travellers"], ["vehicle", "Land Cruiser V8 and Toyota Revo"], ["tour", "Tours and adventure"], ["business", "Business and corporate"]];
+export const LANDINGS = [...BASE.map((x) => ({ ...x, grp: GRP[x.slug] || "vehicle", featured: FEATURED.includes(x.slug) })), ...LANDINGS_MORE];
 export const landing = (slug) => LANDINGS.find((x) => x.slug === slug);

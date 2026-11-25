@@ -5,6 +5,7 @@ import { I18nProvider } from "./i18n";
 import "./styles/i18n.css";
 import App from "./App";
 import { initFleet } from "./fleetSync";
+import { initOffer } from "./offerSync";
 import "./styles/automotive-carousel.css";
 import "./styles/site.css";
 import "./styles/seo.css";
@@ -17,7 +18,7 @@ function Root() { // remounts once if the owner changed prices since this visito
   return <I18nProvider><BrowserRouter><App key={k} /></BrowserRouter></I18nProvider>;
 }
 initAnalytics();
-initFleet().finally(() => createRoot(document.getElementById("root")).render(<Root />));
+Promise.all([initFleet(), initOffer()]).finally(() => createRoot(document.getElementById("root")).render(<Root />));
 
 // Auto-refresh when a new version is deployed, so nobody keeps running old files.
 if (import.meta.env.PROD) {

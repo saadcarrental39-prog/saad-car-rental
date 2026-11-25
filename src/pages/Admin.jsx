@@ -1,3 +1,4 @@
+import { BUSINESS } from "../business.config";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { baseFleet, applyOverrides } from "../data/fleet";
 import { saveLocal } from "../fleetSync";
@@ -356,6 +357,28 @@ function ReviewsCard({ tok }) {
     <p className="ad-note" style={{ marginTop: 12 }}>Google API key lagi ho to ye number khud Google se aata hai aur haath ka number sirf backup hai.</p></section>);
 }
 
+/* Special offer: ON / OFF switch, amount and end date. Saved to the website instantly (no rebuild needed). */
+const OFFER_CFG = BUSINESS.offer || {};
+function OfferCard({ tok }) {
+  const [on, setOn] = useState(true), [amount, setAmount] = useState(""), [endsOn, setEndsOn] = useState(""), [msg, setMsg] = useState(""), [busy, setBusy] = useState(false), [loaded, setLoaded] = useState(false);
+  useEffect(() => { (async () => { try { const j = await (await fetch(`/api/offer?t=${Date.now()}`)).json(); const d = j || {}; setOn(typeof d.active === "boolean" ? d.active : OFFER_CFG.active); setAmount(String(d.amountOff ?? OFFER_CFG.amountOff ?? "")); setEndsOn(d.endsOn || OFFER_CFG.endsOn || ""); } catch { setOn(OFFER_CFG.active); setAmount(String(OFFER_CFG.amountOff || "")); } setLoaded(true); })(); }, []);
+  const save = async (nextOn) => {
+    setBusy(true); setMsg("");
+    try { await api("offer_set", { active: nextOn, amountOff: amount, endsOn }, tok); setOn(nextOn); setMsg(nextOn ? "✅ Offer ON hai. Website par 20-30 second mein dikhne lagega." : "⛔ Offer OFF hai. Website se 20-30 second mein hat jayega."); }
+    catch (e) { setMsg(e.message === "bad_amount" ? "Amount sahi likhein, jaise 1000." : e.message === "bad_date" ? "Date sahi likhein." : "Save nahi hua. Dobara try karein."); }
+    setBusy(false);
+  };
+  return (<section className="ad-card"><h2>Special offer (website par)</h2>
+    <p className="ad-note">{!loaded ? "…" : on ? "✅ Offer abhi ON hai: har page par offer strip aur har gaari par kam rate dikh raha hai." : "⛔ Offer abhi OFF hai: website par kahin offer nahi dikh raha."}</p>
+    <div className="ad-two"><label className="ad-field"><span>Har din kitne rupay kam (Rs)</span><input inputMode="numeric" value={amount} onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))} placeholder="1000" /></label>
+      <label className="ad-field"><span>Khatam hone ki date (optional)</span><input type="date" value={endsOn} onChange={(e) => setEndsOn(e.target.value)} /></label></div>
+    <div className="ad-acts" style={{ marginTop: 14 }}>
+      <button type="button" className={`ad-btn ad-btn--lg ${on ? "" : "ad-btn--ghost"}`} disabled={busy || !amount} onClick={() => save(true)}>{busy ? "Ek second…" : on ? "ON rakhein (update)" : "Offer ON karein"}</button>
+      <button type="button" className="ad-btn ad-btn--del ad-btn--lg" disabled={busy || !on} onClick={() => save(false)}>Offer OFF karein</button></div>
+    {msg && <p className="ad-note" style={{ marginTop: 12 }}>{msg}</p>}
+    <p className="ad-note" style={{ marginTop: 12 }}>OFF karne par offer strip, gaariyon ka kam rate, aur booking messages se offer ka zikr hat jata hai. Date likhein to offer us din ke baad khud band ho jata hai.</p></section>);
+}
+
 function Panel({ tok, out, pwa }) {
   const { theme } = useContext(ThemeCtx), logo = theme === "dark" ? LOGO_DARK : LOGO;
   const [ov, setOv] = useState(null), [dirty, setDirty] = useState(false), [msg, setMsg] = useState(""), [loadErr, setLoadErr] = useState(""), [busy, setBusy] = useState(false), [tab, setTab] = useState(() => { const t = new URLSearchParams(location.search).get("tab"); return t === "fleet" || t === "orders" || t === "leads" || t === "posts" ? t : "home"; }), [q, setQ] = useState(""), [formKey, setFormKey] = useState(0); const [leadN, setLeadN] = useState(0);
@@ -388,7 +411,7 @@ function Panel({ tok, out, pwa }) {
   };
   if (!ov) return (<div className="ad-load">{loadErr ? <><p>{loadErr}</p><button type="button" className="ad-btn" onClick={load}>Dobara try karein</button></> : <><span className="ad-spin" /><p>Load ho raha hai…</p></>}</div>);
   const match = (c, v) => !q.trim() || `${v.name} ${v.trim || ""} ${v.color || ""} ${c.title}`.toLowerCase().includes(q.trim().toLowerCase());
-  const tabs = [["home", "Dashboard", IChart], ["activity", "Activity", IPulse], ["orders", "Orders", IBell], ["leads", "Clients", IPeople], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["posts", "Posts", IPost], ["reviews", "Reviews", IStar], ["me", "Account", IUser]];
+  const tabs = [["home", "Dashboard", IChart], ["activity", "Activity", IPulse], ["orders", "Orders", IBell], ["leads", "Clients", IPeople], ["fleet", "Gaariyan", ICar], ["add", "Add", IPlus], ["posts", "Posts", IPost], ["reviews", "Reviews", IStar], ["offers", "Offers", IPlus], ["me", "Account", IUser]];
   return (<>
     <header className="ad-top"><img src={logo} alt="SAAD CAR" width="900" height="284" /><div className="ad-top__r"><ThemeToggle /><span className="ad-pill">Admin</span></div></header>
     <main className="ad-main">
@@ -407,6 +430,7 @@ function Panel({ tok, out, pwa }) {
       </>}
       {tab === "posts" && <AdminPosts tok={tok} api={api} out={out} />}
       {tab === "reviews" && <AdminReviews tok={tok} api={api} out={out} />}
+      {tab === "offers" && <OfferCard tok={tok} />}
       {tab === "add" && <AddCar key={formKey} tok={tok} cats={cats} onAdd={(item, nc) => { edit((n) => { if (nc) n.cats.push(nc); n.added.push(item); }); setFormKey((k) => k + 1); setTab("fleet"); setMsg("Gaari add ho gayi. Neeche Save dabana na bhoolein."); }} />}
       {tab === "me" && <>
         <section className="ad-card ad-me"><img src={logo} alt="SAAD CAR" width="900" height="284" /><b>SAAD CAR RENTAL SERVICES</b><span>Owner admin</span></section>
@@ -417,7 +441,7 @@ function Panel({ tok, out, pwa }) {
         <p className="ad-ver">Version: {new Date(Number(__BUILD_ID__)).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}<br />Naya update aane par app khud update ho jati hai.</p>
       </>}
     </main>
-    {(dirty || busy) && tab !== "orders" && tab !== "home" && tab !== "leads" && tab !== "posts" && tab !== "reviews" && <div className="ad-save" role="status"><span>Badlaav save nahi hue</span><button type="button" className="ad-btn ad-btn--light" disabled={busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div>}
+    {(dirty || busy) && tab !== "orders" && tab !== "home" && tab !== "leads" && tab !== "posts" && tab !== "reviews" && tab !== "offers" && <div className="ad-save" role="status"><span>Badlaav save nahi hue</span><button type="button" className="ad-btn ad-btn--light" disabled={busy} onClick={save}>{busy ? "Save ho raha hai…" : "Save karein"}</button></div>}
     {msg && <div className="ad-toast" role="status">{msg}</div>}
     <nav className="ad-tabs" aria-label="Admin">{tabs.map(([k, t, Ic]) => <button key={k} type="button" className={tab === k ? "on" : ""} aria-current={tab === k ? "page" : undefined} onClick={() => setTab(k)}><span className="ad-ic"><Ic />{k === "orders" && st.unread > 0 && <i className="ad-count">{st.unread > 99 ? "99+" : st.unread}</i>}{k === "leads" && leadN > 0 && tab !== "leads" && <i className="ad-count">{leadN > 99 ? "99+" : leadN}</i>}</span>{t}</button>)}</nav>
   </>);
